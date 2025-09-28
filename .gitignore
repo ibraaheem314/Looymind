@@ -114,13 +114,17 @@ jspm_packages/
 .next/
 out/
 
+# Public assets (keep important files)
+!public/Logo.png
+!public/favicon.ico
+
 # Nuxt.js build / generate output
 .nuxt
 dist
 
 # Gatsby files
 .cache/
-public
+# public (commented out to allow specific files)
 
 # Storybook build outputs
 .out
