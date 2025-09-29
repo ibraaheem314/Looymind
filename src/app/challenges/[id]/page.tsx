@@ -7,7 +7,9 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar, Trophy, Users, Download, ExternalLink, Clock, Target, Award, TrendingUp, Upload } from 'lucide-react'
 import Link from 'next/link'
 import SubmissionForm from '@/components/challenges/submission-form'
+import Leaderboard from '@/components/challenges/leaderboard'
 import { createClient } from '@/lib/supabase'
+import { useChallenges } from '@/hooks/useChallenges'
 import type { Challenge } from '@/lib/supabase'
 
 // Mock data pour un défi spécifique (sera remplacé par les données Supabase)
@@ -92,24 +94,37 @@ const getDaysRemaining = (endDate: string) => {
 }
 
 export default function ChallengePage({ params }: { params: { id: string } }) {
+  const { getChallengeById } = useChallenges()
   const [challenge, setChallenge] = useState<Challenge | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
-  const [participants, setParticipants] = useState(45)
-  const [submissions, setSubmissions] = useState(128)
+  const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
   useEffect(() => {
-    // Dans l'implémentation réelle, on chargerait depuis Supabase
-    // Pour l'instant, on utilise les données mock
-    setTimeout(() => {
-      setChallenge(mockChallenge as any)
-      setLoading(false)
-    }, 500)
-  }, [params.id])
+    const loadChallenge = async () => {
+      try {
+        setLoading(true)
+        const challengeData = await getChallengeById(params.id)
+        
+        if (challengeData) {
+          setChallenge(challengeData)
+        } else {
+          setError('Défi non trouvé')
+        }
+      } catch (err) {
+        setError('Erreur lors du chargement du défi')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadChallenge()
+  }, [params.id, getChallengeById])
 
   const handleSubmissionSuccess = () => {
-    // Recharger les stats ou afficher une notification
-    setSubmissions(prev => prev + 1)
+    setSubmissionSuccess(true)
+    setActiveTab('leaderboard') // Rediriger vers le classement après soumission
   }
 
   if (loading) {
@@ -265,40 +280,7 @@ export default function ChallengePage({ params }: { params: { id: string } }) {
             )}
 
             {activeTab === 'leaderboard' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Classement</CardTitle>
-                  <CardDescription>
-                    Classement basé sur la métrique {challenge.metric} (meilleur score en premier)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {mockLeaderboard.map((entry) => (
-                      <div key={entry.rank} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                            entry.rank === 1 ? 'bg-yellow-100 text-yellow-800' :
-                            entry.rank === 2 ? 'bg-gray-100 text-gray-800' :
-                            entry.rank === 3 ? 'bg-orange-100 text-orange-800' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
-                            {entry.rank}
-                          </div>
-                          <div>
-                            <p className="font-medium">{entry.user}</p>
-                            <p className="text-sm text-gray-500">{entry.submissions} soumissions</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-mono text-lg">{entry.score}</p>
-                          <p className="text-xs text-gray-500">{challenge.metric}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <Leaderboard challengeId={challenge.id} />
             )}
 
             {activeTab === 'data' && (

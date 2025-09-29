@@ -349,6 +349,132 @@ export interface Database {
           updated_at?: string
         }
       }
+      articles: {
+        Row: {
+          id: string
+          title: string
+          content: string
+          excerpt: string | null
+          slug: string
+          author_id: string
+          status: 'draft' | 'published' | 'archived'
+          featured: boolean
+          tags: string[]
+          category: string
+          image_url: string | null
+          views: number
+          likes: number
+          created_at: string
+          updated_at: string
+          published_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          content: string
+          excerpt?: string | null
+          slug: string
+          author_id: string
+          status?: 'draft' | 'published' | 'archived'
+          featured?: boolean
+          tags?: string[]
+          category: string
+          image_url?: string | null
+          views?: number
+          likes?: number
+          created_at?: string
+          updated_at?: string
+          published_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          content?: string
+          excerpt?: string | null
+          slug?: string
+          author_id?: string
+          status?: 'draft' | 'published' | 'archived'
+          featured?: boolean
+          tags?: string[]
+          category?: string
+          image_url?: string | null
+          views?: number
+          likes?: number
+          created_at?: string
+          updated_at?: string
+          published_at?: string | null
+        }
+      }
+      comments: {
+        Row: {
+          id: string
+          content: string
+          entity_type: 'project' | 'article' | 'challenge'
+          entity_id: string
+          parent_id: string | null
+          author_id: string
+          author_name: string | null
+          author_avatar: string | null
+          author_role: string | null
+          likes: number
+          replies_count: number
+          status: 'published' | 'hidden' | 'deleted'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          content: string
+          entity_type: 'project' | 'article' | 'challenge'
+          entity_id: string
+          parent_id?: string | null
+          author_id: string
+          author_name?: string | null
+          author_avatar?: string | null
+          author_role?: string | null
+          likes?: number
+          replies_count?: number
+          status?: 'published' | 'hidden' | 'deleted'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          content?: string
+          entity_type?: 'project' | 'article' | 'challenge'
+          entity_id?: string
+          parent_id?: string | null
+          author_id?: string
+          author_name?: string | null
+          author_avatar?: string | null
+          author_role?: string | null
+          likes?: number
+          replies_count?: number
+          status?: 'published' | 'hidden' | 'deleted'
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      comment_likes: {
+        Row: {
+          id: string
+          comment_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          comment_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          comment_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -367,6 +493,12 @@ export interface Database {
           ground_truth: Json
         }
         Returns: number
+      }
+      increment_article_views: {
+        Args: {
+          article_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

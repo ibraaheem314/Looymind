@@ -1,6 +1,5 @@
-// Re-export from client and server files
+// Re-export from client files only
 export { createClient, supabase } from './supabase-client'
-export { createServerClient } from './supabase-server'
 
 // Re-export types
 export type {
@@ -10,5 +9,8 @@ export type {
   Project,
   Resource,
   Mentor,
-  MentorRequest
+  MentorRequest,
+  Article,
+  Comment,
+  CommentLike
 } from './supabase-client'

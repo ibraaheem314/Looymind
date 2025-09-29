@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { Upload, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubmissions } from '@/hooks/useSubmissions'
+import { createClient } from '@/lib/supabase'
 
 interface SubmissionFormProps {
   challengeId: string
@@ -18,7 +20,11 @@ export default function SubmissionForm({
   onSubmissionSuccess 
 }: SubmissionFormProps) {
   const { user, isAuthenticated } = useAuth()
+  const { createSubmission } = useSubmissions(challengeId)
+  const supabase = createClient()
   const [file, setFile] = useState<File | null>(null)
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [dragActive, setDragActive] = useState(false)
@@ -45,13 +51,14 @@ export default function SubmissionForm({
 
   const handleFileSelect = (selectedFile: File) => {
     // Valider le fichier
-    if (selectedFile.type !== 'text/csv') {
+    const allowedTypes = ['text/csv', 'application/csv', 'application/vnd.ms-excel']
+    if (!allowedTypes.includes(selectedFile.type) && !selectedFile.name.endsWith('.csv')) {
       setMessage({ type: 'error', text: 'Seuls les fichiers CSV sont acceptés' })
       return
     }
 
-    if (selectedFile.size > 20 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Fichier trop volumineux (max 20MB)' })
+    if (selectedFile.size > 50 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Fichier trop volumineux (max 50MB)' })
       return
     }
 
@@ -73,6 +80,11 @@ export default function SubmissionForm({
       return
     }
 
+    if (!title.trim()) {
+      setMessage({ type: 'error', text: 'Veuillez donner un titre à votre soumission' })
+      return
+    }
+
     if (!isAuthenticated) {
       setMessage({ type: 'error', text: 'Vous devez être connecté pour soumettre' })
       return
@@ -82,26 +94,38 @@ export default function SubmissionForm({
     setMessage(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('challengeId', challengeId)
+      // Upload du fichier vers Supabase Storage
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user?.id}_${Date.now()}.${fileExt}`
+      const filePath = `submissions/${challengeId}/${fileName}`
 
-      const response = await fetch('/api/submissions', {
-        method: 'POST',
-        body: formData
-      })
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('submissions')
+        .upload(filePath, file)
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de la soumission')
+      if (uploadError) {
+        throw new Error(uploadError.message)
       }
+
+      // Créer la soumission en base
+      const submissionData = {
+        challenge_id: challengeId,
+        title: title.trim(),
+        description: description.trim(),
+        file_url: uploadData.path,
+        file_type: file.type,
+        file_size: file.size
+      }
+
+      await createSubmission(submissionData)
 
       setMessage({ 
         type: 'success', 
         text: 'Soumission réussie ! Votre fichier est en cours d\'évaluation.' 
       })
       setFile(null)
+      setTitle('')
+      setDescription('')
       
       if (onSubmissionSuccess) {
         onSubmissionSuccess()
@@ -146,6 +170,37 @@ export default function SubmissionForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Champs de titre et description */}
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                Titre de votre soumission *
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Modèle Random Forest v1.0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                Description (optionnel)
+              </label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Décrivez votre approche, les techniques utilisées..."
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
           {/* Zone de drop */}
           <div
             className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
@@ -172,13 +227,21 @@ export default function SubmissionForm({
               {file ? (
                 <>
                   <CheckCircle className="h-12 w-12 text-green-500" />
-                  <div>
+                  <div className="text-center">
                     <p className="text-sm font-medium text-green-700">
                       Fichier sélectionné : {file.name}
                     </p>
                     <p className="text-xs text-green-600">
                       Taille : {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => setFile(null)}
+                      className="mt-2 inline-flex items-center text-xs text-red-600 hover:text-red-800"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Supprimer
+                    </button>
                   </div>
                 </>
               ) : (
@@ -221,8 +284,9 @@ export default function SubmissionForm({
             <ul className="text-xs text-blue-700 space-y-1">
               <li>• Format CSV obligatoire</li>
               <li>• Maximum 5 soumissions par jour</li>
-              <li>• Taille maximale : 20MB</li>
+              <li>• Taille maximale : 50MB</li>
               <li>• Votre meilleur score sera retenu pour le classement</li>
+              <li>• Titre obligatoire pour chaque soumission</li>
             </ul>
           </div>
 
@@ -230,7 +294,7 @@ export default function SubmissionForm({
           <Button 
             type="submit" 
             className="w-full" 
-            disabled={!file || isSubmitting}
+            disabled={!file || !title.trim() || isSubmitting}
           >
             {isSubmitting ? (
               <>
