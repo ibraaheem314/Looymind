@@ -27,6 +27,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [emailError, setEmailError] = useState('')
+  const [checkingEmail, setCheckingEmail] = useState(false)
+  const [emailTimeout, setEmailTimeout] = useState<NodeJS.Timeout | null>(null)
 
   const router = useRouter()
   const { isAuthenticated, loading: authLoading } = useAuth()
@@ -35,11 +38,63 @@ export default function RegisterPage() {
     if (isAuthenticated && !authLoading) router.push('/dashboard')
   }, [isAuthenticated, authLoading, router])
 
+  // Nettoyage du timeout
+  useEffect(() => {
+    return () => {
+      if (emailTimeout) {
+        clearTimeout(emailTimeout)
+      }
+    }
+  }, [emailTimeout])
+
   const skillsOptions = ['Python','JavaScript','R','SQL','Machine Learning','Deep Learning','Data Analysis','Data Visualization','Statistics','Big Data','Cloud Computing','DevOps','Web Development','Mobile Development','UI/UX Design','Product Management','Business Intelligence','NLP','Computer Vision','Time Series','Reinforcement Learning','MLOps']
   const interestsOptions = ['Intelligence Artificielle','Data Science','Machine Learning','Deep Learning','Big Data','Analytics','Business Intelligence','Computer Vision','NLP','Robotics','IoT','Blockchain','Cybersecurity','Cloud Computing','DevOps','Web Development','Mobile Development','UI/UX','Product Management','Startup','Recherche','Académique','Industrie','Finance','Santé','Agriculture','Éducation','Environnement']
 
-  const handleInputChange = (field: string, value: string | string[]) =>
+  const handleInputChange = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // TEMPORAIRE : Désactiver la vérification en temps réel pour éviter les boucles
+    // La vérification sera faite lors de la soumission
+  }
+
+  const checkEmailAvailability = async (email: string) => {
+    if (!email || !email.includes('@')) {
+      setEmailError('')
+      return
+    }
+
+    setCheckingEmail(true)
+    setEmailError('')
+
+    try {
+      const response = await fetch('/api/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      if (!response.ok) {
+        // Si l'API ne fonctionne pas, on ignore la vérification en temps réel
+        setEmailError('')
+        return
+      }
+
+      const data = await response.json()
+      
+      if (!data.available) {
+        setEmailError(data.error || 'Cet email est déjà utilisé')
+      } else {
+        setEmailError('')
+      }
+    } catch (err) {
+      // Ignorer les erreurs de vérification en temps réel
+      setEmailError('')
+    } finally {
+      setCheckingEmail(false)
+    }
+  }
 
   const addSkill = (skill: string) =>
     !formData.skills.includes(skill) && setFormData(p => ({ ...p, skills: [...p.skills, skill] }))
@@ -64,6 +119,13 @@ export default function RegisterPage() {
 
     setLoading(true); setError(''); setSuccess(false)
 
+    // 🔒 VÉRIFICATION FINALE : Email déjà utilisé
+    if (emailError) {
+      setError('Veuillez corriger l\'erreur d\'email avant de continuer')
+      setLoading(false)
+      return
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Les mots de passe ne correspondent pas'); setLoading(false); return
     }
@@ -74,6 +136,9 @@ export default function RegisterPage() {
     try {
       const { createClient } = await import('@/lib/supabase')
       const supabase = createClient()
+
+      // TEMPORAIRE : Désactiver la vérification préalable pour éviter les boucles
+      // La vérification sera faite par Supabase Auth directement
 
       const emailRedirectTo =
         typeof window !== 'undefined'
@@ -107,11 +172,22 @@ export default function RegisterPage() {
       })
 
       if (authError) {
-        setError(
-          authError.message.toLowerCase().includes('already registered')
-            ? 'Cet email est déjà utilisé. Essayez de vous connecter.'
-            : authError.message
-        )
+        // 🔒 GESTION SPÉCIFIQUE DES ERREURS D'EMAIL DUPLIQUÉ
+        const errorMessage = authError.message.toLowerCase()
+        
+        if (errorMessage.includes('already registered') || 
+            errorMessage.includes('user already registered') ||
+            errorMessage.includes('email already in use') ||
+            errorMessage.includes('duplicate')) {
+          setError('Cet email est déjà utilisé. Veuillez vous connecter ou utiliser un autre email.')
+        } else if (errorMessage.includes('invalid email')) {
+          setError('Adresse email invalide. Veuillez vérifier votre saisie.')
+        } else if (errorMessage.includes('password')) {
+          setError('Le mot de passe ne respecte pas les critères requis.')
+        } else {
+          setError(`Erreur lors de l'inscription : ${authError.message}`)
+        }
+        setLoading(false)
         return
       }
 
@@ -232,8 +308,26 @@ export default function RegisterPage() {
                     <Label htmlFor="email">Email *</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input id="email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} className="pl-10" required />
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        value={formData.email} 
+                        onChange={e => handleInputChange('email', e.target.value)} 
+                        className={`pl-10 ${emailError ? 'border-red-500 focus:border-red-500' : ''}`} 
+                        required 
+                      />
+                      {checkingEmail && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-800" />
+                        </div>
+                      )}
                     </div>
+                    {emailError && (
+                      <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {emailError}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

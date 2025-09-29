@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { 
   User, LogOut, Settings, BarChart3, MapPin, Briefcase, 
   GraduationCap, Phone, Github, Linkedin, Globe, Mail,
-  Calendar, Award, Target, Users
+  Calendar, Award, Target, Users, Building
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -38,15 +38,6 @@ export default function DashboardPage() {
     )
   }
 
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-      window.location.href = '/'
-    } catch (error) {
-      console.error('Error signing out:', error)
-    }
-  }
-
   // Calcul des valeurs d'affichage avec fallbacks
   const displayName = 
     profile?.display_name || 
@@ -55,19 +46,39 @@ export default function DashboardPage() {
     user?.email?.split('@')[0] || 
     'Utilisateur'
 
-  const role = profile?.role || 'member'
+  const firstName = (profile as any)?.first_name || user?.user_metadata?.first_name || ''
+  const lastName = (profile as any)?.last_name || user?.user_metadata?.last_name || ''
+  const fullName = `${firstName} ${lastName}`.trim() || displayName
+
+  const role = profile?.role || user?.user_metadata?.role || 'member'
   const skillsCount = Array.isArray(profile?.skills) ? profile.skills.length : 0
-  const interestsCount = 0 // Temporaire - type Profile n'a pas interests
+  const interestsCount = Array.isArray((profile as any)?.interests) ? (profile as any).interests.length : 0
   const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR') : '—'
 
   // Niveaux d'expérience avec icônes
-  const experienceLevel = 'debutant' // Temporaire - type Profile incomplet
+  const experienceLevel = (profile as any)?.experience_level || user?.user_metadata?.experience_level || 'debutant'
   const experienceLevels = {
     'debutant': { label: 'Débutant', color: 'bg-green-100 text-green-800' },
     'intermediaire': { label: 'Intermédiaire', color: 'bg-blue-100 text-blue-800' },
     'avance': { label: 'Avancé', color: 'bg-purple-100 text-purple-800' },
     'expert': { label: 'Expert', color: 'bg-orange-100 text-orange-800' }
   }
+
+  // Informations professionnelles
+  const currentPosition = (profile as any)?.current_position || user?.user_metadata?.current_position || ''
+  const company = (profile as any)?.company || user?.user_metadata?.company || ''
+  const location = profile?.location || user?.user_metadata?.location || ''
+  const bio = profile?.bio || user?.user_metadata?.bio || ''
+
+  // Liens sociaux
+  const githubUrl = (profile as any)?.github_url || user?.user_metadata?.github_url || ''
+  const linkedinUrl = (profile as any)?.linkedin_url || user?.user_metadata?.linkedin_url || ''
+  const websiteUrl = (profile as any)?.website_url || user?.user_metadata?.website_url || ''
+  const phone = (profile as any)?.phone || user?.user_metadata?.phone || ''
+
+  // Compétences et intérêts
+  const skills = profile?.skills || user?.user_metadata?.skills || []
+  const interests = (profile as any)?.interests || user?.user_metadata?.interests || []
 
   // Rôles avec icônes
   const roleConfig = {
@@ -90,16 +101,6 @@ export default function DashboardPage() {
               <p className="text-gray-600">Bienvenue, {displayName}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/profile">
-                <Button variant="outline" size="sm">
-                  <User className="h-4 w-4 mr-2" />
-                  Mon profil
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Déconnexion
-              </Button>
             </div>
           </div>
         </div>
@@ -112,7 +113,7 @@ export default function DashboardPage() {
           {/* Colonne gauche - Profil détaillé */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Informations personnelles */}
+            {/* Informations personnelles - ÉTAPE 1 */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -120,11 +121,19 @@ export default function DashboardPage() {
                   Informations personnelles
                 </CardTitle>
                 <CardDescription>
-                  Vos informations de profil et coordonnées
+                  Vos informations de base et coordonnées
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <User className="h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-500">Nom complet</p>
+                      <p className="font-medium">{fullName}</p>
+                    </div>
+                  </div>
+                  
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-gray-400" />
                     <div>
@@ -133,17 +142,25 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   
-                  {profile?.location && (
+                  {location && (
                     <div className="flex items-center gap-3">
                       <MapPin className="h-4 w-4 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-500">Localisation</p>
-                        <p className="font-medium">{profile.location}</p>
+                        <p className="font-medium">{location}</p>
                       </div>
                     </div>
                   )}
                   
-                  {/* Téléphone temporairement désactivé - type Profile incomplet */}
+                  {phone && (
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Téléphone</p>
+                        <p className="font-medium">{phone}</p>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-gray-400" />
@@ -155,60 +172,124 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Liens sociaux */}
-                {/* Liens sociaux temporairement désactivés - type Profile incomplet */}
+                {(githubUrl || linkedinUrl || websiteUrl) && (
+                  <div className="mt-6 pt-4 border-t">
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Liens sociaux</h4>
+                    <div className="flex flex-wrap gap-3">
+                      {githubUrl && (
+                        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                          <Github className="h-4 w-4" />
+                          GitHub
+                        </a>
+                      )}
+                      {linkedinUrl && (
+                        <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                          <Linkedin className="h-4 w-4" />
+                          LinkedIn
+                        </a>
+                      )}
+                      {websiteUrl && (
+                        <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                          <Globe className="h-4 w-4" />
+                          Site web
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Parcours professionnel */}
-            {profile?.bio && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5" />
-                    À propos
-                  </CardTitle>
-                  <CardDescription>
-                    Votre présentation personnelle
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Compétences */}
-            {profile?.skills?.length && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5" />
-                    Compétences techniques
-                  </CardTitle>
-                  <CardDescription>
-                    Vos domaines d'expertise techniques
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {profile.skills?.length > 0 && (
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-900 mb-3">
-                        Compétences techniques ({skillsCount})
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {profile.skills.map((skill, index) => (
-                          <Badge key={index} variant="secondary">
-                            {skill}
-                          </Badge>
-                        ))}
+            {/* Informations professionnelles - ÉTAPE 2 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" />
+                  Parcours professionnel
+                </CardTitle>
+                <CardDescription>
+                  Votre expérience et votre rôle dans la communauté
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {currentPosition && (
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="h-4 w-4 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Poste actuel</p>
+                        <p className="font-medium">{currentPosition}</p>
                       </div>
                     </div>
                   )}
                   
-                  {/* Intérêts temporairement désactivés - type Profile incomplet */}
-                </CardContent>
-              </Card>
-            )}
+                  {company && (
+                    <div className="flex items-center gap-3">
+                      <Building className="h-4 w-4 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Entreprise/Institution</p>
+                        <p className="font-medium">{company}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {bio && (
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Biographie</h4>
+                    <p className="text-gray-700 leading-relaxed">{bio}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Compétences et intérêts - ÉTAPE 3 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Compétences et centres d'intérêt
+                </CardTitle>
+                <CardDescription>
+                  Vos domaines d'expertise et centres d'intérêt
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {skills.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                      Compétences techniques ({skills.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((skill: string, index: number) => (
+                        <Badge key={index} variant="secondary">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {interests.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                      Centres d'intérêt ({interests.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {interests.map((interest: string, index: number) => (
+                        <Badge key={index} variant="outline">
+                          {interest}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {skills.length === 0 && interests.length === 0 && (
+                  <p className="text-gray-500 text-sm">Aucune compétence ou centre d'intérêt renseigné</p>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Colonne droite - Stats et actions */}
@@ -233,7 +314,17 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Compétences</span>
-                    <span className="font-semibold text-lg">{skillsCount}</span>
+                    <span className="font-semibold text-lg">{skills.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Centres d'intérêt</span>
+                    <span className="font-semibold text-lg">{interests.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Liens sociaux</span>
+                    <span className="font-semibold text-lg">
+                      {[githubUrl, linkedinUrl, websiteUrl].filter(Boolean).length}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -257,8 +348,8 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-2">Niveau d'expérience</p>
-                    <Badge className={experienceLevels[experienceLevel]?.color}>
-                      {experienceLevels[experienceLevel]?.label}
+                    <Badge className={experienceLevels[experienceLevel as keyof typeof experienceLevels]?.color}>
+                      {experienceLevels[experienceLevel as keyof typeof experienceLevels]?.label}
                     </Badge>
                   </div>
                 </div>

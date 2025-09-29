@@ -3,16 +3,28 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import type { Profile } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 
 export function useProfile(userId?: string) {
+  const { profile: authProfile, loading: authLoading } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
+    if (authProfile && (!userId || authProfile.id === userId)) {
+      setProfile(authProfile as Profile)
+      setLoading(authLoading)
+      setError(null)
+    }
+  }, [authProfile, authLoading, userId])
+
+  useEffect(() => {
     if (userId) {
       fetchProfile(userId)
+    } else if (!authProfile) {
+      setLoading(false)
     }
   }, [userId])
 
@@ -34,6 +46,14 @@ export function useProfile(userId?: string) {
           setLoading(false)
           return
         }
+
+        if (error.code === '42501' && authProfile && authProfile.id === id) {
+          setProfile(authProfile as Profile)
+          setError(null)
+          setLoading(false)
+          return
+        }
+
         setError(error.message)
         return
       }

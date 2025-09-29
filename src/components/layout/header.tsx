@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, Brain, ChevronDown, User, LogOut, Shield } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
@@ -10,7 +10,15 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement | null>(null)
   const { user, profile, isAuthenticated, signOut } = useAuth()
+  const displayName = profile?.display_name || user?.email || 'Compte utilisateur'
+  const initials = (profile?.display_name || user?.email || 'Utilisateur')
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .slice(0, 2)
 
   const navigation = [
     { name: 'Accueil', href: '/' },
@@ -54,6 +62,17 @@ export default function Header() {
       ]
     },
   ]
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -143,35 +162,67 @@ export default function Header() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <User className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm text-gray-700">
-                    {profile?.display_name || user?.email}
-                  </span>
-                </div>
-                <Button variant="ghost" size="sm" className="h-8" asChild>
-                  <Link href="/dashboard">
-                    Dashboard
-                  </Link>
-                </Button>
-                {(profile?.role === 'admin' || profile?.role === 'moderator') && (
-                  <Button variant="ghost" size="sm" className="h-8" asChild>
-                    <Link href="/admin/moderation">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Modération
-                    </Link>
-                  </Button>
-                )}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-8"
-                  onClick={() => signOut()}
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(prev => !prev)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Déconnexion
-                </Button>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-sm font-medium text-white">
+                    {initials.toUpperCase()}
+                  </span>
+                  <span className="text-sm font-medium text-gray-700 leading-tight">
+                    {displayName}
+                  </span>
+                  <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-xl z-[120] overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-800">{displayName}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                    <div className="py-1">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" />
+                        Profil
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <Brain className="h-4 w-4" />
+                        Tableau de bord
+                      </Link>
+                      {(profile?.role === 'admin' || profile?.role === 'moderator') && (
+                        <Link
+                          href="/admin/moderation"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <Shield className="h-4 w-4" />
+                          Espace modération
+                        </Link>
+                      )}
+                      <button
+                        onClick={async () => {
+                          setIsUserMenuOpen(false)
+                          await signOut()
+                          window.location.href = '/'
+                        }}
+                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Déconnexion
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <>
@@ -235,18 +286,51 @@ export default function Header() {
                 </div>
               ))}
               <div className="pt-4 pb-3 border-t border-gray-100">
-                <div className="flex items-center px-3 space-x-3">
-                  <Button variant="ghost" size="sm" className="flex-1" asChild>
-                    <Link href="/login">
-                      Connexion
-                    </Link>
-                  </Button>
-                  <Button size="sm" className="flex-1 bg-slate-800 hover:bg-slate-700 text-white shadow-md" asChild>
-                    <Link href="/register">
-                      S'inscrire
-                    </Link>
-                  </Button>
-                </div>
+                {isAuthenticated ? (
+                  <div className="space-y-3">
+                    <div className="px-3">
+                      <p className="text-sm font-semibold text-gray-700">{displayName}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                    <div className="flex flex-col space-y-2 px-3">
+                      <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                        <Link href="/profile">Mon profil</Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                        <Link href="/dashboard">Tableau de bord</Link>
+                      </Button>
+                      {(profile?.role === 'admin' || profile?.role === 'moderator') && (
+                        <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                          <Link href="/admin/moderation">Espace modération</Link>
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={async () => {
+                          setIsMenuOpen(false)
+                          await signOut()
+                          window.location.href = '/'
+                        }}
+                      >
+                        Déconnexion
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center px-3 space-x-3">
+                    <Button variant="ghost" size="sm" className="flex-1" asChild>
+                      <Link href="/login">
+                        Connexion
+                      </Link>
+                    </Button>
+                    <Button size="sm" className="flex-1 bg-slate-800 hover:bg-slate-700 text-white shadow-md" asChild>
+                      <Link href="/register">
+                        S'inscrire
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
