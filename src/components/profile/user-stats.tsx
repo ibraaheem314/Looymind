@@ -4,12 +4,10 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Trophy, Target, TrendingUp, Calendar, Award, Users, BarChart3, Activity } from 'lucide-react'
-import { useProfile } from '@/hooks/useProfile'
-import { useSubmissions } from '@/hooks/useSubmissions'
-import { useProjects } from '@/hooks/useProjects'
 
 interface UserStatsProps {
   userId: string
+  profile?: any
 }
 
 interface UserStats {
@@ -23,39 +21,34 @@ interface UserStats {
   recentProjects: any[]
 }
 
-export default function UserStats({ userId }: UserStatsProps) {
-  const { getProfileStats } = useProfile()
-  const { submissions: userSubmissions } = useSubmissions()
-  const { projects: userProjects } = useProjects()
-  const [stats, setStats] = useState<UserStats | null>(null)
-  const [loading, setLoading] = useState(true)
+export default function UserStats({ userId, profile }: UserStatsProps) {
+  const [stats, setStats] = useState<UserStats>({
+    totalSubmissions: 0,
+    acceptedSubmissions: 0,
+    bestScore: 0,
+    totalProjects: 0,
+    activeProjects: 0,
+    completedProjects: 0,
+    recentSubmissions: [],
+    recentProjects: []
+  })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true)
-        const statsData = await getProfileStats(userId)
-        
-        if (statsData) {
-          // Filtrer les soumissions et projets de l'utilisateur
-          const userSubs = userSubmissions.filter(s => s.user_id === userId)
-          const userProjs = userProjects.filter(p => p.user_id === userId)
-          
-          setStats({
-            ...statsData,
-            recentSubmissions: userSubs.slice(0, 5),
-            recentProjects: userProjs.slice(0, 5)
-          })
-        }
-      } catch (error) {
-        console.error('Error fetching user stats:', error)
-      } finally {
-        setLoading(false)
-      }
+    // Utiliser les données du profil directement
+    if (profile) {
+      setStats({
+        totalSubmissions: 0,
+        acceptedSubmissions: 0,
+        bestScore: 0,
+        totalProjects: 0,
+        activeProjects: 0,
+        completedProjects: 0,
+        recentSubmissions: [],
+        recentProjects: []
+      })
     }
-
-    fetchStats()
-  }, [userId, getProfileStats, userSubmissions, userProjects])
+  }, [userId, profile])
 
   if (loading) {
     return (

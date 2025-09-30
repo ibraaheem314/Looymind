@@ -40,56 +40,38 @@ export function useAuth(): AuthState {
   }, [])
 
   const loadOrCreateProfile = async (u: User) => {
-    // 1) Tenter de charger le profil existant
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', u.id).single()
+    // Charger le profil existant (le TRIGGER l'a normalement déjà créé)
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', u.id)
+      .single()
+    
     if (!error && data) {
+      console.log('Profile found:', data)
       setProfile(data as Profile)
       return
     }
 
-    // 2) Créer le profil depuis les métadonnées si absent
-    const m = u.user_metadata ?? {}
-    const toInsert: any = {
-      id: u.id,
-      email: u.email,
-      display_name: m.display_name ?? m.full_name ?? u.email?.split('@')[0] ?? 'Utilisateur',
-      first_name: m.first_name ?? m.full_name?.split(' ')?.[0] ?? null,
-      last_name: m.last_name ?? m.full_name?.split(' ')?.slice(1).join(' ') ?? null,
-      role: m.role ?? 'member',
-      experience_level: m.experience_level ?? 'debutant',
-      location: m.location ?? null,
-      current_position: m.current_position ?? null,
-      company: m.company ?? null,
-      bio: m.bio ?? null,
-      github_url: m.github_url ?? null,
-      linkedin_url: m.linkedin_url ?? null,
-      website_url: m.website_url ?? null,
-      phone: m.phone ?? null,
-      skills: Array.isArray(m.skills) ? m.skills : [],
-      interests: Array.isArray(m.interests) ? m.interests : [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+    console.log('Profile not found, waiting for trigger...', error)
+    
+    // Wait a bit then retry in case the trigger is still running
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    const { data: retryData, error: retryError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', u.id)
+      .single()
+    
+    if (!retryError && retryData) {
+      console.log('Profile found after retry:', retryData)
+      setProfile(retryData as Profile)
+      return
     }
     
-    // Nettoyer les valeurs null
-    Object.keys(toInsert).forEach(k => toInsert[k] == null && delete toInsert[k])
-
-    try {
-      const { data: created, error: insertError } = await supabase
-        .from('profiles')
-        .upsert(toInsert, { onConflict: 'id' })
-        .select()
-        .single()
-        
-      if (insertError) {
-        console.error('Error creating profile:', insertError)
-        return
-      }
-      
-      if (created) setProfile(created as Profile)
-    } catch (error) {
-      console.error('Error in loadOrCreateProfile:', error)
-    }
+    console.error('Profile still not found after retry. SQL trigger may not be working.')
+    console.error('Check that the on_auth_user_created trigger is active in Supabase.')
   }
 
   const signOut = async () => {

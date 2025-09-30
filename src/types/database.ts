@@ -12,42 +12,72 @@ export interface Database {
       profiles: {
         Row: {
           id: string
+          email: string | null
+          full_name: string | null
+          first_name: string | null
+          last_name: string | null
           display_name: string
-          role: 'member' | 'mentor' | 'org' | 'admin'
-          location: string | null
           bio: string | null
-          skills: string[] | null
-          github: string | null
-          linkedin: string | null
           avatar_url: string | null
+          github_url: string | null
+          linkedin_url: string | null
+          website_url: string | null
+          phone: string | null
+          location: string | null
+          current_position: string | null
+          company: string | null
+          experience_level: 'debutant' | 'intermediaire' | 'avance' | null
+          role: 'member' | 'mentor' | 'org' | 'admin'
+          skills: string[] | null
+          interests: string[] | null
           points: number
           created_at: string
           updated_at: string
         }
         Insert: {
           id: string
+          email?: string | null
+          full_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
           display_name: string
-          role?: 'member' | 'mentor' | 'org' | 'admin'
-          location?: string | null
           bio?: string | null
-          skills?: string[] | null
-          github?: string | null
-          linkedin?: string | null
           avatar_url?: string | null
+          github_url?: string | null
+          linkedin_url?: string | null
+          website_url?: string | null
+          phone?: string | null
+          location?: string | null
+          current_position?: string | null
+          company?: string | null
+          experience_level?: 'debutant' | 'intermediaire' | 'avance' | null
+          role?: 'member' | 'mentor' | 'org' | 'admin'
+          skills?: string[] | null
+          interests?: string[] | null
           points?: number
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
+          email?: string | null
+          full_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
           display_name?: string
-          role?: 'member' | 'mentor' | 'org' | 'admin'
-          location?: string | null
           bio?: string | null
-          skills?: string[] | null
-          github?: string | null
-          linkedin?: string | null
           avatar_url?: string | null
+          github_url?: string | null
+          linkedin_url?: string | null
+          website_url?: string | null
+          phone?: string | null
+          location?: string | null
+          current_position?: string | null
+          company?: string | null
+          experience_level?: 'debutant' | 'intermediaire' | 'avance' | null
+          role?: 'member' | 'mentor' | 'org' | 'admin'
+          skills?: string[] | null
+          interests?: string[] | null
           points?: number
           created_at?: string
           updated_at?: string

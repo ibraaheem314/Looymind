@@ -13,15 +13,14 @@ import {
   BarChart3
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { useProfile } from '@/hooks/useProfile'
 import ProfileFormSimple from '@/components/profile/profile-form-simple'
 import UserStats from '@/components/profile/user-stats'
 import type { Profile } from '@/lib/supabase'
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useAuth()
-  const { profile, loading, error } = useProfile(user?.id)
+  const { user, profile, loading, isAuthenticated } = useAuth()
   const [activeTab, setActiveTab] = useState<'profile' | 'stats' | 'activity'>('profile')
+  const [error, setError] = useState<string | null>(null)
 
   if (!isAuthenticated) {
     return (
@@ -64,6 +63,55 @@ export default function ProfilePage() {
   }
 
   if (!profile && !loading) {
+    const handleCreateProfile = async () => {
+      if (!user) return
+      
+      try {
+        const { createClient } = await import('@/lib/supabase')
+        const supabase = createClient()
+        
+        const m = user.user_metadata ?? {}
+        const profileData = {
+          id: user.id,
+          email: user.email,
+          display_name: m.display_name ?? m.full_name ?? user.email?.split('@')[0] ?? 'Utilisateur',
+          first_name: m.first_name ?? null,
+          last_name: m.last_name ?? null,
+          role: m.role ?? 'member',
+          experience_level: m.experience_level ?? 'debutant',
+          location: m.location ?? null,
+          current_position: m.current_position ?? null,
+          company: m.company ?? null,
+          bio: m.bio ?? null,
+          github_url: m.github_url ?? null,
+          linkedin_url: m.linkedin_url ?? null,
+          website_url: m.website_url ?? null,
+          phone: m.phone ?? null,
+          skills: Array.isArray(m.skills) ? m.skills : [],
+          interests: Array.isArray(m.interests) ? m.interests : [],
+        }
+        
+        console.log('📋 Création manuelle du profil:', profileData)
+        
+        const { data, error: insertError } = await supabase
+          .from('profiles')
+          .upsert(profileData, { onConflict: 'id' })
+          .select()
+          .single()
+        
+        if (insertError) {
+          console.error('❌ Erreur:', insertError)
+          alert(`Erreur: ${insertError.message}`)
+        } else {
+          console.log('✅ Profil créé:', data)
+          window.location.reload()
+        }
+      } catch (err: any) {
+        console.error('❌ Exception:', err)
+        alert(`Exception: ${err.message}`)
+      }
+    }
+    
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
@@ -71,9 +119,14 @@ export default function ProfilePage() {
             <User className="h-12 w-12 mx-auto mb-4 text-gray-400" />
             <h2 className="text-xl font-semibold mb-2">Profil non trouvé</h2>
             <p className="text-gray-600 mb-4">Votre profil n'a pas encore été créé.</p>
-            <Button onClick={() => window.location.reload()}>
-              Créer mon profil
-            </Button>
+            <div className="space-y-2">
+              <Button onClick={handleCreateProfile} className="w-full">
+                Créer mon profil
+              </Button>
+              <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
+                Actualiser
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -164,7 +217,7 @@ export default function ProfilePage() {
           )}
 
           {activeTab === 'stats' && user?.id && (
-            <UserStats userId={user.id} />
+            <UserStats userId={user.id} profile={profile} />
           )}
 
           {activeTab === 'activity' && (

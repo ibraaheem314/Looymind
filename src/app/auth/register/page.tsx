@@ -22,7 +22,7 @@ export default function RegisterPage() {
     experience_level: 'debutant' as 'debutant' | 'intermediaire' | 'avance' | 'expert',
     current_position: '', company: '', location: '', bio: '',
     skills: [] as string[], interests: [] as string[],
-    github: '', linkedin: '', website: '', phone: ''
+    github_url: '', linkedin_url: '', website_url: '', phone: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -160,9 +160,9 @@ export default function RegisterPage() {
             location: formData.location,
             current_position: formData.current_position,
             company: formData.company,
-            github_url: formData.github,
-            linkedin_url: formData.linkedin,
-            website_url: formData.website,
+            github_url: formData.github_url,
+            linkedin_url: formData.linkedin_url,
+            website_url: formData.website_url,
             phone: formData.phone,
             interests: formData.interests,
             skills: formData.skills,
@@ -208,9 +208,9 @@ export default function RegisterPage() {
         last_name: formData.last_name,
         display_name: formData.display_name || `${formData.first_name} ${formData.last_name}`.trim(),
         bio: formData.bio,
-        github_url: formData.github,
-        linkedin_url: formData.linkedin,
-        website_url: formData.website,
+        github_url: formData.github_url,
+        linkedin_url: formData.linkedin_url,
+        website_url: formData.website_url,
         phone: formData.phone,
         current_position: formData.current_position,
         company: formData.company,
@@ -459,12 +459,12 @@ export default function RegisterPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="github">GitHub</Label>
-                      <Input id="github" value={formData.github} onChange={e => handleInputChange('github', e.target.value)} placeholder="github.com/username" />
+                      <Label htmlFor="github_url">GitHub</Label>
+                      <Input id="github_url" value={formData.github_url} onChange={e => handleInputChange('github_url', e.target.value)} placeholder="https://github.com/username" />
                     </div>
                     <div>
-                      <Label htmlFor="linkedin">LinkedIn</Label>
-                      <Input id="linkedin" value={formData.linkedin} onChange={e => handleInputChange('linkedin', e.target.value)} placeholder="linkedin.com/in/username" />
+                      <Label htmlFor="linkedin_url">LinkedIn</Label>
+                      <Input id="linkedin_url" value={formData.linkedin_url} onChange={e => handleInputChange('linkedin_url', e.target.value)} placeholder="https://linkedin.com/in/username" />
                     </div>
                   </div>
                 </div>

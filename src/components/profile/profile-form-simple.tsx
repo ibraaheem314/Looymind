@@ -24,15 +24,21 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
+    first_name: (profile as any).first_name || '',
+    last_name: (profile as any).last_name || '',
     display_name: profile.display_name || '',
     bio: profile.bio || '',
     location: profile.location || '',
-    website: profile.website || '',
-    github: profile.github || '',
-    linkedin: profile.linkedin || '',
+    phone: (profile as any).phone || '',
+    current_position: (profile as any).current_position || '',
+    company: (profile as any).company || '',
+    website_url: profile.website_url || '',
+    github_url: profile.github_url || '',
+    linkedin_url: profile.linkedin_url || '',
     role: profile.role || 'member',
     skills: profile.skills || [],
-    experience_level: profile.experience_level || 'debutant'
+    interests: (profile as any).interests || [],
+    experience_level: (profile as any).experience_level || 'debutant'
   })
 
   const [newSkill, setNewSkill] = useState('')
@@ -62,15 +68,21 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
 
   const handleCancel = () => {
     setFormData({
+      first_name: (profile as any).first_name || '',
+      last_name: (profile as any).last_name || '',
       display_name: profile.display_name || '',
       bio: profile.bio || '',
       location: profile.location || '',
-      website: profile.website || '',
-      github: profile.github || '',
-      linkedin: profile.linkedin || '',
+      phone: (profile as any).phone || '',
+      current_position: (profile as any).current_position || '',
+      company: (profile as any).company || '',
+      website_url: profile.website_url || '',
+      github_url: profile.github_url || '',
+      linkedin_url: profile.linkedin_url || '',
       role: profile.role || 'member',
       skills: profile.skills || [],
-      experience_level: profile.experience_level || 'debutant'
+      interests: (profile as any).interests || [],
+      experience_level: (profile as any).experience_level || 'debutant'
     })
     setIsEditing(false)
     setError(null)
@@ -111,6 +123,25 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
     setFormData(prev => ({
       ...prev,
       skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+  }
+
+  const [newInterest, setNewInterest] = useState('')
+
+  const addInterest = () => {
+    if (newInterest.trim() && !formData.interests.includes(newInterest.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        interests: [...prev.interests, newInterest.trim()]
+      }))
+      setNewInterest('')
+    }
+  }
+
+  const removeInterest = (interestToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      interests: prev.interests.filter(interest => interest !== interestToRemove)
     }))
   }
 
@@ -267,6 +298,69 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
           </div>
         </div>
 
+        {/* Informations personnelles complètes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-2">
+              Prénom
+            </label>
+            {isEditing ? (
+              <input
+                id="first_name"
+                type="text"
+                value={formData.first_name}
+                onChange={(e) => handleInputChange('first_name', e.target.value)}
+                placeholder="Votre prénom"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <p className="text-sm text-gray-700 py-2">
+                {(profile as any).first_name || 'Non renseigné'}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-2">
+              Nom
+            </label>
+            {isEditing ? (
+              <input
+                id="last_name"
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => handleInputChange('last_name', e.target.value)}
+                placeholder="Votre nom"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <p className="text-sm text-gray-700 py-2">
+                {(profile as any).last_name || 'Non renseigné'}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              Téléphone
+            </label>
+            {isEditing ? (
+              <input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                placeholder="+221 XX XXX XX XX"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <p className="text-sm text-gray-700 py-2">
+                {(profile as any).phone || 'Non renseigné'}
+              </p>
+            )}
+          </div>
+        </div>
+
         {/* Informations professionnelles */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -311,7 +405,47 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
               </select>
             ) : (
               <p className="text-sm text-gray-700 py-2">
-                {experienceLabels[profile.experience_level as keyof typeof experienceLabels]}
+                {experienceLabels[(profile as any).experience_level as keyof typeof experienceLabels] || 'Non renseigné'}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="current_position" className="block text-sm font-medium text-gray-700 mb-2">
+              Poste actuel
+            </label>
+            {isEditing ? (
+              <input
+                id="current_position"
+                type="text"
+                value={formData.current_position}
+                onChange={(e) => handleInputChange('current_position', e.target.value)}
+                placeholder="Data Scientist, Développeur..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <p className="text-sm text-gray-700 py-2">
+                {(profile as any).current_position || 'Non renseigné'}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+              Entreprise/Institution
+            </label>
+            {isEditing ? (
+              <input
+                id="company"
+                type="text"
+                value={formData.company}
+                onChange={(e) => handleInputChange('company', e.target.value)}
+                placeholder="Orange, UCAD, Startup..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <p className="text-sm text-gray-700 py-2">
+                {(profile as any).company || 'Non renseigné'}
               </p>
             )}
           </div>
@@ -387,26 +521,75 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
           )}
         </div>
 
+        {/* Centres d'intérêt */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Centres d'intérêt
+          </label>
+          {isEditing ? (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newInterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                  placeholder="Ajouter un centre d'intérêt"
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addInterest())}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <Button type="button" onClick={addInterest} size="sm">
+                  Ajouter
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.interests.map((interest, index) => (
+                  <Badge key={index} variant="outline" className="flex items-center gap-1">
+                    {interest}
+                    <button
+                      onClick={() => removeInterest(interest)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2 py-2">
+              {(profile as any).interests?.length ? (
+                (profile as any).interests.map((interest: string, index: number) => (
+                  <Badge key={index} variant="outline">
+                    {interest}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">Aucun centre d'intérêt renseigné</p>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Liens sociaux */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="website_url" className="block text-sm font-medium text-gray-700 mb-2">
               Site web
             </label>
             {isEditing ? (
               <input
-                id="website"
+                id="website_url"
                 type="url"
-                value={formData.website}
-                onChange={(e) => handleInputChange('website', e.target.value)}
+                value={formData.website_url}
+                onChange={(e) => handleInputChange('website_url', e.target.value)}
                 placeholder="https://votre-site.com"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             ) : (
               <p className="text-sm text-gray-700 py-2">
-                {profile.website ? (
-                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    {profile.website}
+                {profile.website_url ? (
+                  <a href={profile.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {profile.website_url}
                   </a>
                 ) : (
                   'Non renseigné'
@@ -416,23 +599,23 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
           </div>
 
           <div>
-            <label htmlFor="github" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="github_url" className="block text-sm font-medium text-gray-700 mb-2">
               GitHub
             </label>
             {isEditing ? (
               <input
-                id="github"
+                id="github_url"
                 type="text"
-                value={formData.github}
-                onChange={(e) => handleInputChange('github', e.target.value)}
-                placeholder="username"
+                value={formData.github_url}
+                onChange={(e) => handleInputChange('github_url', e.target.value)}
+                placeholder="https://github.com/username"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             ) : (
               <p className="text-sm text-gray-700 py-2">
-                {profile.github ? (
-                  <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    @{profile.github}
+                {profile.github_url ? (
+                  <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {profile.github_url}
                   </a>
                 ) : (
                   'Non renseigné'
@@ -442,23 +625,23 @@ export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProp
           </div>
 
           <div>
-            <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="linkedin_url" className="block text-sm font-medium text-gray-700 mb-2">
               LinkedIn
             </label>
             {isEditing ? (
               <input
-                id="linkedin"
+                id="linkedin_url"
                 type="text"
-                value={formData.linkedin}
-                onChange={(e) => handleInputChange('linkedin', e.target.value)}
-                placeholder="username"
+                value={formData.linkedin_url}
+                onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
+                placeholder="https://linkedin.com/in/username"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             ) : (
               <p className="text-sm text-gray-700 py-2">
-                {profile.linkedin ? (
-                  <a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    @{profile.linkedin}
+                {profile.linkedin_url ? (
+                  <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {profile.linkedin_url}
                   </a>
                 ) : (
                   'Non renseigné'

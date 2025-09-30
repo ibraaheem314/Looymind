@@ -14,42 +14,16 @@ export default function AuthCallback() {
     const run = async () => {
       const supabase = createClient()
       try {
-        // 1) Échange le code de l’URL contre une session
+        // 1) Échanger le code contre une session
         await supabase.auth.exchangeCodeForSession(window.location.href)
 
-        // 2) Récupère l'utilisateur et ses métadonnées
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const m = user.user_metadata ?? {}
-          const patch: Record<string, any> = {
-            id: user.id,                              // 👈 indispensable pour l’upsert
-            email: user.email,
-            display_name: m.display_name ?? m.full_name ?? null,
-            first_name: m.first_name ?? m.full_name?.split(' ')?.[0] ?? null,
-            last_name: m.last_name ?? (m.full_name?.split(' ')?.slice(1).join(' ') || null),
-            role: m.role ?? 'member',
-            experience_level: m.experience_level ?? 'debutant',
-            location: m.location ?? null,
-            current_position: m.current_position ?? null,
-            company: m.company ?? null,
-            bio: m.bio ?? null,
-            github_url: m.github_url ?? null,
-            linkedin_url: m.linkedin_url ?? null,
-            website_url: m.website_url ?? null,
-            phone: m.phone ?? null,
-            skills: Array.isArray(m.skills) ? m.skills : [],
-            interests: Array.isArray(m.interests) ? m.interests : [],
-          }
-          Object.keys(patch).forEach(k => patch[k] == null && delete patch[k])
-
-          // 3) Upsert (crée si pas de ligne, sinon met à jour)
-          await supabase.from('profiles')
-            .upsert(patch, { onConflict: 'id' })
-        }
-
-        // 4) Go dashboard
+        // 2) Le profil est créé automatiquement par le TRIGGER SQL
+        //    Pas besoin de faire d'upsert ici !
+        
+        // 3) Rediriger directement vers le dashboard
         router.replace('/dashboard')
       } catch (e: any) {
+        console.error('Erreur callback:', e)
         setError(e?.message || 'Erreur lors de la connexion.')
       }
     }
