@@ -86,6 +86,12 @@ export default function ProjectDetailPage() {
     }
   }, [slug])
 
+  useEffect(() => {
+    if (project && user) {
+      checkIfLiked()
+    }
+  }, [project, user])
+
   const fetchProject = async () => {
     setLoading(true)
     try {
@@ -163,20 +169,6 @@ export default function ProjectDetailPage() {
       setLikesCount(formattedProject.likes_count)
       setViewsCount(formattedProject.views_count)
 
-      // Vérifier si l'utilisateur a liké
-      if (user) {
-        console.log('🔍 Checking if user liked project...')
-        const { data: likeData, error: likeError } = await supabase
-          .from('project_likes')
-          .select('id')
-          .eq('project_id', formattedProject.id)
-          .eq('user_id', user.id)
-          .maybeSingle()
-
-        console.log('📊 Like check result:', { likeData, likeError, hasLiked: !!likeData })
-        setLiked(!!likeData)
-      }
-
       // Incrémenter les vues
       await incrementViews(formattedProject.id)
     } catch (err) {
@@ -188,6 +180,7 @@ export default function ProjectDetailPage() {
 
   const incrementViews = async (projectId: string) => {
     try {
+      // Utiliser project_views (table spécifique aux projets)
       const { error } = await supabase
         .from('project_views')
         .insert([{
@@ -201,6 +194,25 @@ export default function ProjectDetailPage() {
       }
     } catch (err) {
       console.error('Error incrementing views:', err)
+    }
+  }
+
+  const checkIfLiked = async () => {
+    if (!user || !project) return
+
+    try {
+      console.log('🔍 Checking if user liked project...')
+      const { data: likeData, error } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('project_id', project.id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      console.log('📊 Like check result:', { likeData, error, hasLiked: !!likeData })
+      setLiked(!!likeData)
+    } catch (err) {
+      console.error('Error checking if liked:', err)
     }
   }
 
@@ -219,7 +231,7 @@ export default function ProjectDetailPage() {
         // Remove like
         console.log('👎 Removing like...')
         const { error } = await supabase
-          .from('project_likes')
+          .from('likes')
           .delete()
           .eq('project_id', project.id)
           .eq('user_id', user.id)
@@ -247,7 +259,7 @@ export default function ProjectDetailPage() {
         // Add like
         console.log('👍 Adding like...')
         const { data, error } = await supabase
-          .from('project_likes')
+          .from('likes')
           .insert([{
             project_id: project.id,
             user_id: user.id,

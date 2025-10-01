@@ -345,20 +345,27 @@ DROP POLICY IF EXISTS "insert_views" ON project_views;
 CREATE POLICY "insert_views" ON project_views
   FOR INSERT WITH CHECK (true);
 
--- Project Likes
-ALTER TABLE project_likes ENABLE ROW LEVEL SECURITY;
+-- Project Likes - UTILISER LA TABLE LIKES GÉNÉRIQUE
+-- RLS policies pour la table likes générique (si pas déjà définies)
+ALTER TABLE likes ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "select_likes" ON project_likes;
-CREATE POLICY "select_likes" ON project_likes
+-- Lecture des likes (tous peuvent voir)
+DROP POLICY IF EXISTS "select_likes" ON likes;
+CREATE POLICY "select_likes" ON likes
   FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "insert_likes" ON project_likes;
-CREATE POLICY "insert_likes" ON project_likes
+-- Insertion de likes (seulement son propre like)
+DROP POLICY IF EXISTS "insert_likes" ON likes;
+CREATE POLICY "insert_likes" ON likes
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "delete_own_likes" ON project_likes;
-CREATE POLICY "delete_own_likes" ON project_likes
+-- Suppression de likes (seulement ses propres likes)
+DROP POLICY IF EXISTS "delete_own_likes" ON likes;
+CREATE POLICY "delete_own_likes" ON likes
   FOR DELETE USING (auth.uid() = user_id);
+
+-- Permissions pour la table likes
+GRANT ALL ON likes TO anon, authenticated;
 
 -- Project Comments
 ALTER TABLE project_comments ENABLE ROW LEVEL SECURITY;
@@ -383,36 +390,77 @@ CREATE POLICY "delete_own_comments" ON project_comments
 -- TRIGGERS POUR LES COMPTEURS
 -- =====================================================
 
--- Trigger pour les likes de projets
-CREATE OR REPLACE FUNCTION increment_project_likes()
+-- Les fonctions project_likes sont maintenant obsolètes
+-- Remplacées par increment_likes_unified() et decrement_likes_unified()
+
+-- Triggers sur la table likes générique - GESTION UNIFIÉE
+-- Supprimer les anciens triggers pour éviter les conflits
+DROP TRIGGER IF EXISTS on_article_liked ON likes;
+DROP TRIGGER IF EXISTS on_article_unliked ON likes;
+DROP TRIGGER IF EXISTS on_project_liked ON likes;
+DROP TRIGGER IF EXISTS on_project_unliked ON likes;
+
+-- Créer des fonctions unifiées qui gèrent articles ET projets
+CREATE OR REPLACE FUNCTION increment_likes_unified()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE projects
-  SET likes_count = likes_count + 1
-  WHERE id = NEW.project_id;
+  -- Gérer les likes d'articles
+  IF NEW.article_id IS NOT NULL THEN
+    UPDATE articles
+    SET likes_count = likes_count + 1
+    WHERE id = NEW.article_id;
+    
+    RAISE NOTICE 'Article % likes incremented', NEW.article_id;
+  END IF;
+  
+  -- Gérer les likes de projets
+  IF NEW.project_id IS NOT NULL THEN
+    UPDATE projects
+    SET likes_count = likes_count + 1
+    WHERE id = NEW.project_id;
+    
+    RAISE NOTICE 'Project % likes incremented', NEW.project_id;
+  END IF;
+  
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION decrement_project_likes()
+CREATE OR REPLACE FUNCTION decrement_likes_unified()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE projects
-  SET likes_count = GREATEST(likes_count - 1, 0)
-  WHERE id = OLD.project_id;
+  -- Gérer les likes d'articles
+  IF OLD.article_id IS NOT NULL THEN
+    UPDATE articles
+    SET likes_count = GREATEST(likes_count - 1, 0)
+    WHERE id = OLD.article_id;
+    
+    RAISE NOTICE 'Article % likes decremented', OLD.article_id;
+  END IF;
+  
+  -- Gérer les likes de projets
+  IF OLD.project_id IS NOT NULL THEN
+    UPDATE projects
+    SET likes_count = GREATEST(likes_count - 1, 0)
+    WHERE id = OLD.project_id;
+    
+    RAISE NOTICE 'Project % likes decremented', OLD.project_id;
+  END IF;
+  
   RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER on_project_liked
-  AFTER INSERT ON project_likes
+-- Créer les triggers unifiés
+CREATE TRIGGER on_likes_inserted
+  AFTER INSERT ON likes
   FOR EACH ROW
-  EXECUTE FUNCTION increment_project_likes();
+  EXECUTE FUNCTION increment_likes_unified();
 
-CREATE TRIGGER on_project_unliked
-  AFTER DELETE ON project_likes
+CREATE TRIGGER on_likes_deleted
+  AFTER DELETE ON likes
   FOR EACH ROW
-  EXECUTE FUNCTION decrement_project_likes();
+  EXECUTE FUNCTION decrement_likes_unified();
 
 -- Trigger pour les vues de projets
 CREATE OR REPLACE FUNCTION increment_project_views()
@@ -582,7 +630,7 @@ GRANT SELECT ON project_tags TO anon, authenticated;
 GRANT ALL ON project_tags TO authenticated;
 
 GRANT ALL ON project_views TO anon, authenticated;
-GRANT ALL ON project_likes TO anon, authenticated;
+-- project_likes n'est plus utilisé, on utilise la table likes générique
 
 GRANT SELECT ON project_comments TO anon, authenticated;
 GRANT ALL ON project_comments TO authenticated;
