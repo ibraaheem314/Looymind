@@ -12,6 +12,7 @@ import {
   Share2, Bookmark, Edit, Trash2, Flag
 } from 'lucide-react'
 import Link from 'next/link'
+import CommentsSection from '@/components/articles/comments-section'
 
 interface Article {
   id: string
@@ -25,13 +26,14 @@ interface Article {
   likes_count: number
   comments_count: number
   views_count: number
-  published: boolean
+  status: 'draft' | 'published' | 'archived'
   created_at: string
   updated_at: string
   author?: {
     id: string
     display_name: string
     role: string
+    avatar_url?: string
   }
 }
 
@@ -43,7 +45,23 @@ export default function ArticleDetailPage() {
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(0)
+  const [commentsCount, setCommentsCount] = useState(0)
+  const [viewsCount, setViewsCount] = useState(0)
   const [error, setError] = useState('')
+
+  const categories = [
+    { value: 'ia', label: 'Intelligence Artificielle' },
+    { value: 'data-science', label: 'Data Science' },
+    { value: 'machine-learning', label: 'Machine Learning' },
+    { value: 'deep-learning', label: 'Deep Learning' },
+    { value: 'nlp', label: 'NLP' },
+    { value: 'computer-vision', label: 'Computer Vision' },
+    { value: 'big-data', label: 'Big Data' },
+    { value: 'cloud', label: 'Cloud Computing' },
+    { value: 'dev', label: 'Développement' },
+    { value: 'tutorial', label: 'Tutoriel' },
+    { value: 'news', label: 'Actualités' }
+  ]
 
   useEffect(() => {
     if (slug) {
@@ -67,10 +85,10 @@ export default function ArticleDetailPage() {
         .from('articles')
         .select(`
           *,
-          author:profiles(id, display_name, role)
+          author:profiles(id, display_name, role, avatar_url)
         `)
         .eq('slug', articleSlug)
-        .eq('published', true)
+        .eq('status', 'published')
         .single()
 
       if (error) {
@@ -80,7 +98,9 @@ export default function ArticleDetailPage() {
       }
 
       setArticle(data)
-      setLikesCount(data.likes_count)
+      setLikesCount(data.likes_count || 0)
+      setCommentsCount(data.comments_count || 0)
+      setViewsCount(data.views_count || 0)
     } catch (err) {
       setError('Erreur lors du chargement de l\'article')
       console.error('Error:', err)
@@ -95,7 +115,7 @@ export default function ArticleDetailPage() {
     try {
       const supabase = createClient()
       const { data } = await supabase
-        .from('article_likes')
+        .from('likes')
         .select('id')
         .eq('article_id', article.id)
         .eq('user_id', user.id)
@@ -112,12 +132,34 @@ export default function ArticleDetailPage() {
 
     try {
       const supabase = createClient()
-      await supabase
-        .from('articles')
-        .update({ views_count: article.views_count + 1 })
-        .eq('id', article.id)
+      
+      console.log('🔍 Attempting to add view for article:', article.id, 'User:', user?.id)
+      
+      // Tenter d'ajouter une vue unique
+      const { data, error } = await supabase
+        .from('article_views')
+        .insert([{
+          article_id: article.id,
+          user_id: user?.id || null,
+        }])
+        .select()
+      
+      // Si pas d'erreur, la vue a ete ajoutee (trigger incremente automatiquement)
+      if (!error && data) {
+        console.log('✅ New unique view registered:', data)
+        // Rafraichir le compteur de vues
+        setViewsCount(prev => {
+          console.log('📊 Views count updated from', prev, 'to', prev + 1)
+          return prev + 1
+        })
+      } else if (error && error.code === '23505') {
+        // Code 23505 = duplicate key (NORMAL pour les vues uniques)
+        console.log('ℹ️ View already exists (normal behavior)')
+      } else if (error) {
+        console.error('❌ Unexpected error:', error)
+      }
     } catch (err) {
-      console.error('Error incrementing views:', err)
+      console.error('❌ Error incrementing views:', err)
     }
   }
 
@@ -129,28 +171,66 @@ export default function ArticleDetailPage() {
 
       if (liked) {
         // Remove like
-        await supabase
-          .from('article_likes')
+        console.log('👎 Removing like for article:', article.id)
+        const { error } = await supabase
+          .from('likes')
           .delete()
           .eq('article_id', article.id)
           .eq('user_id', user.id)
         
-        setLiked(false)
-        setLikesCount(prev => prev - 1)
+        if (!error) {
+          console.log('✅ Like removed successfully')
+          setLiked(false)
+          
+          // Rafraîchir le compteur depuis la base de données
+          const { data: updatedArticle } = await supabase
+            .from('articles')
+            .select('likes_count')
+            .eq('id', article.id)
+            .single()
+          
+          if (updatedArticle) {
+            console.log('📊 Likes count refreshed from DB:', updatedArticle.likes_count)
+            setLikesCount(updatedArticle.likes_count)
+          }
+        } else {
+          console.error('❌ Error removing like:', error)
+        }
       } else {
         // Add like
-        await supabase
-          .from('article_likes')
+        console.log('👍 Adding like for article:', article.id)
+        const { data, error } = await supabase
+          .from('likes')
           .insert([{
             article_id: article.id,
-            user_id: user.id
+            user_id: user.id,
+            project_id: null,
+            comment_id: null,
+            resource_id: null
           }])
+          .select()
         
-        setLiked(true)
-        setLikesCount(prev => prev + 1)
+        if (!error) {
+          console.log('✅ Like added successfully:', data)
+          setLiked(true)
+          
+          // Rafraîchir le compteur depuis la base de données
+          const { data: updatedArticle } = await supabase
+            .from('articles')
+            .select('likes_count')
+            .eq('id', article.id)
+            .single()
+          
+          if (updatedArticle) {
+            console.log('📊 Likes count refreshed from DB:', updatedArticle.likes_count)
+            setLikesCount(updatedArticle.likes_count)
+          }
+        } else {
+          console.error('❌ Error adding like:', error)
+        }
       }
     } catch (err) {
-      console.error('Error toggling like:', err)
+      console.error('❌ Error toggling like:', err)
     }
   }
 
@@ -243,7 +323,7 @@ export default function ArticleDetailPage() {
               </Badge>
               <div className="flex items-center gap-1 text-gray-500 text-sm">
                 <Eye className="h-3 w-3" />
-                {article.views_count} vues
+                {viewsCount} vues
               </div>
             </div>
 
@@ -309,7 +389,7 @@ export default function ArticleDetailPage() {
                   
                   <div className="flex items-center gap-1 text-gray-500">
                     <MessageCircle className="h-4 w-4" />
-                    {article.comments_count} commentaires
+                    {commentsCount} commentaires
                   </div>
                 </div>
 
@@ -329,17 +409,11 @@ export default function ArticleDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Comments Section - To be implemented */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Commentaires ({article.comments_count})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-500 text-center py-8">
-                Système de commentaires en cours de développement...
-              </p>
-            </CardContent>
-          </Card>
+          {/* Comments Section */}
+          <CommentsSection 
+            articleId={article.id} 
+            onCommentCountChange={(count) => setCommentsCount(count)}
+          />
         </article>
       </div>
     </div>

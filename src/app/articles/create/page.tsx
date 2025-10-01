@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../hooks/useAuth'
 import { createClient } from '@/lib/supabase'
@@ -19,8 +19,10 @@ export default function CreateArticlePage() {
   const { user, profile } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [loadingDraft, setLoadingDraft] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [draftId, setDraftId] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
     title: '',
@@ -32,6 +34,17 @@ export default function CreateArticlePage() {
   })
 
   const [newTag, setNewTag] = useState('')
+  
+  // Load draft if editing
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const draftParam = params.get('draft')
+    
+    if (draftParam) {
+      setDraftId(draftParam)
+      loadDraft(draftParam)
+    }
+  }, [])
 
   const categories = [
     { value: 'ia', label: 'Intelligence Artificielle' },
@@ -66,6 +79,42 @@ export default function CreateArticlePage() {
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }))
+  }
+
+  const loadDraft = async (id: string) => {
+    try {
+      setLoadingDraft(true)
+      const supabase = createClient()
+      
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', id)
+        .eq('status', 'draft')
+        .single()
+      
+      if (error) {
+        console.error('Error loading draft:', error)
+        setError('Impossible de charger le brouillon')
+        return
+      }
+      
+      if (data) {
+        setFormData({
+          title: data.title || '',
+          content: data.content || '',
+          excerpt: data.excerpt || '',
+          category: data.category || 'ia',
+          tags: data.tags || [],
+          published: false
+        })
+      }
+    } catch (err) {
+      console.error('Error:', err)
+      setError('Erreur lors du chargement du brouillon')
+    } finally {
+      setLoadingDraft(false)
+    }
   }
 
   const generateSlug = (title: string) => {
@@ -111,20 +160,35 @@ export default function CreateArticlePage() {
         author_id: user.id,
         category: formData.category,
         tags: formData.tags,
-        published: publish,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        status: publish ? 'published' : 'draft'
       }
 
-      const { data, error } = await supabase
-        .from('articles')
-        .insert([articleData])
-        .select()
-        .single()
+      let data, error
+      
+      if (draftId) {
+        // Update existing draft
+        const result = await supabase
+          .from('articles')
+          .update(articleData)
+          .eq('id', draftId)
+          .select()
+          .single()
+        data = result.data
+        error = result.error
+      } else {
+        // Insert new article
+        const result = await supabase
+          .from('articles')
+          .insert([articleData])
+          .select()
+          .single()
+        data = result.data
+        error = result.error
+      }
 
       if (error) {
-        setError('Erreur lors de la création de l\'article')
-        console.error('Error creating article:', error)
+        console.error('Detailed error:', error)
+        setError(`Erreur lors de ${draftId ? 'la mise à jour' : 'la création'} de l'article : ${error.message}`)
         return
       }
 
@@ -135,7 +199,7 @@ export default function CreateArticlePage() {
         if (publish) {
           router.push(`/articles/${slug}`)
         } else {
-          router.push('/articles')
+          router.push('/dashboard')
         }
       }, 1500)
 
@@ -163,6 +227,17 @@ export default function CreateArticlePage() {
     )
   }
 
+  if (loadingDraft) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800 mx-auto mb-4" />
+          <p className="text-gray-600">Chargement du brouillon...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -177,8 +252,12 @@ export default function CreateArticlePage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Créer un article</h1>
-                <p className="text-gray-600">Partagez vos connaissances avec la communauté</p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {draftId ? 'Modifier le brouillon' : 'Créer un article'}
+                </h1>
+                <p className="text-gray-600">
+                  {draftId ? 'Continuez la rédaction de votre article' : 'Partagez vos connaissances avec la communauté'}
+                </p>
               </div>
             </div>
           </div>

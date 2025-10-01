@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Upload, User, Save, X, Camera } from 'lucide-react'
-import { useProfile } from '@/hooks/useProfile'
+// useProfile is now part of useAuth
 import { useAuth } from '@/hooks/useAuth'
 import type { Profile } from '@/lib/supabase'
 
@@ -15,7 +15,6 @@ interface ProfileFormProps {
 }
 
 export default function ProfileFormSimple({ profile, onUpdate }: ProfileFormProps) {
-  const { updateProfile, uploadAvatar } = useProfile()
   const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)

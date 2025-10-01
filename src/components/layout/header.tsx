@@ -36,20 +36,14 @@ export default function Header() {
       href: '/talents',
       submenu: [
         { name: 'Talents', href: '/talents' },
-        { name: 'Projets', href: '/projects' },
+    { name: 'Projets', href: '/projects' },
         { name: 'Success Stories', href: '/success-stories' },
         { name: 'Articles', href: '/articles' },
       ]
     },
     { 
       name: 'Ressources', 
-      href: '/resources',
-      submenu: [
-        { name: 'Toutes les ressources', href: '/resources' },
-        { name: 'Formations', href: '/resources?type=course' },
-        { name: 'Outils', href: '/resources?type=tool' },
-        { name: 'Datasets', href: '/resources?type=dataset' },
-      ]
+      href: '/resources'
     },
     { 
       name: 'Opportunités', 
@@ -148,18 +142,18 @@ export default function Header() {
                     )}
                   </div>
                 ) : (
-                  <Link
-                    href={item.href}
+              <Link
+                href={item.href}
                     className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors duration-200 h-8"
-                  >
-                    {item.name}
-                  </Link>
+              >
+                {item.name}
+              </Link>
                 )}
               </div>
             ))}
           </nav>
 
-          {/* Desktop Auth Buttons */}
+           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             {isAuthenticated ? (
               <div className="relative" ref={userMenuRef}>
@@ -227,18 +221,18 @@ export default function Header() {
             ) : (
               <>
                 <Button variant="ghost" size="sm" className="h-8" asChild>
-                  <Link href="/login">
-                    Connexion
-                  </Link>
-                </Button>
+               <Link href="/login">
+                 Connexion
+               </Link>
+             </Button>
                 <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-white shadow-md h-8" asChild>
-                  <Link href="/register">
-                    S'inscrire
-                  </Link>
-                </Button>
+               <Link href="/register">
+                 S'inscrire
+               </Link>
+             </Button>
               </>
             )}
-          </div>
+           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
@@ -262,13 +256,13 @@ export default function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
                 <div key={item.name}>
-                  <Link
-                    href={item.href}
+                <Link
+                  href={item.href}
                     className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 text-base font-medium rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
                   {item.submenu && (
                     <div className="ml-4 space-y-1">
                       {item.submenu.map((subItem) => (
@@ -318,20 +312,20 @@ export default function Header() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center px-3 space-x-3">
+                   <div className="flex items-center px-3 space-x-3">
                     <Button variant="ghost" size="sm" className="flex-1" asChild>
-                      <Link href="/login">
-                        Connexion
-                      </Link>
-                    </Button>
+                       <Link href="/login">
+                         Connexion
+                       </Link>
+                     </Button>
                     <Button size="sm" className="flex-1 bg-slate-800 hover:bg-slate-700 text-white shadow-md" asChild>
-                      <Link href="/register">
-                        S'inscrire
-                      </Link>
-                    </Button>
-                  </div>
+                       <Link href="/register">
+                         S'inscrire
+                       </Link>
+                     </Button>
+                   </div>
                 )}
-              </div>
+                 </div>
             </div>
           </div>
         )}

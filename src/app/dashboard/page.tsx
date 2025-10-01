@@ -1,18 +1,135 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
+import { createClient } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
-  User, LogOut, Settings, BarChart3, MapPin, Briefcase, 
-  GraduationCap, Phone, Github, Linkedin, Globe, Mail,
-  Calendar, Award, Target, Users, Building
+  User, Settings, BarChart3, Target, Users, 
+  Trophy, TrendingUp, BookOpen, Code, 
+  Bell, Calendar, Award, Zap, Activity, Edit, Trash2
 } from 'lucide-react'
 import Link from 'next/link'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
+
+interface DraftArticle {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  created_at: string
+  updated_at: string
+}
+
+function DraftsSection({ userId }: { userId: string }) {
+  const [drafts, setDrafts] = useState<DraftArticle[]>([])
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    fetchDrafts()
+  }, [userId])
+
+  const fetchDrafts = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('articles')
+      .select('id, title, slug, excerpt, created_at, updated_at')
+      .eq('author_id', userId)
+      .eq('status', 'draft')
+      .order('updated_at', { ascending: false })
+      .limit(5)
+
+    if (!error && data) {
+      setDrafts(data as DraftArticle[])
+    }
+    setLoading(false)
+  }
+
+  const deleteDraft = async (id: string) => {
+    if (!confirm('Voulez-vous vraiment supprimer ce brouillon ?')) return
+
+    const { error } = await supabase
+      .from('articles')
+      .delete()
+      .eq('id', id)
+
+    if (!error) {
+      setDrafts(drafts.filter(d => d.id !== id))
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="text-center py-6 text-gray-500">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800 mx-auto mb-2" />
+        <p className="text-sm">Chargement...</p>
+      </div>
+    )
+  }
+
+  if (drafts.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+        <p className="font-medium">Aucun brouillon</p>
+        <p className="text-sm mt-2">
+          Commencez à rédiger un article
+        </p>
+        <Link href="/articles/create">
+          <Button size="sm" className="mt-4">
+            <Edit className="h-4 w-4 mr-2" />
+            Écrire un article
+          </Button>
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      {drafts.map(draft => (
+        <div key={draft.id} className="flex items-start justify-between p-3 border border-gray-200 rounded-lg hover:border-slate-300 transition-colors">
+          <div className="flex-1 min-w-0">
+            <h4 className="font-medium text-sm truncate">{draft.title}</h4>
+            <p className="text-xs text-gray-500 line-clamp-1 mt-1">{draft.excerpt || 'Aucun extrait'}</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Modifié {format(new Date(draft.updated_at), 'dd MMM yyyy', { locale: fr })}
+            </p>
+          </div>
+          <div className="flex items-center gap-1 ml-2">
+            <Link href={`/articles/create?draft=${draft.id}`}>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Edit className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => deleteDraft(draft.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+      {drafts.length >= 5 && (
+        <Link href="/articles?filter=drafts">
+          <Button variant="link" size="sm" className="w-full">
+            Voir tous mes brouillons →
+          </Button>
+        </Link>
+      )}
+    </div>
+  )
+}
 
 export default function DashboardPage() {
-  const { user, profile, loading, signOut } = useAuth()
+  const { user, profile, loading } = useAuth()
 
   if (loading) {
     return (
@@ -38,7 +155,6 @@ export default function DashboardPage() {
     )
   }
 
-  // Calcul des valeurs d'affichage avec fallbacks
   const displayName = 
     profile?.display_name || 
     user?.user_metadata?.display_name || 
@@ -46,353 +162,292 @@ export default function DashboardPage() {
     user?.email?.split('@')[0] || 
     'Utilisateur'
 
-  const firstName = (profile as any)?.first_name || user?.user_metadata?.first_name || ''
-  const lastName = (profile as any)?.last_name || user?.user_metadata?.last_name || ''
-  const fullName = `${firstName} ${lastName}`.trim() || displayName
-
-  const role = profile?.role || user?.user_metadata?.role || 'member'
-  const skillsCount = Array.isArray(profile?.skills) ? profile.skills.length : 0
-  const interestsCount = Array.isArray((profile as any)?.interests) ? (profile as any).interests.length : 0
-  const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR') : '—'
-
-  // Niveaux d'expérience avec icônes
-  const experienceLevel = (profile as any)?.experience_level || user?.user_metadata?.experience_level || 'debutant'
-  const experienceLevels = {
-    'debutant': { label: 'Débutant', color: 'bg-green-100 text-green-800' },
-    'intermediaire': { label: 'Intermédiaire', color: 'bg-blue-100 text-blue-800' },
-    'avance': { label: 'Avancé', color: 'bg-purple-100 text-purple-800' },
-    'expert': { label: 'Expert', color: 'bg-orange-100 text-orange-800' }
-  }
-
-  // Informations professionnelles
-  const currentPosition = (profile as any)?.current_position || user?.user_metadata?.current_position || ''
-  const company = (profile as any)?.company || user?.user_metadata?.company || ''
-  const location = profile?.location || user?.user_metadata?.location || ''
-  const bio = profile?.bio || user?.user_metadata?.bio || ''
-
-  // Liens sociaux
-  const githubUrl = (profile as any)?.github_url || user?.user_metadata?.github_url || ''
-  const linkedinUrl = (profile as any)?.linkedin_url || user?.user_metadata?.linkedin_url || ''
-  const websiteUrl = (profile as any)?.website_url || user?.user_metadata?.website_url || ''
-  const phone = (profile as any)?.phone || user?.user_metadata?.phone || ''
-
-  // Compétences et intérêts
-  const skills = profile?.skills || user?.user_metadata?.skills || []
-  const interests = (profile as any)?.interests || user?.user_metadata?.interests || []
-
-  // Rôles avec icônes
+  const role = profile?.role || 'member'
   const roleConfig = {
-    'member': { label: 'Membre', icon: User, color: 'bg-gray-100 text-gray-800' },
-    'mentor': { label: 'Mentor', icon: GraduationCap, color: 'bg-blue-100 text-blue-800' },
-    'org': { label: 'Organisation', icon: Briefcase, color: 'bg-purple-100 text-purple-800' },
-    'admin': { label: 'Administrateur', icon: Award, color: 'bg-red-100 text-red-800' }
+    'member': { label: 'Membre', color: 'bg-gray-100 text-gray-800' },
+    'mentor': { label: 'Mentor', color: 'bg-blue-100 text-blue-800' },
+    'org': { label: 'Organisation', color: 'bg-purple-100 text-purple-800' },
+    'admin': { label: 'Administrateur', color: 'bg-red-100 text-red-800' }
   }
-
   const currentRole = roleConfig[role as keyof typeof roleConfig] || roleConfig.member
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600">Bienvenue, {displayName}</p>
-            </div>
             <div className="flex items-center space-x-4">
+              {/* Avatar */}
+              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border-2 border-white/20">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="h-8 w-8 text-white" />
+                )}
+              </div>
+              
+              {/* Info */}
+              <div>
+                <h1 className="text-3xl font-bold">
+                  Bienvenue, {displayName} 👋
+                </h1>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge className={`${currentRole.color} border-0`}>
+                    {currentRole.label}
+                  </Badge>
+                  <span className="text-white/70 text-sm">
+                    {user.email}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="hidden md:flex items-center gap-2">
+              <Link href="/profile">
+                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Modifier mon profil
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Colonne gauche - Profil détaillé */}
+          {/* Colonne principale */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Informations personnelles - ÉTAPE 1 */}
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Points</p>
+                      <p className="text-2xl font-bold">{profile?.points || 0}</p>
+                    </div>
+                    <Trophy className="h-8 w-8 text-yellow-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Challenges</p>
+                      <p className="text-2xl font-bold">0</p>
+                    </div>
+                    <Target className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Articles</p>
+                      <p className="text-2xl font-bold">0</p>
+                    </div>
+                    <BookOpen className="h-8 w-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Projets</p>
+                      <p className="text-2xl font-bold">0</p>
+                    </div>
+                    <Code className="h-8 w-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Activité récente */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Informations personnelles
+                  <BookOpen className="h-5 w-5" />
+                  Mes Brouillons
                 </CardTitle>
                 <CardDescription>
-                  Vos informations de base et coordonnées
+                  Articles en cours de rédaction
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <User className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Nom complet</p>
-                      <p className="font-medium">{fullName}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium">{user.email}</p>
-                    </div>
-                  </div>
-                  
-                  {location && (
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-500">Localisation</p>
-                        <p className="font-medium">{location}</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {phone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-500">Téléphone</p>
-                        <p className="font-medium">{phone}</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Membre depuis</p>
-                      <p className="font-medium">{memberSince}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Liens sociaux */}
-                {(githubUrl || linkedinUrl || websiteUrl) && (
-                  <div className="mt-6 pt-4 border-t">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">Liens sociaux</h4>
-                    <div className="flex flex-wrap gap-3">
-                      {githubUrl && (
-                        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
-                          <Github className="h-4 w-4" />
-                          GitHub
-                        </a>
-                      )}
-                      {linkedinUrl && (
-                        <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
-                          <Linkedin className="h-4 w-4" />
-                          LinkedIn
-                        </a>
-                      )}
-                      {websiteUrl && (
-                        <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
-                          <Globe className="h-4 w-4" />
-                          Site web
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )}
+                <DraftsSection userId={user.id} />
               </CardContent>
             </Card>
 
-            {/* Informations professionnelles - ÉTAPE 2 */}
+            {/* Progression */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" />
-                  Parcours professionnel
+                  <TrendingUp className="h-5 w-5" />
+                  Votre Progression
                 </CardTitle>
                 <CardDescription>
-                  Votre expérience et votre rôle dans la communauté
+                  Suivez votre évolution sur la plateforme
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentPosition && (
-                    <div className="flex items-center gap-3">
-                      <Briefcase className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-500">Poste actuel</p>
-                        <p className="font-medium">{currentPosition}</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {company && (
-                    <div className="flex items-center gap-3">
-                      <Building className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-500">Entreprise/Institution</p>
-                        <p className="font-medium">{company}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {bio && (
-                  <div className="mt-4 pt-4 border-t">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Biographie</h4>
-                    <p className="text-gray-700 leading-relaxed">{bio}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Compétences et intérêts - ÉTAPE 3 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Compétences et centres d'intérêt
-                </CardTitle>
-                <CardDescription>
-                  Vos domaines d'expertise et centres d'intérêt
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {skills.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">
-                      Compétences techniques ({skills.length})
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {skills.map((skill: string, index: number) => (
-                        <Badge key={index} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {interests.length > 0 && (
+                <div className="space-y-4">
+                  {/* Niveau */}
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">
-                      Centres d'intérêt ({interests.length})
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {interests.map((interest: string, index: number) => (
-                        <Badge key={index} variant="outline">
-                          {interest}
-                        </Badge>
-                      ))}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Niveau</span>
+                      <span className="text-sm text-gray-500">1 / 10</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: '10%' }} />
                     </div>
                   </div>
-                )}
 
-                {skills.length === 0 && interests.length === 0 && (
-                  <p className="text-gray-500 text-sm">Aucune compétence ou centre d'intérêt renseigné</p>
-                )}
+                  {/* Compétences */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Compétences validées</span>
+                      <span className="text-sm text-gray-500">
+                        {Array.isArray(profile?.skills) ? profile.skills.length : 0} compétences
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full" 
+                        style={{ 
+                          width: `${Math.min((Array.isArray(profile?.skills) ? profile.skills.length : 0) * 5, 100)}%` 
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Badges */}
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <Award className="h-4 w-4" />
+                      Badges obtenus
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        🎯 Nouveau membre
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Colonne droite - Stats et actions */}
+          {/* Sidebar */}
           <div className="space-y-6">
             
-            {/* Statistiques */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Mes statistiques
-                </CardTitle>
-                <CardDescription>
-                  Vos activités sur la plateforme
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Points</span>
-                    <span className="font-semibold text-lg">{profile?.points || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Compétences</span>
-                    <span className="font-semibold text-lg">{skills.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Centres d'intérêt</span>
-                    <span className="font-semibold text-lg">{interests.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Liens sociaux</span>
-                    <span className="font-semibold text-lg">
-                      {[githubUrl, linkedinUrl, websiteUrl].filter(Boolean).length}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Rôle et niveau */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <currentRole.icon className="h-5 w-5" />
-                  Profil
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-500 mb-2">Rôle</p>
-                    <Badge className={currentRole.color}>
-                      {currentRole.label}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 mb-2">Niveau d'expérience</p>
-                    <Badge className={experienceLevels[experienceLevel as keyof typeof experienceLevels]?.color}>
-                      {experienceLevels[experienceLevel as keyof typeof experienceLevels]?.label}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Actions rapides */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Actions rapides
+                  <Zap className="h-5 w-5" />
+                  Actions Rapides
                 </CardTitle>
-                <CardDescription>
-                  Accès rapide aux fonctionnalités
-                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Link href="/challenges" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start hover:bg-slate-50">
+                    <Target className="h-4 w-4 mr-2" />
+                    Parcourir les défis
+                  </Button>
+                </Link>
+                <Link href="/articles" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start hover:bg-slate-50">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Lire les articles
+                  </Button>
+                </Link>
+                <Link href="/projects" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start hover:bg-slate-50">
+                    <Code className="h-4 w-4 mr-2" />
+                    Créer un projet
+                  </Button>
+                </Link>
+                <Link href="/talents" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start hover:bg-slate-50">
+                    <Users className="h-4 w-4 mr-2" />
+                    Explorer la communauté
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Notifications */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Notifications
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <Link href="/challenges" className="block">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Target className="h-4 w-4 mr-2" />
-                      Voir les défis
-                    </Button>
-                  </Link>
-                  <Link href="/articles" className="block">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      Lire les articles
-                    </Button>
-                  </Link>
-                  <Link href="/projects" className="block">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Briefcase className="h-4 w-4 mr-2" />
-                      Mes projets
-                    </Button>
-                  </Link>
-                  <Link href="/talents" className="block">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      <Users className="h-4 w-4 mr-2" />
-                      Communauté
-                    </Button>
-                  </Link>
+                <div className="text-center py-6 text-gray-500">
+                  <Bell className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">Aucune notification</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Stats globales */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Statistiques Globales
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Rang Global</span>
+                  <span className="font-semibold">-</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Taux de Réussite</span>
+                  <span className="font-semibold">-</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Contributions</span>
+                  <span className="font-semibold">0</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Jours Actifs</span>
+                  <span className="font-semibold">1</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Événements à venir */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Événements à Venir
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-6 text-gray-500">
+                  <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">Aucun événement prévu</p>
                 </div>
               </CardContent>
             </Card>

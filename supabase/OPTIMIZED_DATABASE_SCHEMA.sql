@@ -630,5 +630,20 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO postgres, anon, authenticated, se
 GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO postgres, anon, authenticated, service_role;
 
 -- =====================================================
+-- IMPORTANT: SYSTEME D'INTERACTIONS ARTICLES
+-- =====================================================
+-- Les triggers pour likes, vues et commentaires sont dans:
+-- supabase/migrations/article_interactions_complete.sql
+-- 
+-- Ce fichier contient:
+-- - Table article_views (vues uniques)
+-- - Triggers pour likes (increment/decrement)
+-- - Triggers pour vues (increment)
+-- - Triggers pour commentaires (increment/decrement)
+--
+-- Executer ce fichier APRES avoir execute OPTIMIZED_DATABASE_SCHEMA.sql
+-- =====================================================
+
+-- =====================================================
 -- END OF SCHEMA
 -- =====================================================

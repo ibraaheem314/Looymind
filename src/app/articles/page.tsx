@@ -25,13 +25,14 @@ interface Article {
   likes_count: number
   comments_count: number
   views_count: number
-  published: boolean
+  status: 'draft' | 'published' | 'archived'
   created_at: string
   updated_at: string
   author?: {
     id: string
     display_name: string
     role: string
+    avatar_url?: string
   }
 }
 
@@ -65,8 +66,37 @@ export default function ArticlesPage() {
   const fetchArticles = async () => {
     try {
       setLoading(true)
+      const supabase = createClient()
       
-      // Données mockées en attendant la création des tables Supabase
+      // Récupérer les articles publiés depuis Supabase
+      const { data, error: fetchError } = await supabase
+        .from('articles')
+        .select(`
+          *,
+          author:profiles(id, display_name, role, avatar_url)
+        `)
+        .eq('status', 'published')
+        .order('created_at', { ascending: false })
+      
+      if (fetchError) {
+        console.error('Error fetching articles:', fetchError)
+        setError('Erreur lors du chargement des articles')
+        setArticles([])
+        setLoading(false)
+        return
+      }
+      
+      // Transformer les données pour correspondre à l'interface Article
+      const transformedArticles = (data || []).map((article: any) => ({
+        ...article,
+        author: Array.isArray(article.author) ? article.author[0] : article.author
+      }))
+      
+      setArticles(transformedArticles as Article[])
+      setLoading(false)
+      return
+      
+      // ===== DONNÉES MOCKÉES (fallback) =====
       const mockArticles: Article[] = [
         {
           id: '1',
@@ -80,7 +110,7 @@ export default function ArticlesPage() {
           likes_count: 45,
           comments_count: 12,
           views_count: 234,
-          published: true,
+          status: 'published' as const,
           created_at: '2024-01-15T10:00:00Z',
           updated_at: '2024-01-15T10:00:00Z',
           author: {
@@ -101,7 +131,7 @@ export default function ArticlesPage() {
           likes_count: 67,
           comments_count: 8,
           views_count: 189,
-          published: true,
+          status: 'published' as const,
           created_at: '2024-01-12T14:30:00Z',
           updated_at: '2024-01-12T14:30:00Z',
           author: {
@@ -122,7 +152,7 @@ export default function ArticlesPage() {
           likes_count: 34,
           comments_count: 15,
           views_count: 156,
-          published: true,
+          status: 'published' as const,
           created_at: '2024-01-10T09:15:00Z',
           updated_at: '2024-01-10T09:15:00Z',
           author: {
@@ -133,10 +163,9 @@ export default function ArticlesPage() {
         }
       ]
 
-      // Simuler un délai de chargement
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      setArticles(mockArticles)
+      // Simuler un délai de chargement (fallback uniquement)
+      // await new Promise(resolve => setTimeout(resolve, 1000))
+      // setArticles(mockArticles)
     } catch (err) {
       setError('Erreur lors du chargement des articles')
       console.error('Error:', err)
