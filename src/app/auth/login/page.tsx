@@ -20,7 +20,9 @@ export default function LoginPage() {
   // Rediriger si déjà connecté
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
-      router.push('/dashboard')
+      const urlParams = new URLSearchParams(window.location.search)
+      const redirectTo = urlParams.get('redirect') || '/dashboard'
+      router.push(redirectTo)
     }
   }, [isAuthenticated, authLoading, router])
 
@@ -41,8 +43,10 @@ export default function LoginPage() {
       if (error) {
         setError(error.message)
       } else if (data.user) {
-        // Redirection vers le dashboard après connexion réussie
-        router.push('/dashboard')
+        // Redirection vers la page demandée ou dashboard par défaut
+        const urlParams = new URLSearchParams(window.location.search)
+        const redirectTo = urlParams.get('redirect') || '/dashboard'
+        router.push(redirectTo)
       }
     } catch (err) {
       setError('Une erreur est survenue lors de la connexion')
