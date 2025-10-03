@@ -154,7 +154,9 @@ export default function ArticlesPage() {
                     <div className="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-xs">🎓</div>
                     <div className="w-8 h-8 rounded-full bg-cyan-100 border-2 border-white flex items-center justify-center text-xs">💬</div>
                   </div>
-                  <span className="text-sm text-slate-600">{articles.length} articles</span>
+                  <span className="text-sm text-slate-600">
+                    {articles.length > 0 ? `${articles.length} articles` : 'Objectif : 100+ articles'}
+                  </span>
                 </div>
                 <div className="text-sm text-slate-400">|</div>
                 <div className="text-sm text-slate-600">

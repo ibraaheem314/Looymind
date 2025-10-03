@@ -171,11 +171,17 @@ export default function CompetitionsPage() {
                     <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🎯</div>
                     <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs">💎</div>
                   </div>
-                  <span className="text-sm text-slate-600">{competitions.reduce((acc, c) => acc + c.participants_count, 0)}+ participants</span>
+                  <span className="text-sm text-slate-600">
+                    {competitions.length > 0 
+                      ? `${competitions.reduce((acc, c) => acc + c.participants_count, 0)} participants` 
+                      : 'Objectif : 50+ compétitions'}
+                  </span>
                 </div>
                 <div className="text-sm text-slate-400">|</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-cyan-500">{competitions.length}</span> défis actifs
+                  {competitions.length > 0 
+                    ? <><span className="font-semibold text-cyan-500">{competitions.length}</span> défis actifs</>
+                    : 'Bientôt disponible'}
                 </div>
               </div>
 

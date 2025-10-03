@@ -145,20 +145,27 @@ export default function CreateArticlePage() {
       return
     }
 
-    // Validation
-    if (!formData.title.trim()) {
-      setError('Le titre est requis')
-      return
-    }
-
-    if (!formData.content.trim()) {
-      setError('Le contenu est requis')
-      return
-    }
-
-    if (status === 'published' && !formData.excerpt.trim()) {
-      setError('Un extrait est requis pour publier')
-      return
+    // Validation différente selon le statut
+    if (status === 'published') {
+      // Validation stricte pour publication
+      if (!formData.title.trim()) {
+        setError('Le titre est requis pour publier')
+        return
+      }
+      if (!formData.content.trim()) {
+        setError('Le contenu est requis pour publier')
+        return
+      }
+      if (!formData.excerpt.trim()) {
+        setError('Un extrait est requis pour publier')
+        return
+      }
+    } else {
+      // Validation minimale pour brouillon
+      if (!formData.title.trim() && !formData.content.trim()) {
+        setError('Au moins un titre ou du contenu est requis pour sauvegarder un brouillon')
+        return
+      }
     }
 
     try {
@@ -166,9 +173,19 @@ export default function CreateArticlePage() {
       setError('')
       const supabase = createClient()
 
-      const slug = generateSlug(formData.title)
+      // Générer un slug approprié
+      let slug = ''
+      if (formData.title.trim()) {
+        slug = generateSlug(formData.title)
+      } else if (status === 'draft') {
+        // Pour les brouillons sans titre, générer un slug temporaire
+        slug = `draft-${Date.now()}-${Math.random().toString(36).substring(7)}`
+      } else {
+        throw new Error('Le titre est requis pour publier')
+      }
+
       const articleData = {
-        title: formData.title,
+        title: formData.title.trim() || 'Brouillon sans titre',
         slug: draftId ? undefined : slug, // Ne pas regénérer le slug si c'est une édition
         content: formData.content,
         excerpt: formData.excerpt,
@@ -221,11 +238,22 @@ export default function CreateArticlePage() {
         router.push(redirectUrl)
       }, 500)
     } catch (err: any) {
-      console.error('Error saving article:', err)
-      setError(err.message || 'Erreur lors de l\'enregistrement de l\'article')
+      console.error('❌ Error saving article:', err)
+      console.error('Error details:', JSON.stringify(err, null, 2))
+      
+      // Messages d'erreur plus clairs
+      let errorMessage = 'Erreur lors de l\'enregistrement de l\'article'
+      
+      if (err.message?.includes('permission') || err.message?.includes('policy')) {
+        errorMessage = 'Erreur de permissions. Vérifiez que vous êtes connecté.'
+      } else if (err.message?.includes('duplicate') || err.message?.includes('unique')) {
+        errorMessage = 'Un article avec ce titre existe déjà. Veuillez changer le titre.'
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setError(errorMessage)
       setLoading(false)
-    } finally {
-      // Ne pas appeler setLoading(false) ici car la redirection va démonter le composant
     }
   }
 

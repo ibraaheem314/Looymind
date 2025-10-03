@@ -176,20 +176,27 @@ export default function CreateProjectPage() {
       return
     }
 
-    // Validation
-    if (!formData.title.trim()) {
-      setError('Le titre est requis')
-      return
-    }
-
-    if (!formData.short_description.trim()) {
-      setError('Une description courte est requise')
-      return
-    }
-
-    if (status === 'active' && !formData.description.trim()) {
-      setError('Une description complète est requise pour publier')
-      return
+    // Validation différente selon le statut
+    if (status === 'active') {
+      // Validation stricte pour publication
+      if (!formData.title.trim()) {
+        setError('Le titre est requis pour publier')
+        return
+      }
+      if (!formData.short_description.trim()) {
+        setError('Une description courte est requise pour publier')
+        return
+      }
+      if (!formData.description.trim()) {
+        setError('Une description complète est requise pour publier')
+        return
+      }
+    } else {
+      // Validation minimale pour brouillon
+      if (!formData.title.trim() && !formData.short_description.trim()) {
+        setError('Au moins un titre ou une description est requis pour sauvegarder un brouillon')
+        return
+      }
     }
 
     try {
@@ -197,9 +204,19 @@ export default function CreateProjectPage() {
       setError('')
       const supabase = createClient()
 
-      const slug = generateSlug(formData.title)
+      // Générer un slug approprié
+      let slug = ''
+      if (formData.title.trim()) {
+        slug = generateSlug(formData.title)
+      } else if (status === 'draft') {
+        // Pour les brouillons sans titre, générer un slug temporaire
+        slug = `draft-project-${Date.now()}-${Math.random().toString(36).substring(7)}`
+      } else {
+        throw new Error('Le titre est requis pour publier')
+      }
+
       const projectData = {
-        title: formData.title,
+        title: formData.title.trim() || 'Projet brouillon sans titre',
         slug: projectId ? undefined : slug,
         description: formData.description,
         short_description: formData.short_description,

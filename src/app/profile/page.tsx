@@ -13,12 +13,12 @@ import {
   BarChart3
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import ProfileFormSimple from '@/components/profile/profile-form-simple'
-import UserStats from '@/components/profile/user-stats'
+import { useUserStats } from '@/hooks/useUserStats'
 import type { Profile } from '@/lib/supabase'
 
 export default function ProfilePage() {
   const { user, profile, loading, isAuthenticated } = useAuth()
+  const stats = useUserStats(user?.id)
   const [activeTab, setActiveTab] = useState<'profile' | 'stats' | 'activity'>('profile')
   const [error, setError] = useState<string | null>(null)
 
@@ -208,16 +208,101 @@ export default function ProfilePage() {
         {/* Contenu des onglets */}
         <div className="space-y-6">
           {activeTab === 'profile' && (
-            <ProfileFormSimple 
-              profile={profile} 
-              onUpdate={(updatedProfile) => {
-                console.log('Profile updated:', updatedProfile)
-              }}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle>Informations du Profil</CardTitle>
+                <CardDescription>
+                  Gérez vos informations personnelles et professionnelles
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Nom d'affichage</p>
+                    <p className="text-lg">{profile?.display_name || 'Non renseigné'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Email</p>
+                    <p className="text-lg">{user?.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Rôle</p>
+                    <Badge>{profile?.role || 'member'}</Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Bio</p>
+                    <p className="text-gray-600">{profile?.bio || 'Aucune biographie'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Compétences</p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {profile?.skills && profile.skills.length > 0 ? (
+                        profile.skills.map((skill, i) => (
+                          <Badge key={i} variant="outline">{skill}</Badge>
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-500">Aucune compétence renseignée</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="pt-4">
+                    <Button asChild>
+                      <a href="/profile/edit">Modifier mon profil</a>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
-          {activeTab === 'stats' && user?.id && (
-            <UserStats userId={user.id} profile={profile} />
+          {activeTab === 'stats' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-yellow-500" />
+                    Contributions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Articles publiés</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.articlesCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Projets actifs</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.projectsCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Brouillons</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.draftsCount}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-500" />
+                    Engagement
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Likes</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.totalLikes}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Vues</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.totalViews}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Commentaires</span>
+                    <span className="font-bold">{stats.loading ? '...' : stats.totalComments}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {activeTab === 'activity' && (

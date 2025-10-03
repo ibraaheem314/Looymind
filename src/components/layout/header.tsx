@@ -208,12 +208,12 @@ export default function Header() {
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
-               <Link href="/login">
+               <Link href="/auth/login">
                  Sign in
                </Link>
              </Button>
                 <Button size="sm" className="bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
-               <Link href="/register">
+               <Link href="/auth/register">
                  Join
                </Link>
              </Button>
@@ -301,12 +301,12 @@ export default function Header() {
                 ) : (
                    <div className="flex items-center px-3 space-x-3">
                     <Button variant="ghost" size="sm" className="flex-1" asChild>
-                       <Link href="/login">
+                       <Link href="/auth/login">
                          Sign in
                        </Link>
                      </Button>
                     <Button size="sm" className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
-                       <Link href="/register">
+                       <Link href="/auth/register">
                          Join
                        </Link>
                      </Button>

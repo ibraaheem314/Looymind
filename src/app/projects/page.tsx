@@ -184,7 +184,9 @@ export default function ProjectsPage() {
                     <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🤖</div>
                     <div className="w-8 h-8 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-xs">📱</div>
                   </div>
-                  <span className="text-sm text-slate-600">{projects.length} projets</span>
+                  <span className="text-sm text-slate-600">
+                    {projects.length > 0 ? `${projects.length} projets` : 'Objectif : 200+ projets'}
+                  </span>
                 </div>
                 <div className="text-sm text-slate-400">|</div>
                 <div className="text-sm text-slate-600">
