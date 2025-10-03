@@ -57,15 +57,17 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 transition-transform duration-200 group-hover:scale-110">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
               <img 
                 src="/Logo.png" 
-                alt="Looymind Logo" 
-                className="w-full h-full object-contain"
+                alt="LooyMind Logo" 
+                className="w-full h-full object-contain drop-shadow-md"
               />
             </div>
-            <span className="text-xl font-bold text-slate-900 hidden sm:block">Looymind</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-cyan-700 to-slate-800 bg-clip-text text-transparent hidden sm:block tracking-tight">
+              LooyMind
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

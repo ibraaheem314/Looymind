@@ -8,21 +8,38 @@ export interface Resource {
   title: string
   slug: string
   description: string | null
-  resource_type: 'tutorial' | 'documentation' | 'video' | 'dataset' | 'tool' | 'book'
-  url: string
+  type: 'external_course' | 'local_course' | 'tool' | 'article' | 'video' | 'documentation' | 'tutorial'
+  resource_type?: string // Ancien champ pour compatibilité
+  url: string | null
+  source: string | null
+  is_local: boolean
   cover_image_url: string | null
+  thumbnail_url: string | null
   category: string
   tags: string[]
-  difficulty: 'debutant' | 'intermediaire' | 'avance' | null
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert' | null
+  duration_hours: number | null
   is_free: boolean
-  author_id: string | null
+  has_certificate: boolean
+  price_fcfa: number | null
+  curator_notes: string | null
+  language: 'fr' | 'en' | 'wolof' | 'other'
+  rating_avg: number
+  rating_count: number
   views_count: number
   likes_count: number
+  bookmarks_count: number
+  featured: boolean
+  status: 'draft' | 'published' | 'archived'
+  visibility: 'public' | 'private'
+  created_by: string | null
   created_at: string
   updated_at: string
   author?: {
     display_name: string
     avatar_url: string | null
+    bio?: string
+    role?: string
   }
 }
 
@@ -61,8 +78,10 @@ export function useResources(options: UseResourcesOptions = {}) {
         .from('resources')
         .select(`
           *,
-          author:profiles(display_name, avatar_url)
+          author:profiles!created_by(display_name, avatar_url, bio, role)
         `)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
 
       // Filtres
       if (options.category) {
@@ -74,7 +93,7 @@ export function useResources(options: UseResourcesOptions = {}) {
       }
 
       if (options.resourceType) {
-        query = query.eq('resource_type', options.resourceType)
+        query = query.eq('type', options.resourceType)
       }
 
       if (options.searchQuery) {

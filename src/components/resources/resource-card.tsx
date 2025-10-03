@@ -18,24 +18,26 @@ interface ResourceCardProps {
   isLiked?: boolean
 }
 
-const resourceTypeConfig = {
-  tutorial: { label: 'Tutoriel', icon: BookOpen, color: 'bg-blue-100 text-blue-800' },
+const resourceTypeConfig: Record<string, { label: string; icon: any; color: string }> = {
+  external_course: { label: 'Cours externe', icon: BookOpen, color: 'bg-blue-100 text-blue-800' },
+  local_course: { label: 'Cours local 🇸🇳', icon: BookMarked, color: 'bg-orange-100 text-orange-800' },
+  tutorial: { label: 'Tutoriel', icon: BookOpen, color: 'bg-cyan-100 text-cyan-800' },
   documentation: { label: 'Documentation', icon: FileText, color: 'bg-green-100 text-green-800' },
   video: { label: 'Vidéo', icon: Video, color: 'bg-red-100 text-red-800' },
-  dataset: { label: 'Dataset', icon: Database, color: 'bg-purple-100 text-purple-800' },
-  tool: { label: 'Outil', icon: Wrench, color: 'bg-orange-100 text-orange-800' },
-  book: { label: 'Livre', icon: BookMarked, color: 'bg-pink-100 text-pink-800' }
+  article: { label: 'Article', icon: FileText, color: 'bg-purple-100 text-purple-800' },
+  tool: { label: 'Outil', icon: Wrench, color: 'bg-yellow-100 text-yellow-800' }
 }
 
-const difficultyConfig = {
-  debutant: { label: 'Débutant', color: 'bg-green-50 text-green-700 border-green-200' },
-  intermediaire: { label: 'Intermédiaire', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-  avance: { label: 'Avancé', color: 'bg-red-50 text-red-700 border-red-200' }
+const difficultyConfig: Record<string, { label: string; color: string }> = {
+  beginner: { label: 'Débutant', color: 'bg-green-50 text-green-700 border-green-200' },
+  intermediate: { label: 'Intermédiaire', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  advanced: { label: 'Avancé', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  expert: { label: 'Expert', color: 'bg-red-50 text-red-700 border-red-200' }
 }
 
 export function ResourceCard({ resource, onLike, isLiked }: ResourceCardProps) {
-  const typeConfig = resourceTypeConfig[resource.resource_type]
-  const TypeIcon = typeConfig.icon
+  const typeConfig = resourceTypeConfig[resource.type || resource.resource_type] || resourceTypeConfig.external_course
+  const TypeIcon = typeConfig?.icon || BookOpen
   
   const difficultyLabel = resource.difficulty 
     ? difficultyConfig[resource.difficulty]
