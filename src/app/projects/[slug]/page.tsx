@@ -227,7 +227,18 @@ export default function ProjectDetailPage() {
     try {
       console.log('🔍 Toggle like - Current state:', { liked, project_id: project.id, user_id: user.id })
       
-      if (liked) {
+      // D'abord, vérifier l'état RÉEL dans la base de données
+      const { data: currentLike } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('project_id', project.id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+      
+      const actuallyLiked = !!currentLike
+      console.log('🔍 Actual state in DB:', { actuallyLiked, currentLike })
+      
+      if (actuallyLiked) {
         // Remove like
         console.log('👎 Removing like...')
         const { error } = await supabase

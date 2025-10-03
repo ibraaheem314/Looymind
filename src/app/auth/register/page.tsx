@@ -366,8 +366,7 @@ export default function RegisterPage() {
                       {[
                         { value: 'member', label: 'Membre', icon: User, desc: 'Talent ou étudiant' },
                         { value: 'mentor', label: 'Mentor', icon: GraduationCap, desc: 'Expert qui guide' },
-                        { value: 'org', label: 'Organisation', icon: Building, desc: 'Entreprise ou institution' },
-                        { value: 'admin', label: 'Administrateur', icon: Briefcase, desc: 'Gestion de la plateforme' }
+                        { value: 'org', label: 'Organisation', icon: Building, desc: 'Entreprise ou institution' }
                       ].map(r => (
                         <label key={r.value} className="relative">
                           <input type="radio" name="role" value={r.value} checked={formData.role === r.value} onChange={e => handleInputChange('role', e.target.value)} className="sr-only" />

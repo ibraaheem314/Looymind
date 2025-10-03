@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Search, Filter, MapPin, Github, Linkedin, Mail, Users, Brain, Code, Network } from 'lucide-react'
+import { Search, MapPin, Github, Linkedin, Mail, Users, Trophy, Target, TrendingUp, Award } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -20,6 +20,11 @@ interface Talent {
   github_url: string;
   linkedin_url: string;
   role: Role;
+  stats: {
+    competitions: number;
+    rank: number;
+    points: number;
+  };
 }
 
 // Mock data - à remplacer par des données Supabase
@@ -27,35 +32,50 @@ const mockTalents: Talent[] = [
   {
     id: '1',
     full_name: 'Aminata Diallo',
-    bio: 'Data Scientist passionnée par l\'application de l\'IA aux défis agricoles africains. Spécialisée en machine learning et analyse prédictive.',
+    bio: 'Data Scientist passionnée par l\'application de l\'IA aux défis agricoles. Top 5% sur les compétitions de prédiction.',
     skills: ['Python', 'TensorFlow', 'Scikit-learn', 'SQL', 'R'],
     location: 'Dakar, Sénégal',
     avatar_url: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150',
     github_url: 'https://github.com/aminata-diallo',
     linkedin_url: 'https://linkedin.com/in/aminata-diallo',
-    role: 'talent'
+    role: 'talent',
+    stats: {
+      competitions: 12,
+      rank: 15,
+      points: 4250
+    }
   },
   {
     id: '2',
     full_name: 'Moussa Ndiaye',
-    bio: 'Ingénieur ML avec 5 ans d\'expérience. Mentor actif dans la communauté tech sénégalaise. Expert en computer vision et NLP.',
+    bio: 'Expert ML avec 5 ans d\'expérience. Mentor actif, spécialiste computer vision et NLP. 15+ compétitions remportées.',
     skills: ['PyTorch', 'OpenCV', 'Docker', 'AWS', 'React'],
     location: 'Thiès, Sénégal',
     avatar_url: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150',
     github_url: 'https://github.com/moussa-ndiaye',
     linkedin_url: 'https://linkedin.com/in/moussa-ndiaye',
-    role: 'mentor'
+    role: 'mentor',
+    stats: {
+      competitions: 28,
+      rank: 3,
+      points: 8900
+    }
   },
   {
     id: '3',
     full_name: 'Fatou Sall',
-    bio: 'Étudiante en Master IA à l\'UCAD. Passionnée par l\'éthique de l\'IA et son impact social. Contribue à plusieurs projets open source.',
+    bio: 'Étudiante Master IA UCAD. Passionnée par l\'éthique de l\'IA. Active sur projets open source et compétitions NLP.',
     skills: ['JavaScript', 'Node.js', 'MongoDB', 'Keras', 'Git'],
     location: 'Dakar, Sénégal',
     avatar_url: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=150',
     github_url: 'https://github.com/fatou-sall',
     linkedin_url: 'https://linkedin.com/in/fatou-sall',
-    role: 'talent'
+    role: 'talent',
+    stats: {
+      competitions: 7,
+      rank: 42,
+      points: 1850
+    }
   }
 ]
 
@@ -68,7 +88,7 @@ const roleLabels: Record<Role, string> = {
 
 const roleColors: Record<Role, string> = {
   talent: 'bg-blue-100 text-blue-800',
-  mentor: 'bg-green-100 text-green-800',
+  mentor: 'bg-orange-100 text-orange-800',
   company: 'bg-purple-100 text-purple-800',
   admin: 'bg-red-100 text-red-800'
 }
@@ -76,200 +96,298 @@ const roleColors: Record<Role, string> = {
 export default function TalentsPage() {
   const [selectedRole, setSelectedRole] = useState('all')
   
-  const roles = ['all', 'talent', 'mentor', 'company', 'admin']
+  const roles = ['all', 'talent', 'mentor']
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-white py-16 lg:py-20 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 mb-8">
-              <Network className="h-4 w-4 text-gray-600" />
-              <span className="text-gray-700 font-medium text-sm">Communauté Talents</span>
-            </div>
-
-            {/* Main Title */}
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Talents IA Sénégal
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Découvrez les experts et passionnés d'IA du Sénégal et d'Afrique.
-              Connectez-vous avec des mentors et collaborateurs.
-            </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button size="lg" className="text-base px-8 py-3 bg-slate-800 hover:bg-slate-700">
-                <Users className="mr-2 h-5 w-5" />
-                Rejoindre la communauté
-              </Button>
-              <Button variant="outline" size="lg" className="text-base px-8 py-3 border-gray-300 text-gray-700 hover:bg-gray-50">
-                Devenir mentor
-              </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {[
-                { icon: Users, number: "500+", label: "Talents connectés" },
-                { icon: Brain, number: "50+", label: "Mentors experts" },
-                { icon: Code, number: "25+", label: "Entreprises partenaires" }
-              ].map((stat, index) => (
-                <div key={index} className="bg-gray-50 rounded-2xl p-6 hover:bg-gray-100 transition-colors duration-200">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-800 rounded-xl mb-3">
-                    <stat.icon className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Design Kaggle+Zindi */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-amber-50/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Floating emojis */}
+          <div className="absolute top-10 left-[10%] text-4xl opacity-20">👥</div>
+          <div className="absolute top-24 right-[12%] text-3xl opacity-15">🏆</div>
+          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">⭐</div>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            {/* Left: Text content */}
+            <div>
+              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Rencontrez. <br/>
+                <span className="text-orange-500">Collaborez.</span> <br/>
+                Progressez.
+              </h1>
+              <p className="text-lg text-slate-600 mb-6">
+                Découvrez les meilleurs data scientists du Sénégal, leurs classements et rejoignez-les dans des projets collaboratifs.
+              </p>
+              
+              {/* Stats inline */}
+              <div className="flex items-center gap-6 mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-xs">🥇</div>
+                    <div className="w-8 h-8 rounded-full bg-amber-100 border-2 border-white flex items-center justify-center text-xs">🥈</div>
+                    <div className="w-8 h-8 rounded-full bg-yellow-100 border-2 border-white flex items-center justify-center text-xs">🥉</div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</h3>
-                  <p className="text-gray-600 font-medium text-sm">{stat.label}</p>
+                  <span className="text-sm text-slate-600">500+ membres actifs</span>
                 </div>
-              ))}
+                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-600">
+                  <span className="font-semibold text-orange-500">Classement</span> en temps réel
+                </div>
+              </div>
+
+              <Link href="/auth/register">
+                <Button size="lg" className="bg-orange-500 text-white hover:bg-orange-600 border-0 shadow-lg shadow-orange-500/30">
+                  <Users className="h-5 w-5 mr-2" />
+                  Rejoindre la Communauté
+                </Button>
+              </Link>
+            </div>
+
+            {/* Right: Leaderboard preview mockup */}
+            <div className="hidden lg:block">
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-lg">🏆 Top Compétiteurs</h3>
+                  <Badge className="bg-orange-100 text-orange-700 border-0 text-xs">
+                    Cette semaine
+                  </Badge>
+                </div>
+                
+                {/* Mini leaderboard */}
+                <div className="space-y-3">
+                  {[
+                    { rank: 1, name: 'Moussa N.', points: '8.9K', emoji: '🥇' },
+                    { rank: 2, name: 'Aminata D.', points: '7.2K', emoji: '🥈' },
+                    { rank: 3, name: 'Ibrahima S.', points: '6.5K', emoji: '🥉' }
+                  ].map((user) => (
+                    <div key={user.rank} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{user.emoji}</span>
+                        <div>
+                          <div className="font-medium text-sm">{user.name}</div>
+                          <div className="text-xs text-slate-500">Rang #{user.rank}</div>
+                        </div>
+                      </div>
+                      <div className="font-bold text-orange-600">{user.points}</div>
+                    </div>
+                  ))}
+                </div>
+                
+                <Button size="sm" className="w-full mt-4 bg-orange-500 text-white hover:bg-orange-600 border-0">
+                  Voir le classement complet →
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Filters Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Role Filters */}
-        <div className="flex flex-wrap gap-3 justify-center mb-12">
-          {roles.map((role) => (
-            <button
-              key={role}
-              onClick={() => setSelectedRole(role)}
-              className={`px-6 py-3 rounded-full font-medium transition-colors duration-200 ${
-                selectedRole === role
-                  ? 'bg-slate-800 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-              }`}
-            >
-              {role === 'all' ? 'Tous les profils' : roleLabels[role as Role]}
-            </button>
-          ))}
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <Card className="border border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-3">
+                <Users className="h-6 w-6 text-orange-600" />
+              </div>
+              <div className="text-3xl font-bold text-slate-900 mb-1">500+</div>
+              <div className="text-sm text-slate-600">Membres actifs</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-cyan-100 rounded-full mb-3">
+                <Trophy className="h-6 w-6 text-cyan-600" />
+              </div>
+              <div className="text-3xl font-bold text-slate-900 mb-1">150+</div>
+              <div className="text-sm text-slate-600">Compétitions terminées</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">
+                <Award className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="text-3xl font-bold text-slate-900 mb-1">50+</div>
+              <div className="text-sm text-slate-600">Mentors experts</div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-2xl mx-auto mb-12">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
-              placeholder="Rechercher un talent par nom, compétence ou localisation..."
-              className="w-full pl-12 pr-6 py-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 text-base"
+              placeholder="Rechercher un membre par nom ou compétence..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </div>
+          </div>
+
+          {/* Role Filter */}
+          <div className="flex gap-2">
+            {roles.map((role) => (
+              <button
+                key={role}
+                onClick={() => setSelectedRole(role)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                  selectedRole === role
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                }`}
+              >
+                {role === 'all' ? 'Tous' : roleLabels[role as Role]}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Talents Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockTalents.map((talent, index) => (
-            <Card key={talent.id} className="bg-white hover:shadow-lg transition-shadow duration-300 border-gray-200 overflow-hidden">
-              <CardHeader className="text-center pb-4">
-                {/* Avatar */}
-                <div className="relative mx-auto mb-4">
-                  <div className="bg-slate-800 p-1 rounded-full">
-                    <img
-                      src={talent.avatar_url}
-                      alt={talent.full_name}
-                      className="w-20 h-20 rounded-full object-cover"
-                    />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {mockTalents.map((talent) => (
+            <Card key={talent.id} className="group hover:shadow-md hover:border-orange-200 transition-all border border-slate-200">
+              <CardHeader className="pb-3">
+                {/* Avatar + Role */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <img
+                        src={talent.avatar_url}
+                        alt={talent.full_name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-slate-200"
+                      />
+                      {talent.stats.rank <= 10 && (
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                          {talent.stats.rank}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <CardTitle className="text-base group-hover:text-orange-600 transition-colors">
+                        {talent.full_name}
+                      </CardTitle>
+                      <div className="flex items-center text-xs text-slate-500 mt-0.5">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {talent.location}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                {/* Role Badge */}
-                <div className="flex justify-center mb-3">
-                  <Badge className={roleColors[talent.role]}>
+                  <Badge className={`${roleColors[talent.role]} border-0 text-xs`}>
                     {roleLabels[talent.role]}
                   </Badge>
                 </div>
-                
-                <CardTitle className="text-lg font-bold text-gray-900 mb-2">
-                  {talent.full_name}
-                </CardTitle>
-                
-                <div className="flex items-center justify-center text-sm text-gray-600 mb-4">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  <span>{talent.location}</span>
-                </div>
+
+                <CardDescription className="text-sm line-clamp-2">
+                  {talent.bio}
+                </CardDescription>
               </CardHeader>
               
               <CardContent className="pt-0 space-y-4">
-                <CardDescription className="text-center line-clamp-3 text-gray-600 leading-relaxed">
-                  {talent.bio}
-                </CardDescription>
-                
+                {/* Stats */}
+                <div className="flex items-center justify-between text-sm pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-1 text-slate-600">
+                    <Trophy className="h-3.5 w-3.5 text-orange-500" />
+                    <span className="text-xs">{talent.stats.competitions} compét.</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-slate-600">
+                    <TrendingUp className="h-3.5 w-3.5 text-cyan-500" />
+                    <span className="text-xs">Rang #{talent.stats.rank}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-slate-600">
+                    <Target className="h-3.5 w-3.5 text-purple-500" />
+                    <span className="text-xs font-semibold">{talent.stats.points} pts</span>
+                  </div>
+                </div>
+
                 {/* Skills */}
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap gap-1.5">
                   {talent.skills.slice(0, 4).map((skill) => (
-                    <Badge key={skill} variant="outline" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
+                    <Badge key={skill} variant="outline" className="text-xs bg-slate-50 border-slate-200">
                       {skill}
                     </Badge>
                   ))}
                   {talent.skills.length > 4 && (
-                    <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
+                    <Badge variant="outline" className="text-xs bg-slate-50 border-slate-200">
                       +{talent.skills.length - 4}
                     </Badge>
                   )}
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center gap-2">
                   {talent.github_url && (
-                    <Button variant="outline" size="sm" className="h-10 w-10 p-0 border-gray-200 hover:bg-gray-50" asChild>
-                      <a href={talent.github_url} target="_blank" rel="noopener noreferrer">
-                        <Github className="h-4 w-4" />
-                      </a>
-                    </Button>
+                    <a 
+                      href={talent.github_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <Github className="h-3.5 w-3.5" />
+                      <span className="text-xs font-medium">GitHub</span>
+                    </a>
                   )}
                   {talent.linkedin_url && (
-                    <Button variant="outline" size="sm" className="h-10 w-10 p-0 border-gray-200 hover:bg-gray-50" asChild>
-                      <a href={talent.linkedin_url} target="_blank" rel="noopener noreferrer">
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    </Button>
+                    <a 
+                      href={talent.linkedin_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <Linkedin className="h-3.5 w-3.5" />
+                      <span className="text-xs font-medium">LinkedIn</span>
+                    </a>
                   )}
-                  <Button variant="outline" size="sm" className="h-10 w-10 p-0 border-gray-200 hover:bg-gray-50">
-                    <Mail className="h-4 w-4" />
-                  </Button>
                 </div>
 
-                <Button className="w-full bg-slate-800 hover:bg-slate-700" asChild>
-                  <Link href={`/talents/${talent.id}`}>
-                    Voir le profil complet
-                  </Link>
-                </Button>
+                <Link href={`/talents/${talent.id}`}>
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 border-0 text-sm">
+                    Voir le profil
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Load More Section */}
-        <div className="text-center mt-20">
-          <div className="bg-white rounded-2xl p-12 border border-gray-200">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Vous cherchez des collaborateurs ?
-            </h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Rejoignez notre communauté de talents IA et connectez-vous avec des experts, mentors et entreprises innovantes au Sénégal.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-slate-800 hover:bg-slate-700">
-                <Users className="mr-2 h-5 w-5" />
-                Rejoindre la communauté
-              </Button>
-              <Button variant="outline" size="lg" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                Devenir mentor
-              </Button>
-            </div>
-          </div>
+        {/* CTA Section */}
+        <div className="mt-16 text-center">
+          <Card className="border-2 border-dashed border-slate-300 bg-slate-50/50">
+            <CardContent className="p-12">
+              <div className="max-w-2xl mx-auto">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full mb-6">
+                  <Users className="h-8 w-8 text-orange-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                  Rejoignez la communauté Looymind
+                </h3>
+                <p className="text-slate-600 mb-8">
+                  Participez à des compétitions, collaborez sur des projets IA et montez dans le classement. 
+                  Développez vos compétences avec les meilleurs data scientists du Sénégal.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/auth/register">
+                    <Button size="lg" className="bg-orange-500 hover:bg-orange-600 border-0">
+                      <Users className="mr-2 h-5 w-5" />
+                      S'inscrire gratuitement
+                    </Button>
+                  </Link>
+                  <Link href="/competitions">
+                    <Button variant="outline" size="lg" className="border-slate-300">
+                      <Trophy className="mr-2 h-5 w-5" />
+                      Voir les compétitions
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -23,37 +23,21 @@ export default function Header() {
   const navigation = [
     { name: 'Accueil', href: '/' },
     { 
-      name: 'Défis', 
-      href: '/challenges',
-      submenu: [
-        { name: 'Tous les défis', href: '/challenges' },
-        { name: 'Défis actifs', href: '/challenges?status=active' },
-        { name: 'Mes participations', href: '/challenges?my=participations' },
-      ]
+      name: 'Compétitions', 
+      href: '/competitions'
     },
     { 
       name: 'Communauté', 
       href: '/talents',
       submenu: [
         { name: 'Talents', href: '/talents' },
-    { name: 'Projets', href: '/projects' },
-        { name: 'Success Stories', href: '/success-stories' },
+        { name: 'Projets', href: '/projects' },
         { name: 'Articles', href: '/articles' },
       ]
     },
     { 
       name: 'Ressources', 
       href: '/resources'
-    },
-    { 
-      name: 'Opportunités', 
-      href: '/opportunities',
-      submenu: [
-        { name: 'Toutes les opportunités', href: '/opportunities' },
-        { name: 'Emplois', href: '/opportunities?type=job' },
-        { name: 'Stages', href: '/opportunities?type=internship' },
-        { name: 'Formations', href: '/opportunities?type=training' },
-      ]
     },
   ]
 
@@ -69,18 +53,19 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-lg bg-white/95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="group">
-            <div className="w-16 h-16 group-hover:scale-105 transition-transform duration-200">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 transition-transform duration-200 group-hover:scale-110">
               <img 
                 src="/Logo.png" 
                 alt="Looymind Logo" 
                 className="w-full h-full object-contain"
               />
             </div>
+            <span className="text-xl font-bold text-slate-900 hidden sm:block">Looymind</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -104,14 +89,14 @@ export default function Header() {
                       setDropdownTimeout(timeout)
                     }}
                   >
-                    <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors duration-200 h-8">
+                    <button className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors duration-200">
                       {item.name}
                       <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
                     
                     {activeDropdown === item.name && (
                       <div 
-                        className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100]"
+                        className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-[100]"
                         onMouseEnter={() => {
                           if (dropdownTimeout) {
                             clearTimeout(dropdownTimeout)
@@ -131,7 +116,7 @@ export default function Header() {
                             <Link
                               key={subItem.name}
                               href={subItem.href}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
+                              className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors cursor-pointer"
                               onClick={() => setActiveDropdown(null)}
                             >
                               {subItem.name}
@@ -144,7 +129,7 @@ export default function Header() {
                 ) : (
               <Link
                 href={item.href}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors duration-200 h-8"
+                    className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors duration-200"
               >
                 {item.name}
               </Link>
@@ -159,27 +144,27 @@ export default function Header() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(prev => !prev)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors"
                 >
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-sm font-medium text-white">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500 text-sm font-medium text-white">
                     {initials.toUpperCase()}
                   </span>
-                  <span className="text-sm font-medium text-gray-700 leading-tight">
+                  <span className="text-sm font-medium text-slate-700 leading-tight">
                     {displayName}
                   </span>
-                  <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-xl z-[120] overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-semibold text-gray-800">{displayName}</p>
-                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-xl z-[120] overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
+                      <p className="text-sm font-semibold text-slate-800">{displayName}</p>
+                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
                     </div>
                     <div className="py-1">
                       <Link
                         href="/profile"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <User className="h-4 w-4" />
@@ -187,20 +172,20 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <Brain className="h-4 w-4" />
-                        Tableau de bord
+                        Dashboard
                       </Link>
                       {(profile?.role === 'admin' || profile?.role === 'moderator') && (
                         <Link
                           href="/admin/moderation"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Shield className="h-4 w-4" />
-                          Espace modération
+                          Modération
                         </Link>
                       )}
                       <button
@@ -220,14 +205,14 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <Button variant="ghost" size="sm" className="h-8" asChild>
+                <Button variant="ghost" size="sm" asChild>
                <Link href="/login">
-                 Connexion
+                 Sign in
                </Link>
              </Button>
-                <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-white shadow-md h-8" asChild>
+                <Button size="sm" className="bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
                <Link href="/register">
-                 S'inscrire
+                 Join
                </Link>
              </Button>
               </>
@@ -252,13 +237,13 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-100">
+          <div className="md:hidden border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
                 <div key={item.name}>
                 <Link
                   href={item.href}
-                    className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 text-base font-medium rounded-md"
+                    className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 block px-3 py-2 text-base font-medium rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -269,7 +254,7 @@ export default function Header() {
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 block px-3 py-1 text-sm rounded-md"
+                          className="text-slate-500 hover:text-cyan-600 hover:bg-slate-50 block px-3 py-1 text-sm rounded-md"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           {subItem.name}
@@ -279,23 +264,23 @@ export default function Header() {
                   )}
                 </div>
               ))}
-              <div className="pt-4 pb-3 border-t border-gray-100">
+              <div className="pt-4 pb-3 border-t border-slate-100">
                 {isAuthenticated ? (
                   <div className="space-y-3">
                     <div className="px-3">
-                      <p className="text-sm font-semibold text-gray-700">{displayName}</p>
-                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                      <p className="text-sm font-semibold text-slate-700">{displayName}</p>
+                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
                     </div>
                     <div className="flex flex-col space-y-2 px-3">
                       <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                        <Link href="/profile">Mon profil</Link>
+                        <Link href="/profile">Profil</Link>
                       </Button>
                       <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                        <Link href="/dashboard">Tableau de bord</Link>
+                        <Link href="/dashboard">Dashboard</Link>
                       </Button>
                       {(profile?.role === 'admin' || profile?.role === 'moderator') && (
                         <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                          <Link href="/admin/moderation">Espace modération</Link>
+                          <Link href="/admin/moderation">Modération</Link>
                         </Button>
                       )}
                       <Button
@@ -315,12 +300,12 @@ export default function Header() {
                    <div className="flex items-center px-3 space-x-3">
                     <Button variant="ghost" size="sm" className="flex-1" asChild>
                        <Link href="/login">
-                         Connexion
+                         Sign in
                        </Link>
                      </Button>
-                    <Button size="sm" className="flex-1 bg-slate-800 hover:bg-slate-700 text-white shadow-md" asChild>
+                    <Button size="sm" className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
                        <Link href="/register">
-                         S'inscrire
+                         Join
                        </Link>
                      </Button>
                    </div>

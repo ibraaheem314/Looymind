@@ -133,15 +133,15 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+      <div className="min-h-screen bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-10 bg-gray-100 rounded w-1/3"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg p-6 space-y-4">
-                  <div className="h-48 bg-gray-200 rounded"></div>
-                  <div className="space-y-2">
+                <div key={i} className="bg-gray-50 rounded-lg overflow-hidden">
+                  <div className="h-48 bg-gray-200"></div>
+                  <div className="p-5 space-y-3">
                     <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                     <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                   </div>
@@ -155,37 +155,82 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Hero */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">
-              Découvrez les Projets IA du Sénégal 🚀
-            </h1>
-            <p className="text-xl text-white/80 mb-8">
-              Explorez les innovations, partagez vos créations et collaborez avec la communauté
-            </p>
-            
-            {/* Actions rapides */}
-            <div className="flex flex-wrap justify-center gap-4">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Design Kaggle+Zindi */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Floating emojis */}
+          <div className="absolute top-12 left-[8%] text-4xl opacity-20">💻</div>
+          <div className="absolute top-20 right-[12%] text-3xl opacity-15">🚀</div>
+          <div className="absolute bottom-20 left-[25%] text-3xl opacity-15">⚡</div>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            {/* Left: Text content */}
+            <div>
+              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Créez. <br/>
+                <span className="text-purple-500">Partagez.</span> <br/>
+                Collaborez.
+              </h1>
+              <p className="text-lg text-slate-600 mb-6">
+                Explorez les projets IA innovants du Sénégal, partagez vos créations et trouvez des collaborateurs.
+              </p>
+              
+              {/* Stats inline */}
+              <div className="flex items-center gap-6 mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs">🎨</div>
+                    <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🤖</div>
+                    <div className="w-8 h-8 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-xs">📱</div>
+                  </div>
+                  <span className="text-sm text-slate-600">{projects.length} projets</span>
+                </div>
+                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-600">
+                  <span className="font-semibold text-purple-500">Open-source</span> & collaboratifs
+                </div>
+              </div>
+
               <Link href="/projects/create">
-                <Button size="lg" className="bg-white text-slate-800 hover:bg-gray-100 border-0">
+                <Button size="lg" className="bg-purple-500 text-white hover:bg-purple-600 border-0 shadow-lg shadow-purple-500/30">
                   <Plus className="h-5 w-5 mr-2" />
                   Créer un Projet
                 </Button>
               </Link>
-              <Button variant="secondary" size="lg" className="bg-white/90 text-slate-800 hover:bg-white border-0">
-                <Github className="h-5 w-5 mr-2" />
-                Voir sur GitHub
-              </Button>
+            </div>
+
+            {/* Right: Project preview mockup */}
+            <div className="hidden lg:block">
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden transform -rotate-1 hover:rotate-0 transition-transform">
+                <div className="h-40 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center text-6xl">
+                  🤖
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
+                      🧠 IA
+                    </Badge>
+                    <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                      Actif
+                    </Badge>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Assistant IA en Wolof</h3>
+                  <p className="text-sm text-slate-600 mb-4">Chatbot conversationnel pour les langues locales...</p>
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span>👁 234 vues</span>
+                    <span>❤ 45 likes</span>
+                    <span>👥 3 collaborateurs</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Contenu principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Filtres et recherche */}
         <div className="mb-8">
@@ -267,14 +312,14 @@ export default function ProjectsPage() {
 
         {/* Liste des projets */}
         {filteredProjects.length === 0 ? (
-          <div className="text-center py-12">
-            <Code className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun projet trouvé</h3>
-            <p className="text-gray-500 mb-6">
+          <div className="text-center py-16">
+            <Code className="h-16 w-16 mx-auto mb-4 text-gray-200" />
+            <h3 className="text-xl font-semibold text-slate-800 mb-2">Aucun projet trouvé</h3>
+            <p className="text-slate-500 mb-6">
               {searchQuery ? 'Essayez avec d\'autres mots-clés' : 'Soyez le premier à créer un projet !'}
             </p>
             <Link href="/projects/create">
-              <Button>
+              <Button variant="outline">
                 <Plus className="h-4 w-4 mr-2" />
                 Créer le premier projet
               </Button>
@@ -283,7 +328,7 @@ export default function ProjectsPage() {
         ) : (
           <div className={
             viewMode === 'grid' 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
               : "space-y-4"
           }>
             {filteredProjects.map((project) => {
@@ -291,11 +336,11 @@ export default function ProjectsPage() {
               const TypeIcon = typeConfig.icon
 
               return (
-                <Card key={project.id} className="group hover:shadow-lg transition-all duration-200">
+                <Card key={project.id} className="group hover:shadow-md hover:border-purple-200 transition-all duration-200 border border-slate-200 overflow-hidden">
                   <Link href={`/projects/${project.slug}`}>
                     <CardContent className="p-0">
                       {/* Image de couverture */}
-                      <div className="relative h-48 bg-gray-100 rounded-t-lg overflow-hidden">
+                      <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
                         {project.cover_image_url ? (
                           <img
                             src={project.cover_image_url}
@@ -303,14 +348,14 @@ export default function ProjectsPage() {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                            <TypeIcon className="h-12 w-12 text-gray-400" />
+                          <div className="w-full h-full flex items-center justify-center">
+                            <TypeIcon className="h-16 w-16 text-slate-300" />
                           </div>
                         )}
                         
                         {/* Badge type */}
                         <div className="absolute top-3 left-3">
-                          <Badge className={`${typeConfig.color} border-0`}>
+                          <Badge className={`${typeConfig.color} border-0 text-xs`}>
                             <TypeIcon className="h-3 w-3 mr-1" />
                             {typeConfig.label}
                           </Badge>
@@ -318,36 +363,34 @@ export default function ProjectsPage() {
 
                         {/* Actions rapides */}
                         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="flex gap-1">
+                          <div className="flex gap-1.5">
                             {project.live_url && (
-                              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                                <ExternalLink className="h-4 w-4" />
-                              </Button>
+                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors">
+                                <ExternalLink className="h-3.5 w-3.5 text-slate-700" />
+                              </div>
                             )}
                             {project.github_url && (
-                              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                                <Github className="h-4 w-4" />
-                              </Button>
+                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors">
+                                <Github className="h-3.5 w-3.5 text-slate-700" />
+                              </div>
                             )}
                           </div>
                         </div>
                       </div>
 
                       {/* Contenu */}
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-slate-600">
-                            {project.title}
-                          </h3>
-                        </div>
+                      <div className="p-5">
+                        <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-purple-600 transition-colors mb-2">
+                          {project.title}
+                        </h3>
 
-                        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                        <p className="text-slate-600 text-sm line-clamp-2 mb-4">
                           {project.short_description}
                         </p>
 
                         {/* Auteur */}
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 overflow-hidden">
+                        <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-100">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
                             {project.author_avatar ? (
                               <img
                                 src={project.author_avatar}
@@ -355,40 +398,34 @@ export default function ProjectsPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs">
+                              <div className="w-full h-full bg-slate-300 flex items-center justify-center text-xs font-medium text-slate-600">
                                 {project.author_name.charAt(0)}
                               </div>
                             )}
                           </div>
-                          <span className="text-sm text-gray-600">{project.author_name}</span>
+                          <span className="text-xs text-slate-600">{project.author_name}</span>
                         </div>
 
                         {/* Stats */}
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 text-sm text-slate-500">
                           <div className="flex items-center gap-1">
-                            <Eye className="h-4 w-4" />
-                            {project.views_count}
+                            <Eye className="h-3.5 w-3.5" />
+                            <span className="text-xs">{project.views_count}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Heart className="h-4 w-4" />
-                            {project.likes_count}
+                            <Heart className="h-3.5 w-3.5" />
+                            <span className="text-xs">{project.likes_count}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <MessageCircle className="h-4 w-4" />
-                            {project.comments_count}
+                            <MessageCircle className="h-3.5 w-3.5" />
+                            <span className="text-xs">{project.comments_count}</span>
                           </div>
                           {project.collaborators_count > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-4 w-4" />
-                              {project.collaborators_count}
+                            <div className="flex items-center gap-1 ml-auto">
+                              <Users className="h-3.5 w-3.5" />
+                              <span className="text-xs">{project.collaborators_count}</span>
                             </div>
                           )}
-                        </div>
-
-                        {/* Date */}
-                        <div className="mt-3 text-xs text-gray-400">
-                          <Calendar className="h-3 w-3 inline mr-1" />
-                          {format(new Date(project.created_at), 'dd MMM yyyy', { locale: fr })}
                         </div>
                       </div>
                     </CardContent>

@@ -68,7 +68,6 @@ export default function ArticlesPage() {
       setLoading(true)
       const supabase = createClient()
       
-      // Récupérer les articles publiés depuis Supabase
       const { data, error: fetchError } = await supabase
         .from('articles')
         .select(`
@@ -86,7 +85,6 @@ export default function ArticlesPage() {
         return
       }
       
-      // Transformer les données pour correspondre à l'interface Article
       const transformedArticles = (data || []).map((article: any) => ({
         ...article,
         author: Array.isArray(article.author) ? article.author[0] : article.author
@@ -94,78 +92,6 @@ export default function ArticlesPage() {
       
       setArticles(transformedArticles as Article[])
       setLoading(false)
-      return
-      
-      // ===== DONNÉES MOCKÉES (fallback) =====
-      const mockArticles: Article[] = [
-        {
-          id: '1',
-          title: 'Introduction au Machine Learning avec Python',
-          slug: 'introduction-machine-learning-python',
-          content: 'Contenu complet de l\'article...',
-          excerpt: 'Découvrez les bases du machine learning avec Python. Ce guide complet vous accompagne dans vos premiers pas en IA.',
-          author_id: 'user1',
-          category: 'machine-learning',
-          tags: ['Python', 'Machine Learning', 'IA', 'Tutoriel'],
-          likes_count: 45,
-          comments_count: 12,
-          views_count: 234,
-          status: 'published' as const,
-          created_at: '2024-01-15T10:00:00Z',
-          updated_at: '2024-01-15T10:00:00Z',
-          author: {
-            id: 'user1',
-            display_name: 'Dr. Aminata Diallo',
-            role: 'mentor'
-          }
-        },
-        {
-          id: '2',
-          title: 'Deep Learning pour la Vision par Ordinateur',
-          slug: 'deep-learning-vision-ordinateur',
-          content: 'Contenu complet de l\'article...',
-          excerpt: 'Explorez les réseaux de neurones convolutifs et leur application dans la reconnaissance d\'images.',
-          author_id: 'user2',
-          category: 'deep-learning',
-          tags: ['Deep Learning', 'CNN', 'Computer Vision', 'TensorFlow'],
-          likes_count: 67,
-          comments_count: 8,
-          views_count: 189,
-          status: 'published' as const,
-          created_at: '2024-01-12T14:30:00Z',
-          updated_at: '2024-01-12T14:30:00Z',
-          author: {
-            id: 'user2',
-            display_name: 'Prof. Moussa Ndiaye',
-            role: 'mentor'
-          }
-        },
-        {
-          id: '3',
-          title: 'Analyse de Sentiment en Wolof avec NLP',
-          slug: 'analyse-sentiment-wolof-nlp',
-          content: 'Contenu complet de l\'article...',
-          excerpt: 'Développez un modèle NLP pour analyser les sentiments dans des textes en wolof.',
-          author_id: 'user3',
-          category: 'nlp',
-          tags: ['NLP', 'Wolof', 'Sentiment Analysis', 'Python'],
-          likes_count: 34,
-          comments_count: 15,
-          views_count: 156,
-          status: 'published' as const,
-          created_at: '2024-01-10T09:15:00Z',
-          updated_at: '2024-01-10T09:15:00Z',
-          author: {
-            id: 'user3',
-            display_name: 'Fatou Sall',
-            role: 'member'
-          }
-        }
-      ]
-
-      // Simuler un délai de chargement (fallback uniquement)
-      // await new Promise(resolve => setTimeout(resolve, 1000))
-      // setArticles(mockArticles)
     } catch (err) {
       setError('Erreur lors du chargement des articles')
       console.error('Error:', err)
@@ -199,33 +125,80 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Design Kaggle+Zindi */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Floating emojis */}
+          <div className="absolute top-10 left-[10%] text-4xl opacity-20">📚</div>
+          <div className="absolute top-24 right-[12%] text-3xl opacity-15">✍️</div>
+          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">💡</div>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            {/* Left: Text content */}
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <BookOpen className="h-6 w-6" />
-                Articles
+              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Lisez. <br/>
+                <span className="text-blue-500">Apprenez.</span> <br/>
+                Partagez.
               </h1>
-              <p className="text-gray-600">Découvrez les derniers articles de la communauté</p>
+              <p className="text-lg text-slate-600 mb-6">
+                Découvrez des articles de qualité sur l'IA, la data science et les technologies émergentes au Sénégal.
+              </p>
+              
+              {/* Stats inline */}
+              <div className="flex items-center gap-6 mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">📖</div>
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-xs">🎓</div>
+                    <div className="w-8 h-8 rounded-full bg-cyan-100 border-2 border-white flex items-center justify-center text-xs">💬</div>
+                  </div>
+                  <span className="text-sm text-slate-600">{articles.length} articles</span>
+                </div>
+                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-600">
+                  <span className="font-semibold text-blue-500">100%</span> Francophone
+                </div>
+              </div>
+
+              {user && (
+                <Link href="/articles/create">
+                  <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 border-0 shadow-lg shadow-blue-500/30">
+                    <Plus className="h-5 w-5 mr-2" />
+                    Écrire un Article
+                  </Button>
+                </Link>
+              )}
             </div>
-            {user && (
-              <Link href="/articles/create">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Écrire un article
-                </Button>
-              </Link>
-            )}
+
+            {/* Right: Article preview mockup */}
+            <div className="hidden lg:block">
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
+                <Badge className="bg-blue-100 text-blue-700 border-0 text-xs mb-3">
+                  Machine Learning
+                </Badge>
+                <h3 className="font-bold text-lg mb-2">Introduction au NLP avec Python</h3>
+                <p className="text-sm text-slate-600 mb-4">Découvrez les bases du traitement du langage naturel...</p>
+                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-100">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs">👤</div>
+                  <span className="text-xs text-slate-600">Dr. Aminata Diallo</span>
+                  <Badge className="bg-blue-50 text-blue-700 border-0 text-xs ml-auto">Mentor</Badge>
+                </div>
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                  <span>👁 456 vues</span>
+                  <span>❤ 67 likes</span>
+                  <span>💬 12 commentaires</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
           {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -244,7 +217,7 @@ export default function ArticlesPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {categories.map(category => (
                 <option key={category.value} value={category.value}>
@@ -257,86 +230,76 @@ export default function ArticlesPage() {
 
         {/* Articles Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                  <div className="flex justify-between">
-                    <div className="h-3 bg-gray-200 rounded w-20"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16"></div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div key={i} className="animate-pulse bg-gray-50 rounded-lg overflow-hidden">
+                <div className="h-4 bg-gray-200 m-5 rounded mb-4"></div>
+                <div className="h-3 bg-gray-200 mx-5 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 mx-5 mb-5 rounded"></div>
+              </div>
             ))}
           </div>
         ) : error ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-red-600">{error}</p>
-              <Button onClick={fetchArticles} className="mt-4">
-                Réessayer
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="text-center py-16">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={fetchArticles}>
+              Réessayer
+            </Button>
+          </div>
         ) : filteredArticles.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm ? 'Aucun article trouvé' : 'Aucun article disponible'}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {searchTerm 
-                  ? 'Essayez avec d\'autres mots-clés ou parcourez toutes les catégories.'
-                  : 'Soyez le premier à partager vos connaissances avec la communauté !'
-                }
-              </p>
-              {user && !searchTerm && (
-                <Link href="/articles/create">
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Écrire le premier article
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
+          <div className="text-center py-16">
+            <BookOpen className="h-16 w-16 text-gray-200 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-slate-800 mb-2">
+              {searchTerm ? 'Aucun article trouvé' : 'Aucun article disponible'}
+            </h3>
+            <p className="text-slate-500 mb-6">
+              {searchTerm 
+                ? 'Essayez avec d\'autres mots-clés ou parcourez toutes les catégories.'
+                : 'Soyez le premier à partager vos connaissances avec la communauté !'
+              }
+            </p>
+            {user && !searchTerm && (
+              <Link href="/articles/create">
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Écrire le premier article
+                </Button>
+              </Link>
+            )}
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredArticles.map(article => (
-              <Card key={article.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <Card key={article.id} className="group hover:shadow-md hover:border-blue-200 transition-all cursor-pointer border border-slate-200">
                 <Link href={`/articles/${article.slug}`}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge variant="secondary" className="text-xs">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between mb-3">
+                      <Badge variant="secondary" className="text-xs bg-blue-50 text-blue-700 border-0">
                         {categories.find(c => c.value === article.category)?.label || article.category}
                       </Badge>
-                      <div className="flex items-center gap-1 text-gray-500 text-sm">
+                      <div className="flex items-center gap-1 text-gray-500 text-xs">
                         <Eye className="h-3 w-3" />
                         {article.views_count}
                       </div>
                     </div>
-                    <CardTitle className="line-clamp-2 group-hover:text-slate-600 transition-colors">
+                    <CardTitle className="line-clamp-2 group-hover:text-blue-600 transition-colors text-lg">
                       {article.title}
                     </CardTitle>
-                    <CardDescription className="line-clamp-3">
+                    <CardDescription className="line-clamp-3 text-sm">
                       {article.excerpt}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-0">
                     {/* Tags */}
                     {article.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
+                      <div className="flex flex-wrap gap-1.5 mb-4">
                         {article.tags.slice(0, 3).map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge key={index} variant="outline" className="text-xs bg-slate-50 border-slate-200">
                             {tag}
                           </Badge>
                         ))}
                         {article.tags.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs bg-slate-50 border-slate-200">
                             +{article.tags.length - 3}
                           </Badge>
                         )}
@@ -344,29 +307,26 @@ export default function ArticlesPage() {
                     )}
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-500 pb-3 mb-3 border-b border-slate-100">
                       <div className="flex items-center gap-2">
-                        <User className="h-3 w-3" />
-                        <span>{article.author?.display_name || 'Anonyme'}</span>
-                        {article.author?.role && (
-                          <Badge className={`text-xs ${getRoleColor(article.author.role)}`}>
-                            {article.author.role}
-                          </Badge>
-                        )}
+                        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-xs">
+                          {article.author?.display_name?.charAt(0) || 'A'}
+                        </div>
+                        <span className="text-xs">{article.author?.display_name || 'Anonyme'}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
                           <Heart className="h-3 w-3" />
-                          {article.likes_count}
+                          <span className="text-xs">{article.likes_count}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <MessageCircle className="h-3 w-3" />
-                          {article.comments_count}
+                          <span className="text-xs">{article.comments_count}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 text-xs text-gray-400 mt-2">
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
                       <Calendar className="h-3 w-3" />
                       {formatDate(article.created_at)}
                     </div>
