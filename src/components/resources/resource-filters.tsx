@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
-  BookOpen, Video, FileText, Database, Wrench, 
+  BookOpen, Video, FileText, Wrench, Globe, GraduationCap, Code,
   BookMarked, Filter, X 
 } from 'lucide-react'
 
@@ -18,34 +18,41 @@ interface ResourceFiltersProps {
   onClearFilters: () => void
 }
 
+// Catégories correspondant au schéma DB
 const categories = [
-  'Intelligence Artificielle',
-  'Machine Learning',
-  'Data Science',
-  'Deep Learning',
-  'NLP',
-  'Computer Vision',
-  'Web Development',
-  'Mobile Development',
-  'DevOps',
-  'Cloud Computing',
-  'Cybersécurité',
-  'Blockchain'
+  { value: 'ia', label: 'Intelligence Artificielle' },
+  { value: 'machine-learning', label: 'Machine Learning' },
+  { value: 'deep-learning', label: 'Deep Learning' },
+  { value: 'data-science', label: 'Data Science' },
+  { value: 'nlp', label: 'NLP' },
+  { value: 'computer-vision', label: 'Computer Vision' },
+  { value: 'big-data', label: 'Big Data' },
+  { value: 'cloud', label: 'Cloud Computing' },
+  { value: 'dev', label: 'Développement' },
+  { value: 'mathematics', label: 'Mathématiques' },
+  { value: 'statistics', label: 'Statistiques' },
+  { value: 'python', label: 'Python' },
+  { value: 'r', label: 'R' },
+  { value: 'other', label: 'Autre' }
 ]
 
+// Difficultés correspondant au schéma DB
 const difficulties = [
-  { value: 'debutant', label: 'Débutant', color: 'bg-green-100 text-green-800' },
-  { value: 'intermediaire', label: 'Intermédiaire', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'avance', label: 'Avancé', color: 'bg-red-100 text-red-800' }
+  { value: 'beginner', label: 'Débutant', color: 'bg-green-100 text-green-800', stars: '⭐' },
+  { value: 'intermediate', label: 'Intermédiaire', color: 'bg-yellow-100 text-yellow-800', stars: '⭐⭐' },
+  { value: 'advanced', label: 'Avancé', color: 'bg-orange-100 text-orange-800', stars: '⭐⭐⭐' },
+  { value: 'expert', label: 'Expert', color: 'bg-red-100 text-red-800', stars: '⭐⭐⭐⭐' }
 ]
 
+// Types correspondant au schéma DB
 const resourceTypes = [
-  { value: 'tutorial', label: 'Tutoriel', icon: BookOpen },
+  { value: 'external_course', label: 'Cours externe', icon: Globe },
+  { value: 'local_course', label: 'Cours local', icon: GraduationCap },
+  { value: 'tutorial', label: 'Tutoriel', icon: Code },
   { value: 'documentation', label: 'Documentation', icon: FileText },
   { value: 'video', label: 'Vidéo', icon: Video },
-  { value: 'dataset', label: 'Dataset', icon: Database },
   { value: 'tool', label: 'Outil', icon: Wrench },
-  { value: 'book', label: 'Livre', icon: BookMarked }
+  { value: 'article', label: 'Article', icon: BookMarked }
 ]
 
 export function ResourceFilters({
@@ -101,12 +108,12 @@ export function ResourceFilters({
                 onClick={() => onTypeChange(isSelected ? undefined : type.value)}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-colors ${
                   isSelected
-                    ? 'border-slate-800 bg-slate-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isSelected ? 'text-slate-800' : 'text-gray-500'}`} />
-                <span className={`text-sm ${isSelected ? 'font-medium' : ''}`}>
+                <Icon className={`h-5 w-5 ${isSelected ? 'text-green-600' : 'text-gray-500'}`} />
+                <span className={`text-sm ${isSelected ? 'font-semibold text-green-900' : 'text-slate-700'}`}>
                   {type.label}
                 </span>
               </button>
@@ -131,16 +138,16 @@ export function ResourceFilters({
                 onClick={() => onDifficultyChange(isSelected ? undefined : difficulty.value)}
                 className={`w-full flex items-center justify-between p-3 rounded-lg border-2 transition-colors ${
                   isSelected
-                    ? 'border-slate-800 bg-slate-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                <span className={`text-sm ${isSelected ? 'font-medium' : ''}`}>
+                <span className={`text-sm ${isSelected ? 'font-semibold text-green-900' : 'text-slate-700'}`}>
                   {difficulty.label}
                 </span>
-                <Badge className={`${difficulty.color} border-0`}>
-                  {difficulty.value === 'debutant' ? '⭐' : difficulty.value === 'intermediaire' ? '⭐⭐' : '⭐⭐⭐'}
-                </Badge>
+                <span className="text-base">
+                  {difficulty.stars}
+                </span>
               </button>
             )
           })}
@@ -157,18 +164,18 @@ export function ResourceFilters({
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {categories.map(category => {
-              const isSelected = selectedCategory === category
+              const isSelected = selectedCategory === category.value
               return (
                 <button
-                  key={category}
-                  onClick={() => onCategoryChange(isSelected ? undefined : category)}
+                  key={category.value}
+                  onClick={() => onCategoryChange(isSelected ? undefined : category.value)}
                   className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                     isSelected
-                      ? 'bg-slate-800 text-white border-slate-800'
-                      : 'border-gray-300 hover:border-slate-800 hover:bg-slate-50'
+                      ? 'bg-green-500 text-white border-green-500 shadow-sm'
+                      : 'border-gray-300 hover:border-green-500 hover:bg-green-50 text-slate-700'
                   }`}
                 >
-                  {category}
+                  {category.label}
                 </button>
               )
             })}

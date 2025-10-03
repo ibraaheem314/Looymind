@@ -11,12 +11,22 @@ import {
   Heart, Eye, MessageCircle, Users, ExternalLink, Github, 
   Calendar, Clock, Code, Smartphone, Monitor, Brain, Database, FlaskConical,
   Share2, Bookmark, Star, GitBranch, Download, Play, Pause, Settings,
-  ChevronLeft, ChevronRight, Image as ImageIcon, Video, FileText, Mail, User
+  ChevronLeft, ChevronRight, Image as ImageIcon, Video, FileText, Mail, User,
+  Trash2, Loader2, Edit, ArrowLeft
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from 'next/navigation'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface Project {
   id: string
@@ -70,14 +80,17 @@ const PROJECT_TYPES = [
 
 export default function ProjectDetailPage() {
   const { slug } = useParams()
+  const router = useRouter()
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(0)
   const [viewsCount, setViewsCount] = useState(0)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const supabase = createClient()
 
   useEffect(() => {
@@ -303,6 +316,30 @@ export default function ProjectDetailPage() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!project || !user) return
+
+    try {
+      setDeleteLoading(true)
+
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', project.id)
+        .eq('author_id', user.id)
+
+      if (error) throw error
+
+      router.push('/projects')
+    } catch (err: any) {
+      console.error('Error deleting project:', err)
+      alert('Erreur lors de la suppression du projet')
+    } finally {
+      setDeleteLoading(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
   const getProjectTypeConfig = (type: string) => {
     return PROJECT_TYPES.find(t => t.value === type) || PROJECT_TYPES[0]
   }
@@ -460,6 +497,36 @@ export default function ProjectDetailPage() {
                   <Share2 className="h-4 w-4 mr-1" />
                   Partager
                 </Button>
+
+                {user && user.id === project.author_id && (
+                  <>
+                    <Link href={`/projects/create?edit=${project.id}`}>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4 mr-1" />
+                        Modifier
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => setShowDeleteDialog(true)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Supprimer
+                    </Button>
+                  </>
+                )}
+
+                {profile?.role === 'admin' && user?.id !== project.author_id && (
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={() => setShowDeleteDialog(true)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Supprimer (Admin)
+                  </Button>
+                )}
 
                 <Button variant="outline" size="sm">
                   <Bookmark className="h-4 w-4" />
@@ -853,6 +920,44 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+            <DialogDescription>
+              Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible et supprimera également tous les commentaires, likes, collaborateurs et toutes les données associées.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={deleteLoading}
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Suppression...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer définitivement
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

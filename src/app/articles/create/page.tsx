@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../hooks/useAuth'
 import { createClient } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,18 +11,30 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { 
-  ArrowLeft, Save, Eye, Plus, X, AlertCircle, CheckCircle 
+  ArrowLeft, Save, Eye, Plus, X, AlertCircle, CheckCircle, BookOpen,
+  Trash2, Loader2, FileText, Tag, BookMarked
 } from 'lucide-react'
 import Link from 'next/link'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 export default function CreateArticlePage() {
   const { user, profile } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [loadingDraft, setLoadingDraft] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [draftId, setDraftId] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   
   const [formData, setFormData] = useState({
     title: '',
@@ -30,34 +42,34 @@ export default function CreateArticlePage() {
     excerpt: '',
     category: 'ia',
     tags: [] as string[],
-    published: false
+    markAsResource: false, // Nouvelle option
+    coverImage: '',
   })
 
   const [newTag, setNewTag] = useState('')
   
   // Load draft if editing
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const draftParam = params.get('draft')
+    const draftParam = searchParams?.get('draft')
     
     if (draftParam) {
       setDraftId(draftParam)
       loadDraft(draftParam)
     }
-  }, [])
+  }, [searchParams])
 
   const categories = [
-    { value: 'ia', label: 'Intelligence Artificielle' },
-    { value: 'data-science', label: 'Data Science' },
-    { value: 'machine-learning', label: 'Machine Learning' },
-    { value: 'deep-learning', label: 'Deep Learning' },
-    { value: 'nlp', label: 'NLP' },
-    { value: 'computer-vision', label: 'Computer Vision' },
-    { value: 'big-data', label: 'Big Data' },
-    { value: 'cloud', label: 'Cloud Computing' },
-    { value: 'dev', label: 'Développement' },
-    { value: 'tutorial', label: 'Tutoriel' },
-    { value: 'news', label: 'Actualités' }
+    { value: 'ia', label: 'Intelligence Artificielle', icon: '🤖' },
+    { value: 'data-science', label: 'Data Science', icon: '📊' },
+    { value: 'machine-learning', label: 'Machine Learning', icon: '🧠' },
+    { value: 'deep-learning', label: 'Deep Learning', icon: '🔥' },
+    { value: 'nlp', label: 'NLP', icon: '💬' },
+    { value: 'computer-vision', label: 'Computer Vision', icon: '👁️' },
+    { value: 'big-data', label: 'Big Data', icon: '💾' },
+    { value: 'cloud', label: 'Cloud Computing', icon: '☁️' },
+    { value: 'dev', label: 'Développement', icon: '💻' },
+    { value: 'tutorial', label: 'Tutoriel', icon: '📚' },
+    { value: 'news', label: 'Actualités', icon: '📰' }
   ]
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -98,7 +110,7 @@ export default function CreateArticlePage() {
         setError('Impossible de charger le brouillon')
         return
       }
-      
+
       if (data) {
         setFormData({
           title: data.title || '',
@@ -106,11 +118,12 @@ export default function CreateArticlePage() {
           excerpt: data.excerpt || '',
           category: data.category || 'ia',
           tags: data.tags || [],
-          published: false
+          markAsResource: false,
+          coverImage: data.cover_image_url || '',
         })
       }
     } catch (err) {
-      console.error('Error:', err)
+      console.error('Error loading draft:', err)
       setError('Erreur lors du chargement du brouillon')
     } finally {
       setLoadingDraft(false)
@@ -121,102 +134,140 @@ export default function CreateArticlePage() {
     return title
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Remove accents
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
-      .trim()
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
   }
 
-  const handleSubmit = async (e: React.FormEvent, publish = false) => {
-    e.preventDefault()
-    
+  const handleSubmit = async (status: 'draft' | 'published') => {
     if (!user) {
       setError('Vous devez être connecté pour créer un article')
       return
     }
 
-    if (!formData.title.trim() || !formData.content.trim()) {
-      setError('Le titre et le contenu sont obligatoires')
+    // Validation
+    if (!formData.title.trim()) {
+      setError('Le titre est requis')
       return
     }
 
-    setLoading(true)
-    setError('')
+    if (!formData.content.trim()) {
+      setError('Le contenu est requis')
+      return
+    }
+
+    if (status === 'published' && !formData.excerpt.trim()) {
+      setError('Un extrait est requis pour publier')
+      return
+    }
 
     try {
+      setLoading(true)
+      setError('')
       const supabase = createClient()
-      const slug = generateSlug(formData.title)
-      
-      // Generate excerpt if not provided
-      const excerpt = formData.excerpt.trim() || 
-        formData.content.substring(0, 200).trim() + '...'
 
+      const slug = generateSlug(formData.title)
       const articleData = {
-        title: formData.title.trim(),
-        slug,
-        content: formData.content.trim(),
-        excerpt,
-        author_id: user.id,
+        title: formData.title,
+        slug: draftId ? undefined : slug, // Ne pas regénérer le slug si c'est une édition
+        content: formData.content,
+        excerpt: formData.excerpt,
         category: formData.category,
         tags: formData.tags,
-        status: publish ? 'published' : 'draft'
+        cover_image_url: formData.coverImage || null,
+        author_id: user.id,
+        status,
+        updated_at: new Date().toISOString()
       }
 
-      let data, error
-      
+      let result
       if (draftId) {
         // Update existing draft
-        const result = await supabase
+        result = await supabase
           .from('articles')
           .update(articleData)
           .eq('id', draftId)
           .select()
           .single()
-        data = result.data
-        error = result.error
       } else {
-        // Insert new article
-        const result = await supabase
+        // Create new article
+        result = await supabase
           .from('articles')
           .insert([articleData])
           .select()
           .single()
-        data = result.data
-        error = result.error
       }
 
-      if (error) {
-        console.error('Detailed error:', error)
-        setError(`Erreur lors de ${draftId ? 'la mise à jour' : 'la création'} de l'article : ${error.message}`)
-        return
+      if (result.error) {
+        console.error('Supabase error:', result.error)
+        throw result.error
       }
 
+      if (!result.data) {
+        throw new Error('Aucune donnée retournée après la sauvegarde')
+      }
+
+      console.log('Article saved successfully:', result.data)
       setSuccess(true)
-      
-      // Redirect after success
-      setTimeout(() => {
-        if (publish) {
-          router.push(`/articles/${slug}`)
-        } else {
-          router.push('/dashboard')
-        }
-      }, 1500)
 
+      // Redirection après un court délai
+      const redirectUrl = status === 'published' 
+        ? `/articles/${result.data.slug}` 
+        : '/dashboard'
+      
+      console.log('Redirecting to:', redirectUrl)
+      
+      setTimeout(() => {
+        router.push(redirectUrl)
+      }, 500)
     } catch (err: any) {
-      setError(err?.message || 'Une erreur est survenue')
-      console.error('Error:', err)
-    } finally {
+      console.error('Error saving article:', err)
+      setError(err.message || 'Erreur lors de l\'enregistrement de l\'article')
       setLoading(false)
+    } finally {
+      // Ne pas appeler setLoading(false) ici car la redirection va démonter le composant
     }
+  }
+
+  const handleDelete = async () => {
+    if (!draftId || !user) return
+
+    try {
+      setDeleteLoading(true)
+      const supabase = createClient()
+
+      const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', draftId)
+        .eq('author_id', user.id)
+
+      if (error) throw error
+
+      router.push('/dashboard')
+    } catch (err: any) {
+      console.error('Error deleting article:', err)
+      setError('Erreur lors de la suppression de l\'article')
+    } finally {
+      setDeleteLoading(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
+  if (loadingDraft) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+      </div>
+    )
   }
 
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
+        <Card className="max-w-md">
           <CardContent className="p-8 text-center">
-            <h2 className="text-xl font-semibold mb-2">Connexion requise</h2>
+            <h2 className="text-xl font-semibold mb-2">Non connecté</h2>
             <p className="text-gray-600 mb-4">Vous devez être connecté pour créer un article.</p>
             <Link href="/login">
               <Button>Se connecter</Button>
@@ -227,158 +278,170 @@ export default function CreateArticlePage() {
     )
   }
 
-  if (loadingDraft) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800 mx-auto mb-4" />
-          <p className="text-gray-600">Chargement du brouillon...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/articles">
-                <Button variant="outline" size="sm">
+                <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Retour
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {draftId ? 'Modifier le brouillon' : 'Créer un article'}
+                <h1 className="text-2xl font-bold text-slate-900">
+                  {draftId ? 'Modifier l\'article' : 'Nouvel article'}
                 </h1>
-                <p className="text-gray-600">
-                  {draftId ? 'Continuez la rédaction de votre article' : 'Partagez vos connaissances avec la communauté'}
+                <p className="text-sm text-slate-600">
+                  {draftId ? 'Modifiez et publiez votre article' : 'Partagez vos connaissances avec la communauté'}
                 </p>
               </div>
             </div>
+
+            {draftId && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Supprimer
+              </Button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Form */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Title & Category */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Informations générales</CardTitle>
-              <CardDescription>
-                Titre, catégorie et description de votre article
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="title">Titre de l'article *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Ex: Guide complet du Machine Learning en 2024"
-                  required
-                />
-              </div>
+          {/* Main Form */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Title */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Informations principales
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Titre de l'article *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Ex: Introduction au Machine Learning avec Python"
+                    className="text-lg font-semibold"
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="category">Catégorie *</Label>
+                <div>
+                  <Label htmlFor="excerpt">Extrait (résumé) *</Label>
+                  <Textarea
+                    id="excerpt"
+                    value={formData.excerpt}
+                    onChange={(e) => handleInputChange('excerpt', e.target.value)}
+                    placeholder="Un court résumé de votre article (2-3 phrases)"
+                    rows={3}
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    {formData.excerpt.length}/200 caractères
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="coverImage">Image de couverture (URL)</Label>
+                  <Input
+                    id="coverImage"
+                    value={formData.coverImage}
+                    onChange={(e) => handleInputChange('coverImage', e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Content */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contenu de l'article *</CardTitle>
+                <CardDescription>
+                  Rédigez votre article en Markdown (support complet)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={formData.content}
+                  onChange={(e) => handleInputChange('content', e.target.value)}
+                  placeholder="## Introduction&#10;&#10;Votre contenu ici...&#10;&#10;### Section 1&#10;&#10;Lorem ipsum..."
+                  rows={20}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-2">
+                  Markdown supporté : **gras**, *italique*, `code`, [lien](url), etc.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Category */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Catégorie *</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <select
-                  id="category"
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-                  required
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  {categories.map(category => (
-                    <option key={category.value} value={category.value}>
-                      {category.label}
+                  {categories.map(cat => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.icon} {cat.label}
                     </option>
                   ))}
                 </select>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div>
-                <Label htmlFor="excerpt">Résumé (optionnel)</Label>
-                <Textarea
-                  id="excerpt"
-                  value={formData.excerpt}
-                  onChange={(e) => handleInputChange('excerpt', e.target.value)}
-                  placeholder="Un bref résumé de votre article..."
-                  rows={3}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Si vide, les 200 premiers caractères du contenu seront utilisés
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contenu de l'article</CardTitle>
-              <CardDescription>
-                Rédigez le contenu principal de votre article
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <Label htmlFor="content">Contenu *</Label>
-                <Textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => handleInputChange('content', e.target.value)}
-                  placeholder="Rédigez votre article ici... Vous pouvez utiliser du Markdown."
-                  rows={15}
-                  className="font-mono text-sm"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Vous pouvez utiliser la syntaxe Markdown pour formater votre texte
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tags</CardTitle>
-              <CardDescription>
-                Ajoutez des mots-clés pour aider les utilisateurs à trouver votre article
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            {/* Tags */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Tag className="h-4 w-4" />
+                  Tags
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <div className="flex gap-2">
                   <Input
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="Ajouter un tag..."
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    placeholder="Ajouter un tag..."
+                    className="flex-1"
                   />
-                  <Button type="button" onClick={addTag} variant="outline">
+                  <Button size="sm" onClick={addTag} variant="outline">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
 
                 {formData.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {formData.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                    {formData.tags.map(tag => (
+                      <Badge key={tag} variant="secondary" className="pl-3 pr-1">
                         {tag}
                         <button
-                          type="button"
                           onClick={() => removeTag(tag)}
-                          className="ml-1 hover:text-red-500"
+                          className="ml-2 hover:text-red-600"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -386,53 +449,136 @@ export default function CreateArticlePage() {
                     ))}
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Messages */}
-          {error && (
-            <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-              <AlertCircle className="h-4 w-4" />
-              <span className="text-sm">{error}</span>
-            </div>
-          )}
+            {/* Mark as Resource */}
+            <Card className="border-green-200 bg-green-50/50">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <BookMarked className="h-4 w-4 text-green-600" />
+                  Ressource éducative
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.markAsResource}
+                    onChange={(e) => handleInputChange('markAsResource', e.target.checked)}
+                    className="mt-1"
+                  />
+                  <div className="text-sm">
+                    <p className="font-medium text-slate-900">Marquer comme ressource</p>
+                    <p className="text-slate-600 mt-1">
+                      Votre article apparaîtra dans la section "Ressources" pour aider la communauté
+                    </p>
+                  </div>
+                </label>
+              </CardContent>
+            </Card>
 
-          {success && (
-            <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm">Article créé avec succès !</span>
-            </div>
-          )}
+            {/* Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button
+                  onClick={() => handleSubmit('published')}
+                  disabled={loading}
+                  className="w-full bg-blue-500 hover:bg-blue-600"
+                  size="lg"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Publication...
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Publier maintenant
+                    </>
+                  )}
+                </Button>
 
-          {/* Actions */}
-          <div className="flex justify-between">
-            <Link href="/articles">
-              <Button variant="outline">
-                Annuler
-              </Button>
-            </Link>
-            <div className="flex gap-2">
-              <Button 
-                type="submit" 
-                variant="outline"
-                disabled={loading}
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Sauvegarde...' : 'Sauvegarder en brouillon'}
-              </Button>
-              <Button 
-                type="button"
-                onClick={(e) => handleSubmit(e, true)}
-                disabled={loading}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                {loading ? 'Publication...' : 'Publier l\'article'}
-              </Button>
-            </div>
+                <Button
+                  onClick={() => handleSubmit('draft')}
+                  disabled={loading}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Sauvegarder comme brouillon
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Messages */}
+            {error && (
+              <Card className="border-red-200 bg-red-50">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-2 text-red-600">
+                    <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm">{error}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {success && (
+              <Card className="border-green-200 bg-green-50">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm">Article enregistré avec succès !</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        </form>
+        </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+            <DialogDescription>
+              Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={deleteLoading}
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Suppression...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
+

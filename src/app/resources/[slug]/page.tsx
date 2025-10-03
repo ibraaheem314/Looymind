@@ -1,58 +1,82 @@
 'use client'
 
-import { use, useEffect } from 'react'
-import { useResource } from '@/hooks/useResources'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   ArrowLeft, ExternalLink, Eye, Heart, User, Calendar,
-  BookOpen, Video, FileText, Database, Wrench, BookMarked,
-  Share2, Download, Loader2
+  BookOpen, Video, FileText, Code, Wrench, GraduationCap,
+  Share2, Loader2, Globe, Clock, Award, BookMarked
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow, format } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { createClient } from '@/lib/supabase'
 
 const resourceTypeConfig = {
-  tutorial: { label: 'Tutoriel', icon: BookOpen, color: 'bg-blue-100 text-blue-800' },
-  documentation: { label: 'Documentation', icon: FileText, color: 'bg-green-100 text-green-800' },
+  external_course: { label: 'Cours externe', icon: Globe, color: 'bg-blue-100 text-blue-800' },
+  local_course: { label: 'Cours local', icon: GraduationCap, color: 'bg-green-100 text-green-800' },
+  documentation: { label: 'Documentation', icon: FileText, color: 'bg-slate-100 text-slate-800' },
   video: { label: 'Vidéo', icon: Video, color: 'bg-red-100 text-red-800' },
-  dataset: { label: 'Dataset', icon: Database, color: 'bg-purple-100 text-purple-800' },
+  tutorial: { label: 'Tutoriel', icon: Code, color: 'bg-purple-100 text-purple-800' },
   tool: { label: 'Outil', icon: Wrench, color: 'bg-orange-100 text-orange-800' },
-  book: { label: 'Livre', icon: BookMarked, color: 'bg-pink-100 text-pink-800' }
+  article: { label: 'Article', icon: BookMarked, color: 'bg-pink-100 text-pink-800' }
 }
 
 const difficultyConfig = {
-  debutant: { label: 'Débutant', color: 'bg-green-100 text-green-800' },
-  intermediaire: { label: 'Intermédiaire', color: 'bg-yellow-100 text-yellow-800' },
-  avance: { label: 'Avancé', color: 'bg-red-100 text-red-800' }
+  beginner: { label: 'Débutant', color: 'bg-green-100 text-green-800' },
+  intermediate: { label: 'Intermédiaire', color: 'bg-yellow-100 text-yellow-800' },
+  advanced: { label: 'Avancé', color: 'bg-orange-100 text-orange-800' },
+  expert: { label: 'Expert', color: 'bg-red-100 text-red-800' }
 }
 
-export default function ResourceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params)
-  const { resource, loading, error } = useResource(resolvedParams.slug)
+export default function ResourceDetailPage({ params }: { params: { slug: string } }) {
+  const [resource, setResource] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { user } = useAuth()
 
-  // Increment views on mount
   useEffect(() => {
-    if (resource) {
-      incrementViews()
-    }
-  }, [resource])
+    fetchResource()
+  }, [params.slug])
 
-  const incrementViews = async () => {
+  const fetchResource = async () => {
     try {
-      const { createClient } = await import('@/lib/supabase')
       const supabase = createClient()
       
+      const { data, error } = await supabase
+        .from('resources')
+        .select(`
+          *,
+          author:profiles!created_by(
+            id,
+            display_name,
+            avatar_url,
+            role,
+            bio
+          )
+        `)
+        .eq('slug', params.slug)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
+        .single()
+
+      if (error) throw error
+
+      setResource(data)
+      
+      // Increment views
       await supabase
         .from('resources')
-        .update({ views_count: (resource?.views_count || 0) + 1 })
-        .eq('id', resource?.id)
-    } catch (err) {
-      console.error('Error incrementing views:', err)
+        .update({ views_count: (data.views_count || 0) + 1 })
+        .eq('id', data.id)
+    } catch (err: any) {
+      console.error('Error fetching resource:', err)
+      setError(err.message || 'Erreur lors du chargement de la ressource')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -85,71 +109,97 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ slug:
     )
   }
 
-  const typeConfig = resourceTypeConfig[resource.resource_type]
+  const typeConfig = resourceTypeConfig[resource.type as keyof typeof resourceTypeConfig] || resourceTypeConfig.external_course
   const TypeIcon = typeConfig.icon
-  const difficultyLabel = resource.difficulty ? difficultyConfig[resource.difficulty] : null
+  const difficultyLabel = resource.difficulty ? difficultyConfig[resource.difficulty as keyof typeof difficultyConfig] : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Design Kaggle+Zindi */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-blue-50/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Link href="/resources">
-            <Button variant="ghost" className="text-white hover:bg-white/10 mb-4">
+            <Button variant="ghost" className="text-slate-700 hover:bg-slate-100 mb-6">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour aux ressources
             </Button>
           </Link>
 
-          <div className="flex items-start gap-4">
-            {/* Icon/Image */}
-            <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
-              {resource.cover_image_url ? (
-                <img
-                  src={resource.cover_image_url}
-                  alt={resource.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <TypeIcon className="h-10 w-10 text-white/70" />
-              )}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left: Icon/Image */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 flex items-center justify-center aspect-square">
+                {resource.cover_image_url ? (
+                  <img
+                    src={resource.cover_image_url}
+                    alt={resource.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <TypeIcon className="h-32 w-32 text-green-500" />
+                )}
+              </div>
             </div>
 
-            {/* Info */}
-            <div className="flex-1">
-              <div className="flex flex-wrap gap-2 mb-3">
-                <Badge className={`${typeConfig.color} border-0`}>
-                  <TypeIcon className="h-3 w-3 mr-1" />
+            {/* Right: Info */}
+            <div className="lg:col-span-2">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Badge className={`${typeConfig.color} border-0 text-sm px-3 py-1`}>
+                  <TypeIcon className="h-3.5 w-3.5 mr-1.5" />
                   {typeConfig.label}
                 </Badge>
+                {resource.is_local && (
+                  <Badge className="bg-cyan-100 text-cyan-700 border-0 text-sm px-3 py-1">
+                    🇸🇳 Cours local
+                  </Badge>
+                )}
                 {difficultyLabel && (
-                  <Badge className={`${difficultyLabel.color} border-0`}>
+                  <Badge className={`${difficultyLabel.color} border-0 text-sm px-3 py-1`}>
                     {difficultyLabel.label}
                   </Badge>
                 )}
                 {resource.is_free && (
-                  <Badge className="bg-green-500 text-white border-0">
+                  <Badge className="bg-green-500 text-white border-0 text-sm px-3 py-1">
                     Gratuit
+                  </Badge>
+                )}
+                {resource.has_certificate && (
+                  <Badge className="bg-purple-100 text-purple-700 border-0 text-sm px-3 py-1">
+                    <Award className="h-3.5 w-3.5 mr-1.5" />
+                    Certificat
                   </Badge>
                 )}
               </div>
 
-              <h1 className="text-3xl font-bold mb-2">{resource.title}</h1>
-              <p className="text-slate-200 text-lg mb-4">
+              <h1 className="text-4xl font-bold text-slate-900 mb-3 leading-tight">{resource.title}</h1>
+              
+              {resource.source && (
+                <p className="text-lg text-slate-600 mb-4">
+                  Par <span className="font-semibold text-green-600">{resource.source}</span>
+                </p>
+              )}
+
+              <p className="text-slate-700 text-lg mb-6 leading-relaxed">
                 {resource.description || 'Aucune description disponible'}
               </p>
 
-              {/* Stats */}
-              <div className="flex items-center gap-6 text-sm text-slate-300">
-                <div className="flex items-center gap-1">
+              {/* Stats inline */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 mb-8">
+                <div className="flex items-center gap-2">
                   <Eye className="h-4 w-4" />
                   <span>{resource.views_count} vues</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <Heart className="h-4 w-4" />
                   <span>{resource.likes_count} likes</span>
                 </div>
-                <div className="flex items-center gap-1">
+                {resource.duration_hours && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>{resource.duration_hours}h de cours</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   <span>
                     {formatDistanceToNow(new Date(resource.created_at), {
@@ -159,39 +209,63 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ slug:
                   </span>
                 </div>
               </div>
+
+              {/* CTA Principal */}
+              {resource.url && (
+                resource.type === 'article' && resource.url.startsWith('/') ? (
+                  <Link href={resource.url}>
+                    <Button size="lg" className="bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/30 text-base px-8">
+                      <BookOpen className="h-5 w-5 mr-2" />
+                      Lire l'article
+                    </Button>
+                  </Link>
+                ) : (
+                  <a href={resource.url} target="_blank" rel="noopener noreferrer" className="inline-block">
+                    <Button size="lg" className="bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/30 text-base px-8">
+                      <ExternalLink className="h-5 w-5 mr-2" />
+                      Accéder à la ressource
+                    </Button>
+                  </a>
+                )
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Description complète */}
-            <Card>
-              <CardHeader>
-                <CardTitle>À propos de cette ressource</CardTitle>
-              </CardHeader>
-              <CardContent className="prose prose-slate max-w-none">
-                <p className="text-gray-700 whitespace-pre-line">
-                  {resource.description || 'Aucune description disponible pour cette ressource.'}
-                </p>
-              </CardContent>
-            </Card>
+            {/* What You'll Learn */}
+            {resource.curator_notes && (
+              <Card className="border-green-200">
+                <CardHeader className="bg-green-50">
+                  <CardTitle className="flex items-center gap-2 text-green-900">
+                    <GraduationCap className="h-5 w-5" />
+                    Ce que vous allez apprendre
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <p className="text-slate-700 whitespace-pre-line leading-relaxed">
+                    {resource.curator_notes}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Tags */}
             {resource.tags && resource.tags.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Tags</CardTitle>
+                  <CardTitle className="text-lg">Compétences couvertes</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {resource.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary">
+                    {resource.tags.map((tag: string, index: number) => (
+                      <Badge key={index} variant="outline" className="px-3 py-1.5 text-sm">
                         {tag}
                       </Badge>
                     ))}
@@ -200,118 +274,172 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ slug:
               </Card>
             )}
 
-            {/* Commentaires (à implémenter) */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Commentaires</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <p>Système de commentaires à venir</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button className="w-full" size="lg">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Accéder à la ressource
-                  </Button>
-                </a>
-                
-                <Button variant="outline" className="w-full">
-                  <Heart className="h-4 w-4 mr-2" />
-                  Ajouter aux favoris
-                </Button>
-
-                <Button variant="outline" className="w-full">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Partager
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Auteur */}
-            {resource.author && (
+            {/* Auteur / Curator */}
+            {resource.author && Array.isArray(resource.author) && resource.author[0] && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Auteur</CardTitle>
+                  <CardTitle className="text-lg">Ajouté par</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
-                      {resource.author.avatar_url ? (
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {resource.author[0].avatar_url ? (
                         <img
-                          src={resource.author.avatar_url}
-                          alt={resource.author.display_name}
+                          src={resource.author[0].avatar_url}
+                          alt={resource.author[0].display_name}
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <User className="h-6 w-6 text-slate-400" />
+                        <User className="h-7 w-7 text-slate-400" />
                       )}
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {resource.author.display_name}
+                    <div className="flex-1">
+                      <p className="font-semibold text-slate-900 text-lg">
+                        {resource.author[0].display_name}
                       </p>
-                      {(resource.author as any).role && (
-                        <p className="text-sm text-gray-500 capitalize">
-                          {(resource.author as any).role}
+                      {resource.author[0].role && (
+                        <p className="text-sm text-green-600 capitalize font-medium">
+                          {resource.author[0].role}
+                        </p>
+                      )}
+                      {resource.author[0].bio && (
+                        <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+                          {resource.author[0].bio}
                         </p>
                       )}
                     </div>
                   </div>
-                  {(resource.author as any).bio && (
-                    <p className="text-sm text-gray-600 mt-3">
-                      {(resource.author as any).bio}
-                    </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* CTA Card */}
+            {resource.url && (
+              <Card className="border-green-200 bg-green-50/50">
+                <CardContent className="p-6 space-y-3">
+                  {resource.type === 'article' && resource.url.startsWith('/') ? (
+                    <Link href={resource.url} className="block">
+                      <Button className="w-full bg-green-500 hover:bg-green-600 text-white shadow-lg" size="lg">
+                        <BookOpen className="h-5 w-5 mr-2" />
+                        Lire l'article
+                      </Button>
+                    </Link>
+                  ) : (
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block">
+                      <Button className="w-full bg-green-500 hover:bg-green-600 text-white shadow-lg" size="lg">
+                        <ExternalLink className="h-5 w-5 mr-2" />
+                        Commencer maintenant
+                      </Button>
+                    </a>
                   )}
+                  
+                  <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
+                    <Heart className="h-4 w-4 mr-2" />
+                    Sauvegarder
+                  </Button>
+
+                  <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Partager
+                  </Button>
                 </CardContent>
               </Card>
             )}
 
-            {/* Métadonnées */}
+            {/* Informations détaillées */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Informations</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Catégorie</span>
-                  <span className="font-medium">{resource.category}</span>
+              <CardContent className="space-y-4 text-sm">
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-slate-600 flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Type
+                  </span>
+                  <Badge className={`${typeConfig.color} border-0`}>
+                    {typeConfig.label}
+                  </Badge>
                 </div>
+                
+                {resource.source && (
+                  <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                    <span className="text-slate-600 flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Source
+                    </span>
+                    <span className="font-semibold text-green-600">
+                      {resource.source}
+                      {resource.type === 'article' && resource.is_local && (
+                        <Badge className="ml-2 bg-cyan-100 text-cyan-700 border-0 text-xs">
+                          🇸🇳 Communauté
+                        </Badge>
+                      )}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-slate-600 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4" />
+                    Catégorie
+                  </span>
+                  <span className="font-medium capitalize">{resource.category.replace('-', ' ')}</span>
+                </div>
+                
                 {resource.difficulty && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Niveau</span>
+                  <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                    <span className="text-slate-600 flex items-center gap-2">
+                      <Award className="h-4 w-4" />
+                      Niveau
+                    </span>
                     <Badge className={`${difficultyLabel?.color} border-0`}>
                       {difficultyLabel?.label}
                     </Badge>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Type</span>
-                  <span className="font-medium">{typeConfig.label}</span>
+
+                {resource.duration_hours && (
+                  <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                    <span className="text-slate-600 flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      Durée
+                    </span>
+                    <span className="font-medium">{resource.duration_hours}h</span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-slate-600">Langue</span>
+                  <span className="font-medium uppercase">{resource.language}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Publié le</span>
-                  <span className="font-medium">
-                    {format(new Date(resource.created_at), 'd MMMM yyyy', { locale: fr })}
-                  </span>
+
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-slate-600">Prix</span>
+                  <Badge className={resource.is_free ? "bg-green-500 text-white border-0" : "bg-orange-100 text-orange-800 border-0"}>
+                    {resource.is_free ? 'Gratuit' : (resource.price_fcfa ? `${resource.price_fcfa} FCFA` : 'Payant')}
+                  </Badge>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Prix</span>
-                  <span className="font-medium text-green-600">
-                    {resource.is_free ? 'Gratuit' : 'Payant'}
-                  </span>
+
+                {resource.has_certificate && (
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-slate-600">Certificat</span>
+                    <Badge className="bg-purple-100 text-purple-700 border-0">
+                      ✓ Disponible
+                    </Badge>
+                  </div>
+                )}
+
+                <div className="pt-4 border-t border-slate-200">
+                  <div className="text-xs text-slate-500">
+                    Ajouté {formatDistanceToNow(new Date(resource.created_at), {
+                      addSuffix: true,
+                      locale: fr
+                    })}
+                  </div>
                 </div>
               </CardContent>
             </Card>

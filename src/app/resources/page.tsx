@@ -145,7 +145,28 @@ export default function ResourcesPage() {
           
           {/* Sidebar - Filtres */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-4">
+            <div 
+              className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#86efac transparent'
+              }}
+            >
+              <style jsx>{`
+                div::-webkit-scrollbar {
+                  width: 6px;
+                }
+                div::-webkit-scrollbar-track {
+                  background: transparent;
+                }
+                div::-webkit-scrollbar-thumb {
+                  background: #bbf7d0;
+                  border-radius: 3px;
+                }
+                div::-webkit-scrollbar-thumb:hover {
+                  background: #86efac;
+                }
+              `}</style>
               <ResourceFilters
                 selectedCategory={selectedCategory}
                 selectedDifficulty={selectedDifficulty}
@@ -160,6 +181,45 @@ export default function ResourcesPage() {
 
           {/* Main Content - Liste des ressources */}
           <main className="lg:col-span-3">
+            {/* Filtres actifs */}
+            {(selectedCategory || selectedDifficulty || selectedType || searchQuery) && (
+              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-green-900">Filtres actifs</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearFilters}
+                    className="text-green-700 hover:text-green-900 hover:bg-green-100 h-7"
+                  >
+                    Tout effacer
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {searchQuery && (
+                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                      Recherche: "{searchQuery}"
+                    </Badge>
+                  )}
+                  {selectedCategory && (
+                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                      Catégorie: {selectedCategory}
+                    </Badge>
+                  )}
+                  {selectedDifficulty && (
+                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                      Difficulté: {selectedDifficulty}
+                    </Badge>
+                  )}
+                  {selectedType && (
+                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                      Type: {selectedType}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Toolbar - Tri & Stats */}
             <div className="flex items-center justify-between mb-6">
               <div className="text-sm text-slate-600">

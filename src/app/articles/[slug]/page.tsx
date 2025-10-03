@@ -9,10 +9,18 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, Heart, MessageCircle, Calendar, User, Eye, 
-  Share2, Bookmark, Edit, Trash2, Flag
+  Share2, Bookmark, Edit, Trash2, Flag, Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 import CommentsSection from '@/components/articles/comments-section'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface Article {
   id: string
@@ -38,7 +46,7 @@ interface Article {
 }
 
 export default function ArticleDetailPage() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const { slug } = useParams()
   const router = useRouter()
   const [article, setArticle] = useState<Article | null>(null)
@@ -48,6 +56,8 @@ export default function ArticleDetailPage() {
   const [commentsCount, setCommentsCount] = useState(0)
   const [viewsCount, setViewsCount] = useState(0)
   const [error, setError] = useState('')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const categories = [
     { value: 'ia', label: 'Intelligence Artificielle' },
@@ -234,6 +244,31 @@ export default function ArticleDetailPage() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!article || !user) return
+
+    try {
+      setDeleteLoading(true)
+      const supabase = createClient()
+
+      const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', article.id)
+        .eq('author_id', user.id)
+
+      if (error) throw error
+
+      router.push('/articles')
+    } catch (err: any) {
+      console.error('Error deleting article:', err)
+      setError('Erreur lors de la suppression de l\'article')
+    } finally {
+      setDeleteLoading(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
@@ -280,6 +315,8 @@ export default function ArticleDetailPage() {
   }
 
   const isAuthor = user?.id === article.author_id
+  const isAdmin = profile?.role === 'admin'
+  const canDelete = isAuthor || isAdmin
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -295,12 +332,22 @@ export default function ArticleDetailPage() {
             </Link>
             <div className="flex items-center gap-2">
               {isAuthor && (
-                <Link href={`/articles/${article.slug}/edit`}>
+                <Link href={`/articles/create?draft=${article.id}`}>
                   <Button variant="outline" size="sm">
                     <Edit className="h-4 w-4 mr-2" />
                     Modifier
                   </Button>
                 </Link>
+              )}
+              {canDelete && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer
+                </Button>
               )}
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
@@ -416,6 +463,44 @@ export default function ArticleDetailPage() {
           />
         </article>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+            <DialogDescription>
+              Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible et supprimera également tous les commentaires et likes associés.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={deleteLoading}
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Suppression...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer définitivement
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
