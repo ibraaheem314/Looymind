@@ -57,15 +57,15 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+          <Link href="/" className="flex items-center gap-1 group">
+            <div className="w-14 h-14 transition-all duration-200 group-hover:scale-105">
               <img 
                 src="/Logo.png" 
                 alt="LooyMind Logo" 
-                className="w-full h-full object-contain drop-shadow-md"
+                className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-cyan-700 to-slate-800 bg-clip-text text-transparent hidden sm:block tracking-tight">
+            <span className="text-xl font-bold text-slate-900 hidden sm:block tracking-tight">
               LooyMind
             </span>
           </Link>
@@ -180,7 +180,7 @@ export default function Header() {
                         <Brain className="h-4 w-4" />
                         Dashboard
                       </Link>
-                      {(profile?.role === 'admin' || profile?.role === 'moderator') && (
+                      {profile?.role === 'admin' && (
                         <Link
                           href="/admin/moderation"
                           className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors"
@@ -280,7 +280,7 @@ export default function Header() {
                       <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
                         <Link href="/dashboard">Dashboard</Link>
                       </Button>
-                      {(profile?.role === 'admin' || profile?.role === 'moderator') && (
+                      {profile?.role === 'admin' && (
                         <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
                           <Link href="/admin/moderation">Modération</Link>
                         </Button>
