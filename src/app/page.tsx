@@ -124,6 +124,83 @@ export default function HomePage() {
       </section>
 
       {/* ========================================
+          SECTION 0: C'est quoi LooyMind ? (Simple et clair)
+      ======================================== */}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Message principal */}
+          <div className="text-center mb-16 animate-fadeInUp">
+            <Badge className="bg-cyan-100 text-cyan-700 border-0 text-sm px-4 py-1.5 mb-4">
+              La Plateforme IA du Sénégal
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
+              <span className="text-cyan-500">LooyMind</span>, c'est quoi ?
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              La première plateforme francophone d'Afrique qui réunit <strong>compétitions IA</strong>, 
+              <strong> ressources d'apprentissage</strong>, <strong>projets collaboratifs</strong> et une 
+              <strong> communauté active</strong> — tout en un seul endroit.
+            </p>
+          </div>
+
+          {/* 4 Piliers - Version simple et claire */}
+          <div className="grid md:grid-cols-4 gap-6">
+            <Card className="text-center p-8 border-2 border-cyan-200 bg-cyan-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-cyan-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                <Trophy className="h-10 w-10 text-cyan-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">Compétitions</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Résolvez des défis IA réels, gagnez des prix en FCFA et prouvez vos compétences
+              </p>
+            </Card>
+
+            <Card className="text-center p-8 border-2 border-green-200 bg-green-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                <BookOpen className="h-10 w-10 text-green-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">Ressources</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Cours, tutoriels et outils 100% en français, adaptés au contexte africain
+              </p>
+            </Card>
+
+            <Card className="text-center p-8 border-2 border-purple-200 bg-purple-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                <Code className="h-10 w-10 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">Projets</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Partagez vos créations, construisez votre portfolio et trouvez des collaborateurs
+              </p>
+            </Card>
+
+            <Card className="text-center p-8 border-2 border-orange-200 bg-orange-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                <Users className="h-10 w-10 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">Communauté</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Connectez-vous avec mentors, talents et organisations du continent
+              </p>
+            </Card>
+          </div>
+
+          {/* One-liner mémorable */}
+          <div className="mt-16 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-slate-900">
+              <span className="text-cyan-500">Apprenez.</span>{' '}
+              <span className="text-purple-500">Pratiquez.</span>{' '}
+              <span className="text-orange-500">Excellez.</span>
+            </p>
+            <p className="text-slate-700 mt-4 text-xl font-semibold">
+              Votre tremplin vers une carrière en IA 🚀
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================
           SECTION 1: Le Problème (Texte Gauche + Stats Droite)
       ======================================== */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white" id="features">
@@ -305,42 +382,45 @@ export default function HomePage() {
               </p>
 
               <div className="space-y-5">
-                {[
-                  {
-                    icon: Trophy,
-                    title: 'Compétitions Réelles',
-                    desc: 'Résolvez des problèmes concrets et gagnez des prix en FCFA',
-                    color: 'cyan'
-                  },
-                  {
-                    icon: BookOpen,
-                    title: 'Ressources Francophones',
-                    desc: 'Cours, tutoriels et outils adaptés au contexte africain',
-                    color: 'green'
-                  },
-                  {
-                    icon: Users,
-                    title: 'Communauté Active',
-                    desc: 'Connectez-vous avec mentors, talents et organisations',
-                    color: 'orange'
-                  },
-                  {
-                    icon: Code,
-                    title: 'Projets Collaboratifs',
-                    desc: 'Partagez vos créations et trouvez des collaborateurs',
-                    color: 'purple'
-                  }
-                ].map((feature, index) => (
-                  <div key={index} className="flex items-start gap-4 group">
-                    <div className={`p-3 bg-${feature.color}-100 rounded-xl group-hover:scale-110 transition-transform`}>
-                      <feature.icon className={`h-6 w-6 text-${feature.color}-600`} />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 mb-1">{feature.title}</h3>
-                      <p className="text-slate-600 text-sm">{feature.desc}</p>
-                    </div>
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-cyan-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <Trophy className="h-6 w-6 text-cyan-600" />
                   </div>
-                ))}
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Compétitions Réelles</h3>
+                    <p className="text-slate-600 text-sm">Résolvez des problèmes concrets et gagnez des prix en FCFA</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-green-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <BookOpen className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Ressources Francophones</h3>
+                    <p className="text-slate-600 text-sm">Cours, tutoriels et outils adaptés au contexte africain</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-orange-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <Users className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Communauté Active</h3>
+                    <p className="text-slate-600 text-sm">Connectez-vous avec mentors, talents et organisations</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-purple-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <Code className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Projets Collaboratifs</h3>
+                    <p className="text-slate-600 text-sm">Partagez vos créations et trouvez des collaborateurs</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -424,22 +504,45 @@ export default function HomePage() {
               <div className="relative">
                 {/* Features grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { icon: Trophy, label: 'Compétitions', count: '25+', color: 'cyan' },
-                    { icon: BookOpen, label: 'Ressources', count: '100+', color: 'green' },
-                    { icon: Code, label: 'Projets', count: '150+', color: 'purple' },
-                    { icon: Users, label: 'Membres', count: '500+', color: 'orange' }
-                  ].map((item, index) => (
-                    <Card key={index} className={`bg-${item.color}-50 border-2 border-${item.color}-200 hover:shadow-xl transition-all hover:-translate-y-1`}>
-                      <CardContent className="p-6 text-center">
-                        <div className={`inline-flex p-4 bg-${item.color}-100 rounded-2xl mb-4`}>
-                          <item.icon className={`h-8 w-8 text-${item.color}-600`} />
-                        </div>
-                        <div className={`text-3xl font-bold text-${item.color}-600 mb-1`}>{item.count}</div>
-                        <div className="text-sm font-medium text-slate-700">{item.label}</div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  <Card className="bg-cyan-50 border-2 border-cyan-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-4 bg-cyan-100 rounded-2xl mb-4">
+                        <Trophy className="h-8 w-8 text-cyan-600" />
+                      </div>
+                      <div className="text-3xl font-bold text-cyan-600 mb-1">25+</div>
+                      <div className="text-sm font-medium text-slate-700">Compétitions</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-green-50 border-2 border-green-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-4 bg-green-100 rounded-2xl mb-4">
+                        <BookOpen className="h-8 w-8 text-green-600" />
+                      </div>
+                      <div className="text-3xl font-bold text-green-600 mb-1">100+</div>
+                      <div className="text-sm font-medium text-slate-700">Ressources</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-purple-50 border-2 border-purple-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-4 bg-purple-100 rounded-2xl mb-4">
+                        <Code className="h-8 w-8 text-purple-600" />
+                      </div>
+                      <div className="text-3xl font-bold text-purple-600 mb-1">150+</div>
+                      <div className="text-sm font-medium text-slate-700">Projets</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-orange-50 border-2 border-orange-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-4 bg-orange-100 rounded-2xl mb-4">
+                        <Users className="h-8 w-8 text-orange-600" />
+                      </div>
+                      <div className="text-3xl font-bold text-orange-600 mb-1">500+</div>
+                      <div className="text-sm font-medium text-slate-700">Membres</div>
+                    </CardContent>
+                  </Card>
                 </div>
 
                 {/* Floating testimonial */}

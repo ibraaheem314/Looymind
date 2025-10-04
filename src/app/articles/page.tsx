@@ -126,45 +126,51 @@ export default function ArticlesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Design Kaggle+Zindi */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Floating emojis */}
-          <div className="absolute top-10 left-[10%] text-4xl opacity-20">📚</div>
-          <div className="absolute top-24 right-[12%] text-3xl opacity-15">✍️</div>
-          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">💡</div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Hero Section - Design professionnel cohérent */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-cyan-50/20 to-blue-50/20">
+        {/* Decorative elements - subtils */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text content */}
             <div>
-              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Lisez. <br/>
-                <span className="text-blue-500">Apprenez.</span> <br/>
-                Partagez.
+              <Badge className="bg-blue-100 text-blue-700 border-0 text-sm px-4 py-1.5 mb-4">
+                Articles & Tutoriels
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Lisez, apprenez et<br/>
+                <span className="text-blue-500">partagez vos connaissances</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-6">
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
                 Découvrez des articles de qualité sur l'IA, la data science et les technologies émergentes au Sénégal.
               </p>
               
               {/* Stats inline */}
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">📖</div>
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-xs">🎓</div>
-                    <div className="w-8 h-8 rounded-full bg-cyan-100 border-2 border-white flex items-center justify-center text-xs">💬</div>
-                  </div>
-                  <span className="text-sm text-slate-600">{articles.length} articles</span>
+                  <BookOpen className="h-5 w-5 text-blue-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-blue-600">{articles.length}</strong> articles
+                  </span>
                 </div>
-                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-400">•</div>
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5 text-blue-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-blue-600">100%</strong> Francophone
+                  </span>
+                </div>
+                <div className="text-sm text-slate-400">•</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-blue-500">100%</span> Francophone
+                  Communauté active 🇸🇳
                 </div>
               </div>
 
               {user && (
                 <Link href="/articles/create">
-                  <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 border-0 shadow-lg shadow-blue-500/30">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30">
                     <Plus className="h-5 w-5 mr-2" />
                     Écrire un Article
                   </Button>
@@ -174,23 +180,36 @@ export default function ArticlesPage() {
 
             {/* Right: Article preview mockup */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
+              <Card className="bg-white border-2 border-blue-200 shadow-xl p-6 transform -rotate-1 hover:rotate-0 transition-all hover:shadow-2xl">
                 <Badge className="bg-blue-100 text-blue-700 border-0 text-xs mb-3">
                   Machine Learning
                 </Badge>
-                <h3 className="font-bold text-lg mb-2">Introduction au NLP avec Python</h3>
-                <p className="text-sm text-slate-600 mb-4">Découvrez les bases du traitement du langage naturel...</p>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">Introduction au NLP avec Python</h3>
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                  Découvrez les bases du traitement du langage naturel avec Python.
+                </p>
                 <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-100">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs">👤</div>
-                  <span className="text-xs text-slate-600">Dr. Aminata Diallo</span>
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                    <User className="h-3 w-3 text-blue-600" />
+                  </div>
+                  <span className="text-xs text-slate-600 font-medium">Dr. Aminata Diallo</span>
                   <Badge className="bg-blue-50 text-blue-700 border-0 text-xs ml-auto">Mentor</Badge>
                 </div>
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span>👁 456 vues</span>
-                  <span>❤ 67 likes</span>
-                  <span>💬 12 commentaires</span>
+                <div className="flex items-center justify-between text-xs text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Eye className="h-3 w-3" />
+                    456
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Heart className="h-3 w-3" />
+                    67
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3" />
+                    12
+                  </span>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
@@ -201,23 +220,23 @@ export default function ArticlesPage() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Input
               type="text"
               placeholder="Rechercher un article..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
             />
           </div>
 
           {/* Category Filter */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
+            <Filter className="h-4 w-4 text-slate-500" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               {categories.map(category => (
                 <option key={category.value} value={category.value}>

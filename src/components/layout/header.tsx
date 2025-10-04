@@ -53,15 +53,15 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="relative bg-white sticky top-0 z-50 shadow-md overflow-hidden border-b border-slate-100">
+    <header className="relative bg-white sticky top-0 z-[200] shadow-md overflow-visible border-b border-slate-100">
       {/* Animated mesh gradient background - subtil et moderne */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div className="absolute top-0 -left-4 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
         <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-200"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-400"></div>
       </div>
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 group">
@@ -105,7 +105,7 @@ export default function Header() {
                     
                     {activeDropdown === item.name && (
                       <div 
-                        className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-[100]"
+                        className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-[300]"
                         onMouseEnter={() => {
                           if (dropdownTimeout) {
                             clearTimeout(dropdownTimeout)

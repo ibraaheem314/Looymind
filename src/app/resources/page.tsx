@@ -47,45 +47,48 @@ export default function ResourcesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Design Kaggle+Zindi */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Floating emojis */}
-          <div className="absolute top-10 left-[10%] text-4xl opacity-20">📚</div>
-          <div className="absolute top-24 right-[12%] text-3xl opacity-15">🎓</div>
-          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">🔥</div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Hero Section - Design professionnel avec identité VERTE */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-green-50/20 to-emerald-50/20">
+        {/* Decorative elements - subtils en VERT */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-green-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text content */}
             <div>
-              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Apprenez. <br/>
-                <span className="text-green-500">Progressez.</span> <br/>
-                Excellez.
+              <Badge className="bg-green-100 text-green-700 border-0 text-sm px-4 py-1.5 mb-4">
+                Bibliothèque de Ressources
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Apprenez l'IA avec des <br/>
+                <span className="text-green-600">ressources de qualité</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-6">
-                Accédez à une bibliothèque complète de tutoriels, cours, vidéos et outils pour développer vos compétences en IA.
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                Cours, tutoriels, vidéos et outils soigneusement sélectionnés pour vous accompagner du niveau débutant à expert.
               </p>
               
               {/* Stats inline */}
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-white flex items-center justify-center text-xs">📖</div>
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-xs">🎥</div>
-                    <div className="w-8 h-8 rounded-full bg-teal-100 border-2 border-white flex items-center justify-center text-xs">🛠️</div>
-                  </div>
-                  <span className="text-sm text-slate-600">{resources.length} ressources</span>
+                  <BookOpen className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-green-600">{resources.length}</strong> ressources disponibles
+                  </span>
                 </div>
-                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-400">•</div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <span className="font-semibold text-green-600">100% Gratuit</span>
+                </div>
+                <div className="text-sm text-slate-400">•</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-green-500">Gratuit</span> & accessible
+                  En français 🇸🇳
                 </div>
               </div>
 
               {canCreateResource && (
                 <Link href="/resources/create">
-                  <Button size="lg" className="bg-green-500 text-white hover:bg-green-600 border-0 shadow-lg shadow-green-500/30">
+                  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/30">
                     <Plus className="h-5 w-5 mr-2" />
                     Ajouter une Ressource
                   </Button>
@@ -95,31 +98,33 @@ export default function ResourcesPage() {
 
             {/* Right: Resource preview mockup */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-lg">
-                    📚
+              <Card className="bg-white border-2 border-green-200 shadow-xl p-6 transform -rotate-1 hover:rotate-0 transition-all hover:shadow-2xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                    <BookOpen className="h-6 w-6 text-green-600" />
                   </div>
-                  <div>
-                    <Badge className="bg-green-100 text-green-700 border-0 text-xs mb-1">
+                  <div className="flex flex-col gap-1">
+                    <Badge className="bg-green-100 text-green-700 border-0 text-xs w-fit">
                       Cours
                     </Badge>
-                    <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs ml-1">
+                    <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs w-fit">
                       Débutant
                     </Badge>
                   </div>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Python pour la Data Science</h3>
-                <p className="text-sm text-slate-600 mb-4">Maîtrisez les bases de Python pour l'analyse de données...</p>
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-3 pb-3 border-b border-slate-100">
-                  <span>👁 1.2K vues</span>
-                  <span>⭐ 4.8/5</span>
-                  <span>⏱ 6h</span>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">Python pour la Data Science</h3>
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                  Maîtrisez les bases de Python pour l'analyse de données et le machine learning.
+                </p>
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
+                  <span className="flex items-center gap-1">👁 1.2K</span>
+                  <span className="flex items-center gap-1">⭐ 4.8</span>
+                  <span className="flex items-center gap-1">⏱ 6h</span>
                 </div>
-                <Button size="sm" className="w-full bg-green-500 text-white hover:bg-green-600 border-0">
+                <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white">
                   Commencer →
                 </Button>
-              </div>
+              </Card>
             </div>
           </div>
 
@@ -132,7 +137,7 @@ export default function ResourcesPage() {
                 placeholder="Rechercher une ressource (titre, description, tags...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-3 text-base border-slate-300 focus:border-green-500 focus:ring-green-500"
+                className="pl-12 pr-4 py-3 text-base border-2 border-slate-200 focus:border-green-500 focus:ring-green-500 shadow-sm"
               />
             </div>
           </div>
@@ -183,7 +188,7 @@ export default function ResourcesPage() {
           <main className="lg:col-span-3">
             {/* Filtres actifs */}
             {(selectedCategory || selectedDifficulty || selectedType || searchQuery) && (
-              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="mb-6 p-4 bg-green-50 rounded-lg border-2 border-green-200">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold text-green-900">Filtres actifs</h3>
                   <Button
@@ -234,11 +239,11 @@ export default function ResourcesPage() {
 
               {/* Tri */}
               <div className="flex items-center gap-2">
-                <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                <ArrowUpDown className="h-4 w-4 text-slate-500" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value}>

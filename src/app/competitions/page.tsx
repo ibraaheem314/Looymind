@@ -143,44 +143,50 @@ export default function CompetitionsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Design Kaggle+Zindi */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Floating emojis */}
-          <div className="absolute top-10 left-[10%] text-4xl opacity-20">🏆</div>
-          <div className="absolute top-24 right-[15%] text-3xl opacity-15">📊</div>
-          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">💡</div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Hero Section - Design professionnel cohérent */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-cyan-50/20 to-blue-50/20">
+        {/* Decorative elements - subtils */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text content */}
             <div>
-              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Résolvez. <br/>
-                <span className="text-cyan-500">Apprenez.</span> <br/>
-                Gagnez.
+              <Badge className="bg-cyan-100 text-cyan-700 border-0 text-sm px-4 py-1.5 mb-4">
+                Compétitions IA & Data Science
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Résolvez des défis réels,<br/>
+                <span className="text-cyan-500">gagnez des prix</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-6">
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
                 Participez à des compétitions de data science, développez vos compétences en IA et gagnez des prix en FCFA.
               </p>
               
               {/* Stats inline */}
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-cyan-100 border-2 border-white flex items-center justify-center text-xs">🔥</div>
-                    <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🎯</div>
-                    <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs">💎</div>
-                  </div>
-                  <span className="text-sm text-slate-600">{competitions.reduce((acc, c) => acc + c.participants_count, 0)}+ participants</span>
+                  <Users className="h-5 w-5 text-cyan-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-cyan-600">{competitions.reduce((acc, c) => acc + c.participants_count, 0)}+</strong> participants
+                  </span>
                 </div>
-                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-400">•</div>
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-cyan-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-cyan-600">{competitions.length}</strong> défis actifs
+                  </span>
+                </div>
+                <div className="text-sm text-slate-400">•</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-cyan-500">{competitions.length}</span> défis actifs
+                  Prix en <strong className="text-cyan-600">FCFA</strong> 🇸🇳
                 </div>
               </div>
 
               <Link href="/competitions/create">
-                <Button size="lg" className="bg-cyan-500 text-white hover:bg-cyan-600 border-0 shadow-lg shadow-cyan-500/30">
+                <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700 text-white shadow-lg shadow-cyan-500/30">
                   <Trophy className="h-5 w-5 mr-2" />
                   Créer une Compétition
                 </Button>
@@ -189,24 +195,36 @@ export default function CompetitionsPage() {
 
             {/* Right: Competition preview mockup */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
+              <Card className="bg-white border-2 border-cyan-200 shadow-xl p-6 transform -rotate-1 hover:rotate-0 transition-all hover:shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
-                  <Badge className="bg-orange-100 text-orange-700 border-0">
-                    🔥 Bientôt
+                  <Badge className="bg-orange-100 text-orange-700 border-0 text-xs">
+                    🔥 7j restants
                   </Badge>
-                  <span className="text-xs text-slate-500">7j restants</span>
+                  <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                    Actif
+                  </Badge>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Prédiction Prix Immobilier Dakar</h3>
-                <p className="text-sm text-slate-600 mb-4">Utilisez le ML pour prédire les prix...</p>
-                <div className="flex items-center justify-between text-sm text-slate-500 mb-3">
-                  <span>🎓 Débutant</span>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">Prédiction Prix Immobilier Dakar</h3>
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                  Utilisez le ML pour prédire les prix de l'immobilier à Dakar.
+                </p>
+                <div className="flex items-center justify-between text-sm mb-4 pb-4 border-b border-slate-100">
+                  <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-0 text-xs">
+                    Débutant
+                  </Badge>
                   <span className="font-semibold text-green-600">500K FCFA</span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-400">
-                  <span>👥 123 participants</span>
-                  <span>📊 245 soumissions</span>
+                <div className="flex items-center gap-4 text-xs text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3 w-3" />
+                    123
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Target className="h-3 w-3" />
+                    245
+                  </span>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
@@ -221,12 +239,12 @@ export default function CompetitionsPage() {
             {/* Recherche */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   placeholder="Rechercher une compétition..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-2 border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 shadow-sm"
                 />
               </div>
             </div>
@@ -236,7 +254,7 @@ export default function CompetitionsPage() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               >
                 <option value="all">Toutes catégories</option>
                 {CATEGORIES.map(cat => (
@@ -247,7 +265,7 @@ export default function CompetitionsPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               >
                 <option value="all">Tous statuts</option>
                 <option value="active">Actif</option>

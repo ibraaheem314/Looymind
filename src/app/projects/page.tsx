@@ -156,44 +156,50 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Design Kaggle+Zindi */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Floating emojis */}
-          <div className="absolute top-12 left-[8%] text-4xl opacity-20">💻</div>
-          <div className="absolute top-20 right-[12%] text-3xl opacity-15">🚀</div>
-          <div className="absolute bottom-20 left-[25%] text-3xl opacity-15">⚡</div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Hero Section - Design professionnel cohérent */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-cyan-50/20 to-blue-50/20">
+        {/* Decorative elements - subtils */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text content */}
             <div>
-              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Créez. <br/>
-                <span className="text-purple-500">Partagez.</span> <br/>
-                Collaborez.
+              <Badge className="bg-purple-100 text-purple-700 border-0 text-sm px-4 py-1.5 mb-4">
+                Projets & Collaborations
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Partagez vos projets,<br/>
+                <span className="text-purple-500">trouvez des collaborateurs</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-6">
-                Explorez les projets IA innovants du Sénégal, partagez vos créations et trouvez des collaborateurs.
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                Explorez les projets IA innovants du Sénégal, partagez vos créations et construisez ensemble.
               </p>
               
               {/* Stats inline */}
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs">🎨</div>
-                    <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🤖</div>
-                    <div className="w-8 h-8 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-xs">📱</div>
-                  </div>
-                  <span className="text-sm text-slate-600">{projects.length} projets</span>
+                  <Code className="h-5 w-5 text-purple-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-purple-600">{projects.length}</strong> projets
+                  </span>
                 </div>
-                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-400">•</div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-purple-500" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-purple-600">Open-source</strong>
+                  </span>
+                </div>
+                <div className="text-sm text-slate-400">•</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-purple-500">Open-source</span> & collaboratifs
+                  Collaboratif 🇸🇳
                 </div>
               </div>
 
               <Link href="/projects/create">
-                <Button size="lg" className="bg-purple-500 text-white hover:bg-purple-600 border-0 shadow-lg shadow-purple-500/30">
+                <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/30">
                   <Plus className="h-5 w-5 mr-2" />
                   Créer un Projet
                 </Button>
@@ -202,28 +208,40 @@ export default function ProjectsPage() {
 
             {/* Right: Project preview mockup */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden transform -rotate-1 hover:rotate-0 transition-transform">
-                <div className="h-40 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center text-6xl">
-                  🤖
+              <Card className="bg-white border-2 border-purple-200 shadow-xl overflow-hidden transform -rotate-1 hover:rotate-0 transition-all hover:shadow-2xl">
+                <div className="h-40 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                  <Brain className="h-20 w-20 text-purple-400" />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
-                      🧠 IA
+                      <Brain className="h-3 w-3 mr-1" />
+                      IA
                     </Badge>
                     <Badge className="bg-green-100 text-green-700 border-0 text-xs">
                       Actif
                     </Badge>
                   </div>
-                  <h3 className="font-bold text-lg mb-2">Assistant IA en Wolof</h3>
-                  <p className="text-sm text-slate-600 mb-4">Chatbot conversationnel pour les langues locales...</p>
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>👁 234 vues</span>
-                    <span>❤ 45 likes</span>
-                    <span>👥 3 collaborateurs</span>
+                  <h3 className="font-bold text-lg text-slate-900 mb-2">Assistant IA en Wolof</h3>
+                  <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                    Chatbot conversationnel pour les langues locales sénégalaises.
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <Eye className="h-3 w-3" />
+                      234
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Heart className="h-3 w-3" />
+                      45
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      3
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
@@ -238,12 +256,12 @@ export default function ProjectsPage() {
             {/* Recherche */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   placeholder="Rechercher des projets..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-2 border-slate-200 focus:border-purple-500 focus:ring-purple-500 shadow-sm"
                 />
               </div>
             </div>
@@ -253,7 +271,7 @@ export default function ProjectsPage() {
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="px-3 py-2 py-1 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="all">Tous les types</option>
                 {PROJECT_TYPES.map(type => (
@@ -264,7 +282,7 @@ export default function ProjectsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="recent">Plus récents</option>
                 <option value="popular">Plus populaires</option>

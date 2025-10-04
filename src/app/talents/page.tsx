@@ -100,44 +100,50 @@ export default function TalentsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Design Kaggle+Zindi */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-amber-50/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Floating emojis */}
-          <div className="absolute top-10 left-[10%] text-4xl opacity-20">👥</div>
-          <div className="absolute top-24 right-[12%] text-3xl opacity-15">🏆</div>
-          <div className="absolute bottom-16 left-[20%] text-3xl opacity-15">⭐</div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Hero Section - Design professionnel avec identité ORANGE */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-orange-50/20 to-amber-50/20">
+        {/* Decorative elements - subtils en ORANGE */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text content */}
             <div>
-              <h1 className="text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Rencontrez. <br/>
-                <span className="text-orange-500">Collaborez.</span> <br/>
-                Progressez.
+              <Badge className="bg-orange-100 text-orange-700 border-0 text-sm px-4 py-1.5 mb-4">
+                Annuaire des Talents
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                Connectez-vous avec les<br/>
+                <span className="text-orange-600">meilleurs talents IA</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-6">
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
                 Découvrez les meilleurs data scientists du Sénégal, leurs classements et rejoignez-les dans des projets collaboratifs.
               </p>
               
               {/* Stats inline */}
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-xs">🥇</div>
-                    <div className="w-8 h-8 rounded-full bg-amber-100 border-2 border-white flex items-center justify-center text-xs">🥈</div>
-                    <div className="w-8 h-8 rounded-full bg-yellow-100 border-2 border-white flex items-center justify-center text-xs">🥉</div>
-                  </div>
-                  <span className="text-sm text-slate-600">500+ membres actifs</span>
+                  <Users className="h-5 w-5 text-orange-600" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-orange-600">500+</strong> membres actifs
+                  </span>
                 </div>
-                <div className="text-sm text-slate-400">|</div>
+                <div className="text-sm text-slate-400">•</div>
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-orange-600" />
+                  <span className="text-sm font-medium text-slate-700">
+                    <strong className="text-orange-600">Classement</strong> en temps réel
+                  </span>
+                </div>
+                <div className="text-sm text-slate-400">•</div>
                 <div className="text-sm text-slate-600">
-                  <span className="font-semibold text-orange-500">Classement</span> en temps réel
+                  Talents vérifiés 🇸🇳
                 </div>
               </div>
 
               <Link href="/auth/register">
-                <Button size="lg" className="bg-orange-500 text-white hover:bg-orange-600 border-0 shadow-lg shadow-orange-500/30">
+                <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-500/30">
                   <Users className="h-5 w-5 mr-2" />
                   Rejoindre la Communauté
                 </Button>
@@ -146,38 +152,44 @@ export default function TalentsPage() {
 
             {/* Right: Leaderboard preview mockup */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 transform rotate-1 hover:rotate-0 transition-transform">
+              <Card className="bg-white border-2 border-orange-200 shadow-xl p-6 transform -rotate-1 hover:rotate-0 transition-all hover:shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-lg">🏆 Top Compétiteurs</h3>
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-orange-600" />
+                    <h3 className="font-bold text-lg text-slate-900">Top Compétiteurs</h3>
+                  </div>
                   <Badge className="bg-orange-100 text-orange-700 border-0 text-xs">
                     Cette semaine
                   </Badge>
                 </div>
                 
                 {/* Mini leaderboard */}
-                <div className="space-y-3">
+                <div className="space-y-3 mb-4">
                   {[
-                    { rank: 1, name: 'Moussa N.', points: '8.9K', emoji: '🥇' },
-                    { rank: 2, name: 'Aminata D.', points: '7.2K', emoji: '🥈' },
-                    { rank: 3, name: 'Ibrahima S.', points: '6.5K', emoji: '🥉' }
+                    { rank: 1, name: 'Moussa N.', points: '8.9K' },
+                    { rank: 2, name: 'Aminata D.', points: '7.2K' },
+                    { rank: 3, name: 'Ibrahima S.', points: '6.5K' }
                   ].map((user) => (
-                    <div key={user.rank} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                    <div key={user.rank} className={`flex items-center justify-between p-2 rounded-lg ${user.rank === 1 ? 'bg-orange-50' : 'bg-slate-50'}`}>
                       <div className="flex items-center gap-3">
-                        <span className="text-xl">{user.emoji}</span>
+                        <span className={`text-sm font-bold ${user.rank === 1 ? 'text-orange-600' : 'text-slate-600'}`}>#{user.rank}</span>
+                        <div className="w-8 h-8 rounded-full bg-slate-200"></div>
                         <div>
-                          <div className="font-medium text-sm">{user.name}</div>
-                          <div className="text-xs text-slate-500">Rang #{user.rank}</div>
+                          <div className="font-medium text-sm text-slate-900">{user.name}</div>
+                          <div className="text-xs text-slate-500">{user.points} pts</div>
                         </div>
                       </div>
-                      <div className="font-bold text-orange-600">{user.points}</div>
+                      {user.rank === 1 && (
+                        <Award className="h-4 w-4 text-orange-600" />
+                      )}
                     </div>
                   ))}
                 </div>
                 
-                <Button size="sm" className="w-full mt-4 bg-orange-500 text-white hover:bg-orange-600 border-0">
+                <Button size="sm" className="w-full bg-orange-600 text-white hover:bg-orange-700">
                   Voir le classement complet →
                 </Button>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
@@ -223,11 +235,11 @@ export default function TalentsPage() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
               placeholder="Rechercher un membre par nom ou compétence..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-sm"
             />
           </div>
 
