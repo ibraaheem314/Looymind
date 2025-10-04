@@ -53,8 +53,15 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-lg bg-white/95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="relative bg-white sticky top-0 z-50 shadow-md overflow-hidden border-b border-slate-100">
+      {/* Animated mesh gradient background - subtil et moderne */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-200"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-400"></div>
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 group">
@@ -207,16 +214,16 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild>
-               <Link href="/auth/login">
-                 Sign in
-               </Link>
-             </Button>
-                <Button size="sm" className="bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
-               <Link href="/auth/register">
-                 Join
-               </Link>
-             </Button>
+                <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100" asChild>
+                  <Link href="/auth/login">
+                    Se connecter
+                  </Link>
+                </Button>
+                <Button size="sm" className="bg-[#2d5986] hover:bg-[#1e3a5f] text-white shadow-md" asChild>
+                  <Link href="/auth/register">
+                    S'inscrire
+                  </Link>
+                </Button>
               </>
             )}
            </div>
@@ -300,14 +307,14 @@ export default function Header() {
                   </div>
                 ) : (
                    <div className="flex items-center px-3 space-x-3">
-                    <Button variant="ghost" size="sm" className="flex-1" asChild>
+                    <Button variant="ghost" size="sm" className="flex-1 text-slate-700 hover:text-slate-900 hover:bg-slate-100" asChild>
                        <Link href="/auth/login">
-                         Sign in
+                         Se connecter
                        </Link>
                      </Button>
-                    <Button size="sm" className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white shadow-md" asChild>
+                    <Button size="sm" className="flex-1 bg-[#2d5986] hover:bg-[#1e3a5f] text-white shadow-md" asChild>
                        <Link href="/auth/register">
-                         Join
+                         S'inscrire
                        </Link>
                      </Button>
                    </div>

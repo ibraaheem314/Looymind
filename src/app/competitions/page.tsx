@@ -123,7 +123,7 @@ export default function CompetitionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
             <div className="h-10 bg-gray-100 rounded w-1/3"></div>
@@ -142,7 +142,7 @@ export default function CompetitionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Design Kaggle+Zindi */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -171,17 +171,11 @@ export default function CompetitionsPage() {
                     <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs">🎯</div>
                     <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs">💎</div>
                   </div>
-                  <span className="text-sm text-slate-600">
-                    {competitions.length > 0 
-                      ? `${competitions.reduce((acc, c) => acc + c.participants_count, 0)} participants` 
-                      : 'Objectif : 50+ compétitions'}
-                  </span>
+                  <span className="text-sm text-slate-600">{competitions.reduce((acc, c) => acc + c.participants_count, 0)}+ participants</span>
                 </div>
                 <div className="text-sm text-slate-400">|</div>
                 <div className="text-sm text-slate-600">
-                  {competitions.length > 0 
-                    ? <><span className="font-semibold text-cyan-500">{competitions.length}</span> défis actifs</>
-                    : 'Bientôt disponible'}
+                  <span className="font-semibold text-cyan-500">{competitions.length}</span> défis actifs
                 </div>
               </div>
 

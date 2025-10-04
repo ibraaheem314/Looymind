@@ -46,7 +46,7 @@ export default function ResourcesPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Design Kaggle+Zindi */}
       <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
