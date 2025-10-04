@@ -22,7 +22,7 @@ export default function HomePage() {
       {/* ========================================
           HERO SECTION - Bleu nuit profond du logo (plus sombre)
       ======================================== */}
-      <section className="relative bg-gradient-to-br from-[#1e3a5f] via-[#2d5986] to-[#1e3a5f] overflow-hidden">
+      <section className="relative bg-[#0f172a] overflow-hidden">
         {/* Floating elements - Subtils et élégants */}
         <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-blob animation-delay-200" />
@@ -37,7 +37,7 @@ export default function HomePage() {
             </div>
 
             {/* Main headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] text-white animate-fadeInUp">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.2] text-white animate-fadeInUp">
               Devenez un expert en
               <span className="block mt-3 bg-gradient-to-r from-cyan-300 via-blue-200 to-blue-300 bg-clip-text text-transparent">
                 Intelligence Artificielle
@@ -134,7 +134,7 @@ export default function HomePage() {
               La Plateforme IA du Sénégal
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
-              <span className="text-cyan-500">LooyMind</span>, c'est quoi ?
+              <span className="text-cyan-600">LooyMind</span>, c'est quoi ?
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               La première plateforme francophone d'Afrique qui réunit <strong>compétitions IA</strong>, 
@@ -143,11 +143,11 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 4 Piliers - Version simple et claire */}
+          {/* 4 Piliers - Style Andakia (3 couleurs max: bleu nuit + cyan + blanc) */}
           <div className="grid md:grid-cols-4 gap-6">
-            <Card className="text-center p-8 border-2 border-cyan-200 bg-cyan-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-cyan-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
-                <Trophy className="h-10 w-10 text-cyan-600" />
+            <Card className="text-center p-8 bg-white border border-slate-200 hover:shadow-lg hover:border-cyan-300 transition-all group">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-50 rounded-xl mb-6 group-hover:bg-cyan-100 transition-colors">
+                <Trophy className="h-8 w-8 text-cyan-600" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Compétitions</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
@@ -155,9 +155,9 @@ export default function HomePage() {
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-2 border-green-200 bg-green-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
-                <BookOpen className="h-10 w-10 text-green-600" />
+            <Card className="text-center p-8 bg-white border border-slate-200 hover:shadow-lg hover:border-cyan-300 transition-all group">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-50 rounded-xl mb-6 group-hover:bg-cyan-100 transition-colors">
+                <BookOpen className="h-8 w-8 text-cyan-600" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Ressources</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
@@ -165,9 +165,9 @@ export default function HomePage() {
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-2 border-purple-200 bg-purple-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
-                <Code className="h-10 w-10 text-purple-600" />
+            <Card className="text-center p-8 bg-white border border-slate-200 hover:shadow-lg hover:border-cyan-300 transition-all group">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-50 rounded-xl mb-6 group-hover:bg-cyan-100 transition-colors">
+                <Code className="h-8 w-8 text-cyan-600" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Projets</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
@@ -175,9 +175,9 @@ export default function HomePage() {
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-2 border-orange-200 bg-orange-50/30 hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
-                <Users className="h-10 w-10 text-orange-600" />
+            <Card className="text-center p-8 bg-white border border-slate-200 hover:shadow-lg hover:border-cyan-300 transition-all group">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-50 rounded-xl mb-6 group-hover:bg-cyan-100 transition-colors">
+                <Users className="h-8 w-8 text-cyan-600" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Communauté</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
@@ -186,14 +186,12 @@ export default function HomePage() {
             </Card>
           </div>
 
-          {/* One-liner mémorable */}
+          {/* One-liner mémorable - Simplifié */}
           <div className="mt-16 text-center">
             <p className="text-2xl md:text-3xl font-bold text-slate-900">
-              <span className="text-cyan-500">Apprenez.</span>{' '}
-              <span className="text-purple-500">Pratiquez.</span>{' '}
-              <span className="text-orange-500">Excellez.</span>
+              Apprenez. Pratiquez. <span className="text-cyan-600">Excellez.</span>
             </p>
-            <p className="text-slate-700 mt-4 text-xl font-semibold">
+            <p className="text-slate-600 mt-4 text-lg">
               Votre tremplin vers une carrière en IA 🚀
             </p>
           </div>
@@ -210,13 +208,13 @@ export default function HomePage() {
             {/* Texte à gauche */}
             <div className="animate-slideInLeft">
               <div className="inline-block mb-4">
-                <Badge className="bg-orange-100 text-orange-700 border-0 text-sm px-4 py-1.5">
+                <Badge className="bg-cyan-100 text-cyan-700 border-0 text-sm px-4 py-1.5">
                   L'Opportunité
                 </Badge>
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                L'IA en Afrique a besoin de <span className="text-orange-500">champions francophones</span>
+                L'IA en Afrique a besoin de <span className="text-cyan-600">champions francophones</span>
               </h2>
               
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
@@ -231,15 +229,15 @@ export default function HomePage() {
                   'Pas de plateforme centralisée pour la communauté'
                 ].map((problem, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="mt-1 p-1 bg-orange-100 rounded-full">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                    <div className="mt-1 p-1 bg-cyan-100 rounded-full">
+                      <div className="w-2 h-2 bg-cyan-600 rounded-full" />
                     </div>
                     <p className="text-slate-700">{problem}</p>
                   </div>
                 ))}
               </div>
 
-              <p className="text-lg font-semibold text-orange-600">
+              <p className="text-lg font-semibold text-cyan-600">
                 → C'est votre opportunité de briller ! 🚀
               </p>
             </div>
@@ -260,24 +258,24 @@ export default function HomePage() {
                         <div className="text-4xl font-bold text-cyan-600 mb-2">5%</div>
                         <div className="text-sm text-slate-600">Contenu francophone</div>
                       </div>
-                      <div className="text-center p-6 bg-blue-50 rounded-xl border border-blue-100">
-                        <div className="text-4xl font-bold text-blue-600 mb-2">12</div>
+                      <div className="text-center p-6 bg-cyan-50 rounded-xl border border-cyan-100">
+                        <div className="text-4xl font-bold text-cyan-600 mb-2">12</div>
                         <div className="text-sm text-slate-600">Plateformes locales</div>
                       </div>
-                      <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-100">
-                        <div className="text-4xl font-bold text-purple-600 mb-2">60%</div>
+                      <div className="text-center p-6 bg-cyan-50 rounded-xl border border-cyan-100">
+                        <div className="text-4xl font-bold text-cyan-600 mb-2">60%</div>
                         <div className="text-sm text-slate-600">Talents isolés</div>
                       </div>
-                      <div className="text-center p-6 bg-orange-50 rounded-xl border border-orange-100">
-                        <div className="text-4xl font-bold text-orange-600 mb-2">3x</div>
+                      <div className="text-center p-6 bg-cyan-50 rounded-xl border border-cyan-100">
+                        <div className="text-4xl font-bold text-cyan-600 mb-2">3x</div>
                         <div className="text-sm text-slate-600">Potentiel de croissance</div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Floating badge */}
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-full shadow-lg transform rotate-3">
+                {/* Floating badge - Cyan */}
+                <div className="absolute -top-4 -right-4 bg-cyan-600 text-white px-6 py-3 rounded-full shadow-lg transform rotate-3">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5" />
                     <span className="font-bold">Opportunité</span>
@@ -374,7 +372,7 @@ export default function HomePage() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                <span className="text-cyan-500">LooyMind</span>, votre plateforme tout-en-un
+                <span className="text-cyan-600">LooyMind</span>, votre plateforme tout-en-un
               </h2>
               
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
@@ -393,8 +391,8 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="p-3 bg-green-100 rounded-xl group-hover:scale-110 transition-transform">
-                    <BookOpen className="h-6 w-6 text-green-600" />
+                  <div className="p-3 bg-cyan-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <BookOpen className="h-6 w-6 text-cyan-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 mb-1">Ressources Francophones</h3>
@@ -403,8 +401,8 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="p-3 bg-orange-100 rounded-xl group-hover:scale-110 transition-transform">
-                    <Users className="h-6 w-6 text-orange-600" />
+                  <div className="p-3 bg-cyan-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <Users className="h-6 w-6 text-cyan-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 mb-1">Communauté Active</h3>
@@ -413,8 +411,8 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="p-3 bg-purple-100 rounded-xl group-hover:scale-110 transition-transform">
-                    <Code className="h-6 w-6 text-purple-600" />
+                  <div className="p-3 bg-cyan-100 rounded-xl group-hover:scale-110 transition-transform">
+                    <Code className="h-6 w-6 text-cyan-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 mb-1">Projets Collaboratifs</h3>
@@ -447,7 +445,7 @@ export default function HomePage() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                Tout ce dont vous avez besoin pour <span className="text-cyan-500">progresser</span>
+                Tout ce dont vous avez besoin pour <span className="text-cyan-600">progresser</span>
               </h2>
               
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
@@ -469,11 +467,11 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-green-200 bg-green-50/50 hover:shadow-lg transition-shadow">
+                <Card className="border-2 border-cyan-200 bg-cyan-50/50 hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-green-100 rounded-xl">
-                        <GraduationCap className="h-6 w-6 text-green-600" />
+                      <div className="p-3 bg-cyan-100 rounded-xl">
+                        <GraduationCap className="h-6 w-6 text-cyan-600" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-bold text-slate-900 mb-2">Apprentissage Structuré</h3>
@@ -483,11 +481,11 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-orange-200 bg-orange-50/50 hover:shadow-lg transition-shadow">
+                <Card className="border-2 border-cyan-200 bg-cyan-50/50 hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-orange-100 rounded-xl">
-                        <MessageSquare className="h-6 w-6 text-orange-600" />
+                      <div className="p-3 bg-cyan-100 rounded-xl">
+                        <MessageSquare className="h-6 w-6 text-cyan-600" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-bold text-slate-900 mb-2">Communauté & Support</h3>
@@ -502,8 +500,9 @@ export default function HomePage() {
             {/* Preview à droite */}
             <div className="animate-slideInRight">
               <div className="relative">
-                {/* Features grid */}
+                {/* Features grid - Structuration optimale: Cyan (ligne 1) + Slate (ligne 2) */}
                 <div className="grid grid-cols-2 gap-4">
+                  {/* Ligne 1: Contenus principaux (Cyan) */}
                   <Card className="bg-cyan-50 border-2 border-cyan-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex p-4 bg-cyan-100 rounded-2xl mb-4">
@@ -514,32 +513,33 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-green-50 border-2 border-green-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Card className="bg-cyan-50 border-2 border-cyan-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
-                      <div className="inline-flex p-4 bg-green-100 rounded-2xl mb-4">
-                        <BookOpen className="h-8 w-8 text-green-600" />
+                      <div className="inline-flex p-4 bg-cyan-100 rounded-2xl mb-4">
+                        <BookOpen className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-green-600 mb-1">100+</div>
+                      <div className="text-3xl font-bold text-cyan-600 mb-1">100+</div>
                       <div className="text-sm font-medium text-slate-700">Ressources</div>
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-purple-50 border-2 border-purple-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                  {/* Ligne 2: Communauté (Slate) */}
+                  <Card className="bg-slate-50 border-2 border-slate-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
-                      <div className="inline-flex p-4 bg-purple-100 rounded-2xl mb-4">
-                        <Code className="h-8 w-8 text-purple-600" />
+                      <div className="inline-flex p-4 bg-slate-100 rounded-2xl mb-4">
+                        <Code className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-purple-600 mb-1">150+</div>
+                      <div className="text-3xl font-bold text-slate-700 mb-1">150+</div>
                       <div className="text-sm font-medium text-slate-700">Projets</div>
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-orange-50 border-2 border-orange-200 hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Card className="bg-slate-50 border-2 border-slate-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
-                      <div className="inline-flex p-4 bg-orange-100 rounded-2xl mb-4">
-                        <Users className="h-8 w-8 text-orange-600" />
+                      <div className="inline-flex p-4 bg-slate-100 rounded-2xl mb-4">
+                        <Users className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-orange-600 mb-1">500+</div>
+                      <div className="text-3xl font-bold text-slate-700 mb-1">500+</div>
                       <div className="text-sm font-medium text-slate-700">Membres</div>
                     </CardContent>
                   </Card>
@@ -583,8 +583,9 @@ export default function HomePage() {
             {/* Visuel communauté à gauche */}
             <div className="animate-slideInLeft">
               <div className="relative">
-                {/* Community stats */}
+                {/* Community stats - Structuration optimale: Cyan (ligne 1) + Slate + Bleu Nuit (ligne 2) */}
                 <div className="grid grid-cols-2 gap-4">
+                  {/* Ligne 1: Métriques de croissance (Cyan) */}
                   <Card className="bg-cyan-50 border-2 border-cyan-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
                       <Brain className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
@@ -592,24 +593,25 @@ export default function HomePage() {
                       <div className="text-sm text-slate-600">Talents Formés</div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-blue-50 border-2 border-blue-100 hover:shadow-lg transition-shadow">
+                  <Card className="bg-cyan-50 border-2 border-cyan-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
-                      <Trophy className="h-10 w-10 text-blue-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-blue-600 mb-1">25</div>
+                      <Trophy className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
+                      <div className="text-4xl font-bold text-cyan-600 mb-1">25</div>
                       <div className="text-sm text-slate-600">Compétitions</div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-purple-50 border-2 border-purple-100 hover:shadow-lg transition-shadow">
+                  {/* Ligne 2: Projets (Slate) + Note importante (Bleu Nuit) */}
+                  <Card className="bg-slate-50 border-2 border-slate-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
-                      <Rocket className="h-10 w-10 text-purple-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-purple-600 mb-1">150</div>
+                      <Rocket className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
+                      <div className="text-4xl font-bold text-slate-700 mb-1">150</div>
                       <div className="text-sm text-slate-600">Projets Lancés</div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-orange-50 border-2 border-orange-100 hover:shadow-lg transition-shadow">
+                  <Card className="bg-[#2d5986]/10 border-2 border-[#2d5986]/20 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
-                      <Star className="h-10 w-10 text-orange-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-orange-600 mb-1">4.9</div>
+                      <Star className="h-10 w-10 text-[#2d5986] mx-auto mb-3" />
+                      <div className="text-4xl font-bold text-[#2d5986] mb-1">4.9</div>
                       <div className="text-sm text-slate-600">Note Moyenne</div>
                     </CardContent>
                   </Card>
@@ -635,7 +637,7 @@ export default function HomePage() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                Une communauté qui <span className="text-cyan-500">transforme des vies</span>
+                Une communauté qui <span className="text-cyan-600">transforme des vies</span>
               </h2>
               
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
@@ -692,7 +694,7 @@ export default function HomePage() {
             </div>
             
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Prêt à propulser votre carrière en <span className="text-cyan-500">IA</span> ?
+              Prêt à propulser votre carrière en <span className="text-cyan-600">IA</span> ?
             </h2>
             
             <p className="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed max-w-3xl mx-auto">
