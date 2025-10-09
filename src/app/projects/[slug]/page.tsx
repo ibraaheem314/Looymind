@@ -12,10 +12,11 @@ import {
   Calendar, Clock, Code, Smartphone, Monitor, Brain, Database, FlaskConical,
   Share2, Bookmark, Star, GitBranch, Download, Play, Pause, Settings,
   ChevronLeft, ChevronRight, Image as ImageIcon, Video, FileText, Mail, User,
-  Trash2, Loader2, Edit, ArrowLeft
+  Trash2, Loader2, Edit, ArrowLeft, Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import ModerationModal from '@/components/moderation/moderation-modal'
 import { fr } from 'date-fns/locale'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
@@ -89,6 +90,7 @@ export default function ProjectDetailPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showModerateModal, setShowModerateModal] = useState(false)
   
   const { user, profile } = useAuth()
   const supabase = createClient()
@@ -518,14 +520,25 @@ export default function ProjectDetailPage() {
                 )}
 
                 {profile?.role === 'admin' && user?.id !== project.author_id && (
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => setShowDeleteDialog(true)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Supprimer (Admin)
-                  </Button>
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowModerateModal(true)}
+                      className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                    >
+                      <Shield className="h-4 w-4 mr-1" />
+                      Modérer
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => setShowDeleteDialog(true)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Supprimer
+                    </Button>
+                  </>
                 )}
 
                 <Button variant="outline" size="sm">
@@ -958,6 +971,22 @@ export default function ProjectDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Moderation Modal */}
+      {profile?.role === 'admin' && project && (
+        <ModerationModal
+          open={showModerateModal}
+          onOpenChange={setShowModerateModal}
+          contentType="project"
+          contentId={project.id}
+          contentTitle={project.title}
+          authorId={project.author_id}
+          authorName={project.author_name}
+          onSuccess={() => {
+            router.push('/projects')
+          }}
+        />
+      )}
     </div>
   )
 }

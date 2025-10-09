@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, Heart, MessageCircle, Calendar, User, Eye, 
-  Share2, Bookmark, Edit, Trash2, Flag, Loader2
+  Share2, Bookmark, Edit, Trash2, Flag, Loader2, Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import CommentsSection from '@/components/articles/comments-section'
+import ModerationModal from '@/components/moderation/moderation-modal'
 import {
   Dialog,
   DialogContent,
@@ -58,6 +59,7 @@ export default function ArticleDetailPage() {
   const [error, setError] = useState('')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showModerateModal, setShowModerateModal] = useState(false)
 
   const categories = [
     { value: 'ia', label: 'Intelligence Artificielle' },
@@ -339,6 +341,17 @@ export default function ArticleDetailPage() {
                   </Button>
                 </Link>
               )}
+              {isAdmin && !isAuthor && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowModerateModal(true)}
+                  className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Modérer
+                </Button>
+              )}
               {canDelete && (
                 <Button 
                   variant="destructive" 
@@ -501,6 +514,22 @@ export default function ArticleDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Moderation Modal */}
+      {isAdmin && article && (
+        <ModerationModal
+          open={showModerateModal}
+          onOpenChange={setShowModerateModal}
+          contentType="article"
+          contentId={article.id}
+          contentTitle={article.title}
+          authorId={article.author_id}
+          authorName={article.author?.display_name || 'Utilisateur inconnu'}
+          onSuccess={() => {
+            router.push('/articles')
+          }}
+        />
+      )}
     </div>
   )
 }

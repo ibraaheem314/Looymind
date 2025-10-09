@@ -8,12 +8,14 @@ import { Badge } from '@/components/ui/badge'
 import {
   ArrowLeft, ExternalLink, Eye, Heart, User, Calendar,
   BookOpen, Video, FileText, Code, Wrench, GraduationCap,
-  Share2, Loader2, Globe, Clock, Award, BookMarked
+  Share2, Loader2, Globe, Clock, Award, BookMarked, Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow, format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase'
+import ModerationModal from '@/components/moderation/moderation-modal'
+import { useRouter } from 'next/navigation'
 
 const resourceTypeConfig = {
   external_course: { label: 'Cours externe', icon: Globe, color: 'bg-blue-100 text-blue-800' },
@@ -36,7 +38,9 @@ export default function ResourceDetailPage({ params }: { params: { slug: string 
   const [resource, setResource] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { user } = useAuth()
+  const [showModerateModal, setShowModerateModal] = useState(false)
+  const { user, profile } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     fetchResource()
@@ -118,12 +122,26 @@ export default function ResourceDetailPage({ params }: { params: { slug: string 
       {/* Hero Section - Design Kaggle+Zindi */}
       <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-blue-50/30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Link href="/resources">
-            <Button variant="ghost" className="text-slate-700 hover:bg-slate-100 mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour aux ressources
-            </Button>
-          </Link>
+          <div className="flex items-center justify-between mb-6">
+            <Link href="/resources">
+              <Button variant="ghost" className="text-slate-700 hover:bg-slate-100">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Retour aux ressources
+              </Button>
+            </Link>
+
+            {profile?.role === 'admin' && resource.created_by !== user?.id && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowModerateModal(true)}
+                className="border-orange-300 text-orange-700 hover:bg-orange-50"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Modérer
+              </Button>
+            )}
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left: Icon/Image */}
@@ -446,6 +464,22 @@ export default function ResourceDetailPage({ params }: { params: { slug: string 
           </div>
         </div>
       </div>
+
+      {/* Moderation Modal */}
+      {profile?.role === 'admin' && resource && (
+        <ModerationModal
+          open={showModerateModal}
+          onOpenChange={setShowModerateModal}
+          contentType="article"
+          contentId={resource.id}
+          contentTitle={resource.title}
+          authorId={resource.created_by || ''}
+          authorName={resource.author?.display_name || 'Utilisateur inconnu'}
+          onSuccess={() => {
+            router.push('/resources')
+          }}
+        />
+      )}
     </div>
   )
 }

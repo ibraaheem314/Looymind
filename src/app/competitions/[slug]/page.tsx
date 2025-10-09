@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, Calendar, Users, Trophy, 
   Target, Clock, Award, Download,
-  Upload, BarChart3
+  Upload, BarChart3, Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -18,6 +18,7 @@ import { fr } from 'date-fns/locale'
 import ReactMarkdown from 'react-markdown'
 import SubmissionModal from '@/components/competitions/submission-modal'
 import Leaderboard from '@/components/competitions/leaderboard'
+import ModerationModal from '@/components/moderation/moderation-modal'
 
 interface Competition {
   id: string
@@ -46,10 +47,11 @@ interface Competition {
 export default function CompetitionDetailPage() {
   const { slug } = useParams()
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [competition, setCompetition] = useState<Competition | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'rules' | 'data' | 'leaderboard'>('overview')
+  const [showModerateModal, setShowModerateModal] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -118,13 +120,27 @@ export default function CompetitionDetailPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link 
-            href="/competitions"
-            className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour aux compétitions
-          </Link>
+          <div className="flex items-center justify-between mb-4">
+            <Link 
+              href="/competitions"
+              className="inline-flex items-center text-white/80 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour aux compétitions
+            </Link>
+            
+            {profile?.role === 'admin' && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowModerateModal(true)}
+                className="border-orange-300 text-orange-700 bg-white hover:bg-orange-50"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Modérer
+              </Button>
+            )}
+          </div>
 
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -354,6 +370,22 @@ export default function CompetitionDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Moderation Modal */}
+      {profile?.role === 'admin' && competition && (
+        <ModerationModal
+          open={showModerateModal}
+          onOpenChange={setShowModerateModal}
+          contentType="article"
+          contentId={competition.id}
+          contentTitle={competition.title}
+          authorId={competition.created_by || ''}
+          authorName="Créateur de la compétition"
+          onSuccess={() => {
+            router.push('/competitions')
+          }}
+        />
+      )}
     </div>
   )
 }

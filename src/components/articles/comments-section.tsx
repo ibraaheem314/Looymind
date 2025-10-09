@@ -9,10 +9,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { 
   MessageCircle, Send, ThumbsUp, Reply, MoreVertical,
-  Trash2, Edit2, X, Check
+  Trash2, Edit2, X, Check, Shield
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import ModerationModal from '@/components/moderation/moderation-modal'
 
 interface Comment {
   id: string
@@ -39,7 +40,7 @@ interface CommentsSectionProps {
 }
 
 export default function CommentsSection({ articleId, onCommentCountChange }: CommentsSectionProps) {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
   const [newComment, setNewComment] = useState('')
@@ -48,6 +49,7 @@ export default function CommentsSection({ articleId, onCommentCountChange }: Com
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [moderatingComment, setModeratingComment] = useState<Comment | null>(null)
 
   useEffect(() => {
     fetchComments()
@@ -323,6 +325,15 @@ export default function CommentsSection({ articleId, onCommentCountChange }: Com
                     </button>
                   </>
                 )}
+                {profile?.role === 'admin' && !isAuthor && (
+                  <button
+                    onClick={() => setModeratingComment(comment)}
+                    className="flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700"
+                  >
+                    <Shield className="h-3 w-3" />
+                    Modérer
+                  </button>
+                )}
               </div>
             )}
 
@@ -439,6 +450,23 @@ export default function CommentsSection({ articleId, onCommentCountChange }: Com
           </div>
         )}
       </CardContent>
+
+      {/* Moderation Modal */}
+      {moderatingComment && (
+        <ModerationModal
+          open={!!moderatingComment}
+          onOpenChange={(open) => !open && setModeratingComment(null)}
+          contentType="comment"
+          contentId={moderatingComment.id}
+          contentTitle={moderatingComment.content.substring(0, 50) + '...'}
+          authorId={moderatingComment.author_id}
+          authorName={moderatingComment.author?.display_name || 'Utilisateur inconnu'}
+          onSuccess={() => {
+            setModeratingComment(null)
+            fetchComments()
+          }}
+        />
+      )}
     </Card>
   )
 }
