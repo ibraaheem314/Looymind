@@ -41,7 +41,7 @@ export default function HeroSection() {
               ) : (
                 <>
                   <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white text-base px-8" asChild>
-                    <Link href="/register">
+                    <Link href="/auth/register">
                       Rejoindre Looymind
                     </Link>
                   </Button>

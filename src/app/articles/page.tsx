@@ -45,18 +45,15 @@ export default function ArticlesPage() {
   const [error, setError] = useState('')
 
   const categories = [
-    { value: 'all', label: 'Tous les articles' },
-    { value: 'ia', label: 'Intelligence Artificielle' },
-    { value: 'data-science', label: 'Data Science' },
-    { value: 'machine-learning', label: 'Machine Learning' },
-    { value: 'deep-learning', label: 'Deep Learning' },
-    { value: 'nlp', label: 'NLP' },
-    { value: 'computer-vision', label: 'Computer Vision' },
-    { value: 'big-data', label: 'Big Data' },
-    { value: 'cloud', label: 'Cloud Computing' },
-    { value: 'dev', label: 'Développement' },
-    { value: 'tutorial', label: 'Tutoriel' },
-    { value: 'news', label: 'Actualités' }
+    { value: 'all', label: 'Tous les tutoriels' },
+    { value: 'tutorial', label: '📚 Tutoriel (How-to)' },
+    { value: 'competition-analysis', label: '🏆 Analyse de Compétition' },
+    { value: 'feedback', label: '💡 Retour d\'Expérience' },
+    { value: 'best-practices', label: '⭐ Best Practices' },
+    { value: 'technique', label: '🔬 Technique & Méthode' },
+    { value: 'dataset-exploration', label: '📊 Exploration de Dataset' },
+    { value: 'model-optimization', label: '⚡ Optimisation de Modèle' },
+    { value: 'feature-engineering', label: '🛠️ Feature Engineering' }
   ]
 
   useEffect(() => {
@@ -137,14 +134,14 @@ export default function ArticlesPage() {
             {/* Left: Text content */}
             <div>
               <Badge className="bg-blue-100 text-blue-700 border-0 text-sm px-4 py-1.5 mb-4">
-                Articles & Tutoriels
+                Tutoriels & Analyses IA
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                Lisez, apprenez et<br/>
-                <span className="text-blue-500">partagez vos connaissances</span>
+                Apprenez des meilleurs,<br/>
+                <span className="text-blue-500">maîtrisez les compétitions</span>
               </h1>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                Découvrez des articles de qualité sur l'IA, la data science et les technologies émergentes au Sénégal.
+                Tutoriels, analyses de compétitions, retours d'expérience et best practices partagés par la communauté IA du Sénégal.
               </p>
               
               {/* Stats inline */}
@@ -152,7 +149,7 @@ export default function ArticlesPage() {
                 <div className="flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-blue-500" />
                   <span className="text-sm font-medium text-slate-700">
-                    <strong className="text-blue-600">{articles.length}</strong> articles
+                    <strong className="text-blue-600">{articles.length}</strong> tutoriels
                   </span>
                 </div>
                 <div className="text-sm text-slate-400">•</div>
@@ -172,7 +169,7 @@ export default function ArticlesPage() {
                 <Link href="/articles/create">
                   <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30">
                     <Plus className="h-5 w-5 mr-2" />
-                    Écrire un Article
+                    Écrire un Tutoriel
                   </Button>
                 </Link>
               )}

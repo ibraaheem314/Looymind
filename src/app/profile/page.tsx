@@ -33,7 +33,7 @@ export default function ProfilePage() {
               Vous devez être connecté pour accéder à votre profil.
             </p>
             <Button asChild>
-              <a href="/login">Se connecter</a>
+              <a href="/auth/login">Se connecter</a>
             </Button>
           </CardContent>
         </Card>

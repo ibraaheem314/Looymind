@@ -293,6 +293,7 @@ export default function ProjectsPage() {
                 variant={filterFeatured ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilterFeatured(!filterFeatured)}
+                className={filterFeatured ? "bg-purple-600 hover:bg-purple-700" : "border-2 border-purple-600 text-purple-600 hover:bg-purple-50"}
               >
                 <Filter className="h-4 w-4 mr-1" />
                 Featured
@@ -300,11 +301,12 @@ export default function ProjectsPage() {
             </div>
 
             {/* Mode d'affichage */}
-            <div className="flex gap-1 border border-gray-300 rounded-lg p-1">
+            <div className="flex gap-1 border-2 border-slate-200 rounded-lg p-1 bg-white">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
+                className={viewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : 'text-slate-600 hover:bg-purple-50 hover:text-purple-600'}
               >
                 <Grid className="h-4 w-4" />
               </Button>
@@ -312,6 +314,7 @@ export default function ProjectsPage() {
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
+                className={viewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : 'text-slate-600 hover:bg-purple-50 hover:text-purple-600'}
               >
                 <List className="h-4 w-4" />
               </Button>

@@ -12,7 +12,7 @@ export default function AuthLayout({
       <div className="absolute top-6 left-6">
         <Link href="/" className="flex items-center space-x-2">
           <Brain className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">Looymind</span>
+          <span className="text-xl font-bold text-gray-900">Palanteer</span>
         </Link>
       </div>
       

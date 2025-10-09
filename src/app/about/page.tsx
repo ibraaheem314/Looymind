@@ -12,7 +12,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              À propos de Looymind
+              À propos de Palanteer
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               La première communauté hybride d'Intelligence Artificielle du Sénégal. 
@@ -202,7 +202,7 @@ export default function AboutPage() {
             Ensemble, construisons l'avenir de l'Intelligence Artificielle en Afrique
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="lg" className="bg-white text-slate-800 hover:bg-gray-100">
                 Rejoindre la communauté
               </Button>

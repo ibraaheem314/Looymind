@@ -405,7 +405,7 @@ export default function CommentsSection({ articleId, onCommentCountChange }: Com
               Vous devez être connecté pour commenter
             </p>
             <Button size="sm" asChild>
-              <a href="/login">Se connecter</a>
+              <a href="/auth/login">Se connecter</a>
             </Button>
           </div>
         )}

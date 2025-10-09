@@ -789,7 +789,7 @@ export default function ProjectDetailPage() {
                       className="w-full bg-slate-800 hover:bg-slate-700"
                       onClick={() => {
                         // Ouvrir un modal de contact ou rediriger vers une page de messagerie
-                        window.location.href = `mailto:?subject=Contact via Looymind - ${project.title}&body=Bonjour ${project.author_name},%0D%0A%0D%0AJe souhaite discuter de votre projet "${project.title}".%0D%0A%0D%0ACordialement`
+                        window.location.href = `mailto:?subject=Contact via Palanteer - ${project.title}&body=Bonjour ${project.author_name},%0D%0A%0D%0AJe souhaite discuter de votre projet "${project.title}".%0D%0A%0D%0ACordialement`
                       }}
                     >
                       <Mail className="h-4 w-4 mr-2" />

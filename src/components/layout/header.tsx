@@ -32,7 +32,7 @@ export default function Header() {
       submenu: [
         { name: 'Talents', href: '/talents' },
         { name: 'Projets', href: '/projects' },
-        { name: 'Articles', href: '/articles' },
+        { name: 'Tutoriels', href: '/articles' },
       ]
     },
     { 
@@ -64,16 +64,16 @@ export default function Header() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 group">
-            <div className="w-14 h-14 transition-all duration-200 group-hover:scale-105">
+          <Link href="/" className="flex items-center gap-0 group">
+            <div className="w-12 h-12 transition-all duration-200 group-hover:scale-105">
               <img 
                 src="/Logo.png" 
-                alt="LooyMind Logo" 
+                alt="Palanteer Logo" 
                 className="w-full h-full object-contain"
               />
             </div>
             <span className="text-xl font-bold text-slate-900 hidden sm:block tracking-tight">
-              LooyMind
+              Palanteer
             </span>
           </Link>
 

@@ -72,46 +72,64 @@ export default function SubmissionModal({
     setSuccess(false)
 
     try {
+      console.log('🚀 DÉBUT DE SOUMISSION')
+      console.log('Competition ID:', competitionId)
+      console.log('User ID:', userId)
+      console.log('Competition Slug:', competitionSlug)
+      
       // 1. Upload du fichier vers Supabase Storage
       const fileName = `${userId}/${competitionSlug}/${Date.now()}_${file.name}`
+      console.log('📁 Upload du fichier:', fileName)
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('competition-submissions')
         .upload(fileName, file)
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
+        console.error('❌ Upload error:', uploadError)
         setError(`Erreur d'upload: ${uploadError.message}`)
         setLoading(false)
         return
       }
+
+      console.log('✅ Upload réussi:', uploadData)
 
       // 2. Obtenir l'URL du fichier
       const { data: { publicUrl } } = supabase.storage
         .from('competition-submissions')
         .getPublicUrl(fileName)
 
+      console.log('🔗 URL publique:', publicUrl)
+
       // 3. Créer la soumission en DB
+      const submissionPayload = {
+        competition_id: competitionId,
+        user_id: userId,
+        file_url: publicUrl,
+        file_name: file.name,
+        file_size: file.size,
+        description: description,
+        evaluation_status: 'pending',
+        submitted_at: new Date().toISOString()
+      }
+      
+      console.log('💾 Tentative d\'insertion en DB:', submissionPayload)
+
       const { data: submissionData, error: submissionError } = await supabase
         .from('submissions')
-        .insert([{
-          competition_id: competitionId,
-          user_id: userId,
-          file_url: publicUrl,
-          file_name: file.name,
-          file_size: file.size,
-          description: description,
-          status: 'pending'
-        }])
+        .insert([submissionPayload])
         .select()
         .single()
 
       if (submissionError) {
-        console.error('Submission error:', submissionError)
+        console.error('❌ Submission error:', submissionError)
+        console.error('❌ Error details:', JSON.stringify(submissionError, null, 2))
         setError(`Erreur de soumission: ${submissionError.message}`)
         setLoading(false)
         return
       }
+
+      console.log('✅ Soumission créée en DB:', submissionData)
 
       setSuccess(true)
       setFile(null)

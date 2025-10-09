@@ -12,11 +12,11 @@ export default function Footer() {
               <div className="w-10 h-10">
                 <img 
                   src="/Logo.png" 
-                  alt="Looymind Logo" 
+                  alt="Palanteer Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-xl font-bold">Looymind</span>
+              <span className="text-xl font-bold">Palanteer</span>
             </div>
             <p className="text-slate-400 mb-4 max-w-md text-sm leading-relaxed">
               La première communauté hybride IA du Sénégal. Connectons les talents, 
@@ -137,7 +137,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 mt-8 pt-6 text-center">
           <p className="text-slate-400 text-sm">
-            © 2024 Looymind. Tous droits réservés. Fait avec <span className="text-red-500">❤️</span> au Sénégal.
+            © 2024 Palanteer. Tous droits réservés. Fait avec <span className="text-red-500">❤️</span> au Sénégal.
           </p>
         </div>
       </div>

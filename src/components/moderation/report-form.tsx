@@ -93,7 +93,7 @@ export default function ReportForm({ entityType, entityId, onClose, onSuccess }:
             Vous devez être connecté pour signaler du contenu.
           </p>
           <Button asChild>
-            <a href="/login">Se connecter</a>
+            <a href="/auth/login">Se connecter</a>
           </Button>
         </CardContent>
       </Card>

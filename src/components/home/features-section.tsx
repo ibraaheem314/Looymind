@@ -163,9 +163,9 @@ export default function FeaturesSection() {
                 icon: BookOpen,
                 title: 'Ressources',
                 description: 'Accédez à des cours et tutoriels pour progresser',
-                color: 'text-purple-600 bg-purple-100'
-              },
-              {
+    color: 'text-purple-600 bg-purple-100'
+  },
+  {
                 icon: Users,
                 title: 'Communauté',
                 description: 'Connectez-vous avec 500+ talents IA en Afrique',
@@ -175,9 +175,9 @@ export default function FeaturesSection() {
                 icon: Code,
                 title: 'Projets',
                 description: 'Partagez vos créations et collaborez',
-                color: 'text-green-600 bg-green-100'
-              },
-              {
+    color: 'text-green-600 bg-green-100'
+  },
+  {
                 icon: Brain,
                 title: 'Articles',
                 description: 'Lisez et publiez des articles techniques',
@@ -197,10 +197,10 @@ export default function FeaturesSection() {
                 <h3 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">{feature.description}</p>
               </div>
-            ))}
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* CTA Section - Simple and Clean */}
       <section className="py-16 bg-white">
@@ -218,7 +218,7 @@ export default function FeaturesSection() {
               className="bg-cyan-500 hover:bg-cyan-600 text-white text-base px-10" 
               asChild
             >
-              <Link href="/register">
+              <Link href="/auth/register">
                 Rejoindre Looymind
               </Link>
             </Button>

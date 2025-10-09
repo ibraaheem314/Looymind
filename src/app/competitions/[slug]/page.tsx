@@ -17,6 +17,7 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import ReactMarkdown from 'react-markdown'
 import SubmissionModal from '@/components/competitions/submission-modal'
+import Leaderboard from '@/components/competitions/leaderboard'
 
 interface Competition {
   id: string
@@ -279,19 +280,9 @@ export default function CompetitionDetailPage() {
             )}
 
             {activeTab === 'leaderboard' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Classement</CardTitle>
-                  <CardDescription>Top participants de la compétition</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 text-gray-500">
-                    <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p className="font-medium">Aucune soumission pour le moment</p>
-                    <p className="text-sm mt-2">Soyez le premier à soumettre !</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div>
+                <Leaderboard competitionId={competition.id} />
+              </div>
             )}
           </div>
 
@@ -313,7 +304,7 @@ export default function CompetitionDetailPage() {
                     <Button variant="outline" className="w-full" asChild>
                       <Link href={`/competitions/${competition.slug}/leaderboard`}>
                         <Trophy className="h-4 w-4 mr-2" />
-                        Voir le classement
+                        Tableau des scores
                       </Link>
                     </Button>
                   </>
@@ -323,7 +314,7 @@ export default function CompetitionDetailPage() {
                       Connectez-vous pour participer à cette compétition
                     </p>
                     <Button className="w-full" asChild>
-                      <Link href={`/login?redirect=/competitions/${competition.slug}`}>
+                      <Link href={`/auth/login?redirect=/competitions/${competition.slug}`}>
                         Se connecter
                       </Link>
                     </Button>

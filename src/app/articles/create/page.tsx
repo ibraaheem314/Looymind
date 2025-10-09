@@ -59,17 +59,14 @@ export default function CreateArticlePage() {
   }, [searchParams])
 
   const categories = [
-    { value: 'ia', label: 'Intelligence Artificielle', icon: '🤖' },
-    { value: 'data-science', label: 'Data Science', icon: '📊' },
-    { value: 'machine-learning', label: 'Machine Learning', icon: '🧠' },
-    { value: 'deep-learning', label: 'Deep Learning', icon: '🔥' },
-    { value: 'nlp', label: 'NLP', icon: '💬' },
-    { value: 'computer-vision', label: 'Computer Vision', icon: '👁️' },
-    { value: 'big-data', label: 'Big Data', icon: '💾' },
-    { value: 'cloud', label: 'Cloud Computing', icon: '☁️' },
-    { value: 'dev', label: 'Développement', icon: '💻' },
-    { value: 'tutorial', label: 'Tutoriel', icon: '📚' },
-    { value: 'news', label: 'Actualités', icon: '📰' }
+    { value: 'tutorial', label: 'Tutoriel (How-to)', icon: '📚' },
+    { value: 'competition-analysis', label: 'Analyse de Compétition', icon: '🏆' },
+    { value: 'feedback', label: 'Retour d\'Expérience', icon: '💡' },
+    { value: 'best-practices', label: 'Best Practices', icon: '⭐' },
+    { value: 'technique', label: 'Technique & Méthode', icon: '🔬' },
+    { value: 'dataset-exploration', label: 'Exploration de Dataset', icon: '📊' },
+    { value: 'model-optimization', label: 'Optimisation de Modèle', icon: '⚡' },
+    { value: 'feature-engineering', label: 'Feature Engineering', icon: '🛠️' }
   ]
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -297,7 +294,7 @@ export default function CreateArticlePage() {
           <CardContent className="p-8 text-center">
             <h2 className="text-xl font-semibold mb-2">Non connecté</h2>
             <p className="text-gray-600 mb-4">Vous devez être connecté pour créer un article.</p>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button>Se connecter</Button>
             </Link>
           </CardContent>

@@ -257,7 +257,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Rejoignez Looymind</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Rejoignez Palanteer</h1>
           <p className="text-gray-600">Créez votre compte et rejoignez la communauté IA du Sénégal</p>
         </div>
 
@@ -497,7 +497,7 @@ export default function RegisterPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Déjà un compte ?{' '}
-                <Link href="/login" className="text-slate-800 hover:text-slate-600 font-medium">Se connecter</Link>
+                <Link href="/auth/login" className="text-slate-800 hover:text-slate-600 font-medium">Se connecter</Link>
               </p>
             </div>
           </CardContent>

@@ -58,17 +58,6 @@ export function useResources(options: UseResourcesOptions = {}) {
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchResources()
-  }, [
-    options.category,
-    options.difficulty,
-    options.resourceType,
-    options.searchQuery,
-    options.sortBy,
-    options.limit
-  ])
-
   const fetchResources = async () => {
     try {
       setLoading(true)
@@ -131,6 +120,17 @@ export function useResources(options: UseResourcesOptions = {}) {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchResources()
+  }, [
+    options.category,
+    options.difficulty,
+    options.resourceType,
+    options.searchQuery,
+    options.sortBy,
+    options.limit
+  ])
 
   const incrementViews = async (resourceId: string) => {
     try {

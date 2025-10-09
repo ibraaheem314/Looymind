@@ -36,7 +36,7 @@ export default function AuthCallback() {
         <div>
           <h1 className="text-xl font-semibold mb-2">Oups</h1>
           <p className="text-gray-600 mb-4">{error}</p>
-          <a href="/login" className="text-slate-800 underline">Revenir à la connexion</a>
+          <a href="/auth/login" className="text-slate-800 underline">Revenir à la connexion</a>
         </div>
       </div>
     )

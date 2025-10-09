@@ -60,7 +60,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Connexion à Looymind
+            Connexion à Palanteer
           </h1>
           <p className="text-gray-600">
             Accédez à votre compte pour participer aux défis IA
@@ -149,7 +149,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Pas encore de compte?{' '}
-                <Link href="/register" className="text-blue-600 hover:text-blue-500 font-medium">
+                <Link href="/auth/register" className="text-blue-600 hover:text-blue-500 font-medium">
                   S'inscrire
                 </Link>
               </p>

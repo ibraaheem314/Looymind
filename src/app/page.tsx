@@ -30,21 +30,21 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center max-w-5xl mx-auto">
             
-            {/* Badge - Style Andakia */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2.5 mb-8 animate-fadeIn">
-              <Sparkles className="h-4 w-4 text-cyan-300" />
-              <span className="text-sm font-semibold text-white">🇸🇳 Plateforme IA #1 en Afrique</span>
+            {/* Badge - Style sobre et professionnel */}
+            <div className="inline-flex items-center gap-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 rounded-full px-6 py-2.5 mb-8 animate-fadeIn">
+              <Sparkles className="h-4 w-4 text-slate-300" />
+              <span className="text-sm font-semibold text-slate-200">🇸🇳 Plateforme IA #1 en Afrique</span>
             </div>
 
             {/* Main headline */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.2] text-white animate-fadeInUp">
               Devenez un expert en
-              <span className="block mt-3 bg-gradient-to-r from-cyan-300 via-blue-200 to-blue-300 bg-clip-text text-transparent">
+              <span className="block mt-3 bg-gradient-to-r from-slate-300 via-slate-200 to-slate-400 bg-clip-text text-transparent">
                 Intelligence Artificielle
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-blue-100 mb-12 leading-relaxed max-w-3xl mx-auto animate-fadeInUp animation-delay-100">
+            <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed max-w-3xl mx-auto animate-fadeInUp animation-delay-100">
               Participez à des compétitions, apprenez avec des ressources francophones, 
               partagez vos projets et collaborez avec les meilleurs talents du continent.
             </p>
@@ -53,13 +53,13 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fadeInUp animation-delay-200">
               {isAuthenticated ? (
                 <>
-                  <Button size="lg" className="bg-white text-[#1e3a5f] hover:bg-gray-50 hover:text-[#2d5986] text-lg px-10 py-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold" asChild>
+                  <Button size="lg" className="bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900 text-lg px-10 py-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold" asChild>
                     <Link href="/dashboard">
                       <Zap className="h-5 w-5 mr-2" />
                       Mon Dashboard
                     </Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 hover:border-white text-lg px-10 py-6 transition-all duration-300" asChild>
+                  <Button variant="outline" size="lg" className="bg-transparent border-2 border-slate-400 text-slate-200 hover:bg-slate-800/30 hover:border-slate-300 text-lg px-10 py-6 transition-all duration-300" asChild>
                     <Link href="/competitions">
                       <Trophy className="h-5 w-5 mr-2" />
                       Voir les compétitions
@@ -68,13 +68,13 @@ export default function HomePage() {
                 </>
               ) : (
                 <>
-                  <Button size="lg" className="bg-white text-[#1e3a5f] hover:bg-gray-50 hover:text-[#2d5986] text-lg px-10 py-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold" asChild>
+                  <Button size="lg" className="bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900 text-lg px-10 py-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold" asChild>
                     <Link href="/auth/register">
                       Commencer gratuitement
                       <ArrowRight className="h-5 w-5 ml-2" />
                     </Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 hover:border-white text-lg px-10 py-6 transition-all duration-300" asChild>
+                  <Button variant="outline" size="lg" className="bg-transparent border-2 border-slate-400 text-slate-200 hover:bg-slate-800/30 hover:border-slate-300 text-lg px-10 py-6 transition-all duration-300" asChild>
                     <Link href="#features">
                       <Play className="h-5 w-5 mr-2" />
                       Découvrir la plateforme
@@ -85,21 +85,21 @@ export default function HomePage() {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-wrap items-center justify-center gap-8 text-blue-100 text-sm animate-fadeInUp animation-delay-300">
+            <div className="flex flex-wrap items-center justify-center gap-8 text-slate-300 text-sm animate-fadeInUp animation-delay-300">
               <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-cyan-300" />
+                <Check className="h-5 w-5 text-slate-400" />
                 <span>100% Gratuit</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-cyan-300" />
+                <Check className="h-5 w-5 text-slate-400" />
                 <span>En Français</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-cyan-300" />
+                <Check className="h-5 w-5 text-slate-400" />
                 <span>Communauté Active</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-cyan-300" />
+                <Check className="h-5 w-5 text-slate-400" />
                 <span>Basé au Sénégal</span>
               </div>
             </div>
@@ -124,7 +124,7 @@ export default function HomePage() {
       </section>
 
       {/* ========================================
-          SECTION 0: C'est quoi LooyMind ? (Simple et clair)
+          SECTION 0: C'est quoi Palanteer ? (Simple et clair)
       ======================================== */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,7 +134,7 @@ export default function HomePage() {
               La Plateforme IA du Sénégal
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
-              <span className="text-cyan-600">LooyMind</span>, c'est quoi ?
+              <span className="text-cyan-600">Palanteer</span>, c'est quoi ?
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               La première plateforme francophone d'Afrique qui réunit <strong>compétitions IA</strong>, 
@@ -372,7 +372,7 @@ export default function HomePage() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                <span className="text-cyan-600">LooyMind</span>, votre plateforme tout-en-un
+                <span className="text-cyan-600">Palanteer</span>, votre plateforme tout-en-un
               </h2>
               
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
@@ -449,7 +449,7 @@ export default function HomePage() {
               </h2>
               
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                LooyMind regroupe tous les outils essentiels pour votre apprentissage et votre carrière en IA.
+                Palanteer regroupe tous les outils essentiels pour votre apprentissage et votre carrière en IA.
               </p>
 
               <div className="space-y-6">
@@ -502,14 +502,14 @@ export default function HomePage() {
               <div className="relative">
                 {/* Features grid - Structuration optimale: Cyan (ligne 1) + Slate (ligne 2) */}
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Ligne 1: Contenus principaux (Cyan) */}
+                  {/* Ligne 1: Objectifs 2026-2027 (Cyan) */}
                   <Card className="bg-cyan-50 border-2 border-cyan-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex p-4 bg-cyan-100 rounded-2xl mb-4">
                         <Trophy className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-cyan-600 mb-1">25+</div>
-                      <div className="text-sm font-medium text-slate-700">Compétitions</div>
+                      <div className="text-3xl font-bold text-cyan-600 mb-1">50+</div>
+                      <div className="text-sm font-medium text-slate-700">Compétitions/An</div>
                     </CardContent>
                   </Card>
 
@@ -518,19 +518,19 @@ export default function HomePage() {
                       <div className="inline-flex p-4 bg-cyan-100 rounded-2xl mb-4">
                         <BookOpen className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-cyan-600 mb-1">100+</div>
+                      <div className="text-3xl font-bold text-cyan-600 mb-1">500+</div>
                       <div className="text-sm font-medium text-slate-700">Ressources</div>
                     </CardContent>
                   </Card>
 
-                  {/* Ligne 2: Communauté (Slate) */}
+                  {/* Ligne 2: Objectifs Communauté (Slate) */}
                   <Card className="bg-slate-50 border-2 border-slate-200 hover:shadow-xl transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex p-4 bg-slate-100 rounded-2xl mb-4">
                         <Code className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-slate-700 mb-1">150+</div>
-                      <div className="text-sm font-medium text-slate-700">Projets</div>
+                      <div className="text-3xl font-bold text-slate-700 mb-1">200+</div>
+                      <div className="text-sm font-medium text-slate-700">Projets Collaboratifs</div>
                     </CardContent>
                   </Card>
 
@@ -539,8 +539,8 @@ export default function HomePage() {
                       <div className="inline-flex p-4 bg-slate-100 rounded-2xl mb-4">
                         <Users className="h-8 w-8 text-cyan-600" />
                       </div>
-                      <div className="text-3xl font-bold text-slate-700 mb-1">500+</div>
-                      <div className="text-sm font-medium text-slate-700">Membres</div>
+                      <div className="text-3xl font-bold text-slate-700 mb-1">1000+</div>
+                      <div className="text-sm font-medium text-slate-700">Talents Formés</div>
                     </CardContent>
                   </Card>
                 </div>
@@ -553,7 +553,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p className="text-sm text-slate-700 mb-3 italic">
-                    "LooyMind m'a permis de décrocher mon premier emploi en data science. 
+                    "Palanteer m'a permis de décrocher mon premier emploi en data science. 
                     Les compétitions sont top!"
                   </p>
                   <div className="flex items-center gap-3">
@@ -585,34 +585,34 @@ export default function HomePage() {
               <div className="relative">
                 {/* Community stats - Structuration optimale: Cyan (ligne 1) + Slate + Bleu Nuit (ligne 2) */}
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Ligne 1: Métriques de croissance (Cyan) */}
+                  {/* Ligne 1: Objectifs 2026-2027 (Cyan) */}
                   <Card className="bg-cyan-50 border-2 border-cyan-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
                       <Brain className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-cyan-600 mb-1">500+</div>
+                      <div className="text-4xl font-bold text-cyan-600 mb-1">1000+</div>
                       <div className="text-sm text-slate-600">Talents Formés</div>
                     </CardContent>
                   </Card>
                   <Card className="bg-cyan-50 border-2 border-cyan-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
                       <Trophy className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-cyan-600 mb-1">25</div>
-                      <div className="text-sm text-slate-600">Compétitions</div>
+                      <div className="text-4xl font-bold text-cyan-600 mb-1">50+</div>
+                      <div className="text-sm text-slate-600">Compétitions/An</div>
                     </CardContent>
                   </Card>
-                  {/* Ligne 2: Projets (Slate) + Note importante (Bleu Nuit) */}
+                  {/* Ligne 2: Projets (Slate) + Objectif important (Bleu Nuit) */}
                   <Card className="bg-slate-50 border-2 border-slate-100 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
                       <Rocket className="h-10 w-10 text-cyan-600 mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-slate-700 mb-1">150</div>
-                      <div className="text-sm text-slate-600">Projets Lancés</div>
+                      <div className="text-4xl font-bold text-slate-700 mb-1">200+</div>
+                      <div className="text-sm text-slate-600">Projets Collaboratifs</div>
                     </CardContent>
                   </Card>
                   <Card className="bg-[#2d5986]/10 border-2 border-[#2d5986]/20 hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 text-center">
                       <Star className="h-10 w-10 text-[#2d5986] mx-auto mb-3" />
-                      <div className="text-4xl font-bold text-[#2d5986] mb-1">4.9</div>
-                      <div className="text-sm text-slate-600">Note Moyenne</div>
+                      <div className="text-4xl font-bold text-[#2d5986] mb-1">2027</div>
+                      <div className="text-sm text-slate-600">Objectif Final</div>
                     </CardContent>
                   </Card>
                 </div>
@@ -621,8 +621,8 @@ export default function HomePage() {
                 <div className="mt-6 inline-flex items-center gap-3 bg-[#2d5986] text-white px-6 py-4 rounded-2xl shadow-lg">
                   <Sparkles className="h-6 w-6" />
                   <div>
-                    <div className="font-bold">Impact Mesuré</div>
-                    <div className="text-sm opacity-90">Données réelles, communauté active</div>
+                    <div className="font-bold">Vision 2026-2027</div>
+                    <div className="text-sm opacity-90">Objectifs concrets et mesurables</div>
                   </div>
                 </div>
               </div>
@@ -632,24 +632,24 @@ export default function HomePage() {
             <div className="animate-slideInRight">
               <div className="inline-block mb-4">
                 <Badge className="bg-cyan-100 text-cyan-700 border-0 text-sm px-4 py-1.5">
-                  Notre Impact
+                  Notre Vision
                 </Badge>
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                Une communauté qui <span className="text-cyan-600">transforme des vies</span>
+                Nos objectifs pour <span className="text-cyan-600">2026-2027</span>
               </h2>
               
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Depuis notre lancement, LooyMind a permis à des centaines de talents sénégalais 
-                de développer leurs compétences et de lancer leur carrière en IA.
+                Palanteer s'engage à créer un écosystème IA francophone robuste au Sénégal. 
+                Voici nos objectifs concrets pour les prochaines années.
               </p>
 
               <div className="space-y-6 mb-8">
                 {[
-                  { stat: '85%', label: 'ont trouvé un emploi ou stage dans les 6 mois', icon: TrendingUp },
-                  { stat: '92%', label: 'recommandent LooyMind à leurs pairs', icon: Star },
-                  { stat: '3x', label: 'augmentation du réseau professionnel', icon: Users }
+                  { stat: '1000+', label: 'talents formés en IA d\'ici 2027', icon: TrendingUp },
+                  { stat: '50+', label: 'compétitions organisées par an', icon: Star },
+                  { stat: '200+', label: 'projets collaboratifs lancés', icon: Users }
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <div className="p-3 bg-cyan-100 rounded-xl">
@@ -665,11 +665,11 @@ export default function HomePage() {
 
               <blockquote className="border-l-4 border-cyan-500 pl-6 py-4 bg-cyan-50/50 rounded-r-xl">
                 <p className="text-slate-700 italic mb-3">
-                  "J'ai découvert ma passion pour le NLP grâce aux ressources de LooyMind. 
-                  Aujourd'hui, je travaille sur des projets qui impactent mon pays."
+                  "Notre vision est de faire du Sénégal un hub de l'IA francophone en Afrique. 
+                  Nous croyons en la capacité de nos talents à transformer le continent."
                 </p>
                 <footer className="text-cyan-600 font-semibold">
-                  — Fatou Sall, NLP Engineer
+                  — Équipe Palanteer, Mission 2026-2027
                 </footer>
               </blockquote>
             </div>

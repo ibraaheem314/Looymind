@@ -41,12 +41,12 @@ export default function PrivacyPage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Chez Looymind, nous nous engageons à protéger votre vie privée et vos données personnelles. 
+              Chez Palanteer, nous nous engageons à protéger votre vie privée et vos données personnelles. 
               Cette politique de confidentialité explique comment nous collectons, utilisons, stockons et 
               protégeons vos informations lorsque vous utilisez notre plateforme.
             </p>
             <p className="text-gray-700 leading-relaxed">
-              En utilisant Looymind, vous acceptez les pratiques décrites dans cette politique. 
+              En utilisant Palanteer, vous acceptez les pratiques décrites dans cette politique. 
               Si vous n'acceptez pas ces termes, veuillez ne pas utiliser notre service.
             </p>
           </CardContent>
