@@ -31,7 +31,6 @@ type RecommendationItem = {
 
 export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
   const [selectedType, setSelectedType] = useState<string>()
@@ -43,21 +42,12 @@ export default function ResourcesPage() {
   const { user, profile } = useAuth()
   const router = useRouter()
   const canCreateResource = profile?.role === 'admin' || profile?.role === 'mentor'
-  
-  // Debounce search query (300ms)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery)
-    }, 300)
-    
-    return () => clearTimeout(timer)
-  }, [searchQuery])
 
   const { resources, loading, error } = useResources({
     category: selectedCategory,
     difficulty: selectedDifficulty,
     resourceType: selectedType,
-    searchQuery: debouncedSearchQuery,
+    searchQuery,
     sortBy
   })
 
@@ -102,14 +92,6 @@ export default function ResourcesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Skip to content link for accessibility */}
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-cyan-600 focus:text-white focus:rounded-lg focus:shadow-lg"
-      >
-        Passer au contenu principal
-      </a>
-
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-green-50/20 to-emerald-50/20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-green-500/5 rounded-full blur-3xl"></div>
@@ -117,34 +99,34 @@ export default function ResourcesPage() {
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10">
           <div className="text-center max-w-3xl mx-auto">
-              <Badge className="bg-green-100 text-green-700 border-0 text-sm px-4 py-1.5 mb-4">
+            <Badge className="bg-green-100 text-green-700 border-0 text-sm px-4 py-1.5 mb-4">
               Centre de Ressources
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
               Apprends l'IA avec des <br/>
-                <span className="text-green-600">ressources de qualité</span>
-              </h1>
+              <span className="text-green-600">ressources de qualité</span>
+            </h1>
             <p className="text-lg text-slate-600 mb-8 leading-relaxed">
               Cours, tutoriels, vidéos et outils sélectionnés. <br className="hidden sm:block"/>
               Organisés en parcours guidés pour apprendre étape par étape.
-              </p>
-              
-              {/* Stats inline */}
+            </p>
+            
+            {/* Stats inline */}
             <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-green-600" />
-                  <span className="text-sm font-medium text-slate-700">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-green-600" />
+                <span className="text-sm font-medium text-slate-700">
                   <strong className="text-green-600">{resources.length}</strong> ressources
-                  </span>
-                </div>
-                <div className="text-sm text-slate-400">•</div>
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <span className="font-semibold text-green-600">100% Gratuit</span>
-                </div>
-                <div className="text-sm text-slate-400">•</div>
-                <div className="text-sm text-slate-600">
-                  En français 🇸🇳
-                </div>
+                </span>
+              </div>
+              <div className="text-sm text-slate-400">•</div>
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <span className="font-semibold text-green-600">100% Gratuit</span>
+              </div>
+              <div className="text-sm text-slate-400">•</div>
+              <div className="text-sm text-slate-600">
+                En français 🇸🇳
+              </div>
             </div>
           </div>
 
@@ -164,43 +146,12 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      {/* Navigation sticky */}
-      <nav className="sticky top-16 bg-white/95 backdrop-blur-sm border-b border-slate-200 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-6 overflow-x-auto py-3">
-            {hasOnboarding && (
-              <a 
-                href="#recommandations" 
-                className="text-sm font-medium text-slate-700 hover:text-cyan-600 whitespace-nowrap transition-colors flex items-center gap-2"
-              >
-                <Sparkles className="h-4 w-4" />
-                Recommandé pour toi
-              </a>
-            )}
-            <a 
-              href="#parcours" 
-              className="text-sm font-medium text-slate-700 hover:text-green-600 whitespace-nowrap transition-colors flex items-center gap-2"
-            >
-              <GraduationCap className="h-4 w-4" />
-              Parcours guidés
-            </a>
-            <a 
-              href="#bibliotheque" 
-              className="text-sm font-medium text-slate-700 hover:text-slate-900 whitespace-nowrap transition-colors flex items-center gap-2"
-            >
-              <BookOpen className="h-4 w-4" />
-              Bibliothèque
-            </a>
-          </div>
-        </div>
-      </nav>
-
       {/* Main Content */}
-      <div id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         
         {/* Section 1: Recommandations personnalisées (si connecté et onboarding complété) */}
         {hasOnboarding && (
-          <section aria-label="Recommandations personnalisées" id="recommandations">
+          <section>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
@@ -216,31 +167,14 @@ export default function ResourcesPage() {
                 size="sm"
                 onClick={() => router.push('/onboarding')}
                 className="text-cyan-700 hover:text-cyan-900"
-                aria-label="Ajuster mes préférences d'apprentissage"
               >
                 Ajuster mes préférences
               </Button>
             </div>
 
             {loadingRecos ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Card key={i} className="border-2 border-slate-200 animate-pulse">
-                    <CardContent className="p-5">
-                      <div className="h-6 bg-slate-200 rounded w-20 mb-3"></div>
-                      <div className="h-6 bg-slate-200 rounded w-full mb-2"></div>
-                      <div className="h-4 bg-slate-200 rounded w-full mb-2"></div>
-                      <div className="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
-                      <div className="flex gap-2 mb-4">
-                        <div className="h-6 bg-slate-200 rounded w-16"></div>
-                        <div className="h-6 bg-slate-200 rounded w-12"></div>
-                        <div className="h-6 bg-slate-200 rounded w-12"></div>
-                      </div>
-                      <div className="h-16 bg-slate-200 rounded mb-4"></div>
-                      <div className="h-10 bg-slate-200 rounded"></div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-cyan-600" />
               </div>
             ) : recommendations.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -322,7 +256,7 @@ export default function ResourcesPage() {
 
         {/* CTA Onboarding si pas connecté ou pas complété */}
         {!hasOnboarding && (
-          <section aria-label="Invitation à personnaliser votre expérience" id="cta-onboarding">
+          <section>
             <Card className="border-2 border-cyan-300 bg-gradient-to-br from-cyan-50 to-blue-50 shadow-lg">
               <CardContent className="p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
@@ -373,7 +307,7 @@ export default function ResourcesPage() {
         )}
 
         {/* Section 2: Parcours guidés */}
-        <section aria-label="Parcours d'apprentissage guidés" id="parcours">
+        <section>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
@@ -422,7 +356,7 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 <Button asChild size="sm" variant="outline" className="w-full">
-                  <Link href="/resources/paths/debutant-ia-ml">
+                  <Link href="/resources/paths">
                     Commencer le parcours
                   </Link>
                 </Button>
@@ -458,7 +392,7 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 <Button asChild size="sm" variant="outline" className="w-full">
-                  <Link href="/resources/paths/data-scientist-junior">
+                  <Link href="/resources/paths">
                     Commencer le parcours
                   </Link>
                 </Button>
@@ -494,7 +428,7 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 <Button asChild size="sm" variant="outline" className="w-full">
-                  <Link href="/resources/paths/nlp-llms">
+                  <Link href="/resources/paths">
                     Commencer le parcours
                   </Link>
                 </Button>
@@ -504,7 +438,7 @@ export default function ResourcesPage() {
         </section>
 
         {/* Section 3: Bibliothèque complète avec filtres */}
-        <section aria-label="Bibliothèque complète de ressources" id="bibliotheque">
+        <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
               <BookOpen className="h-5 w-5 text-white" />
@@ -515,133 +449,133 @@ export default function ResourcesPage() {
             </div>
           </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar - Filtres */}
-          <aside className="lg:col-span-1">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Sidebar - Filtres */}
+            <aside className="lg:col-span-1">
               <div className="sticky top-4">
-              <ResourceFilters
-                selectedCategory={selectedCategory}
-                selectedDifficulty={selectedDifficulty}
-                selectedType={selectedType}
-                onCategoryChange={setSelectedCategory}
-                onDifficultyChange={setSelectedDifficulty}
-                onTypeChange={setSelectedType}
-                onClearFilters={handleClearFilters}
-              />
-            </div>
-          </aside>
+                <ResourceFilters
+                  selectedCategory={selectedCategory}
+                  selectedDifficulty={selectedDifficulty}
+                  selectedType={selectedType}
+                  onCategoryChange={setSelectedCategory}
+                  onDifficultyChange={setSelectedDifficulty}
+                  onTypeChange={setSelectedType}
+                  onClearFilters={handleClearFilters}
+                />
+              </div>
+            </aside>
 
-          {/* Main Content - Liste des ressources */}
-          <main className="lg:col-span-3">
-            {/* Filtres actifs */}
-            {(selectedCategory || selectedDifficulty || selectedType || searchQuery) && (
-              <div className="mb-6 p-4 bg-green-50 rounded-lg border-2 border-green-200">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-semibold text-green-900">Filtres actifs</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClearFilters}
-                    className="text-green-700 hover:text-green-900 hover:bg-green-100 h-7"
+            {/* Main Content - Liste des ressources */}
+            <main className="lg:col-span-3">
+              {/* Filtres actifs */}
+              {(selectedCategory || selectedDifficulty || selectedType || searchQuery) && (
+                <div className="mb-6 p-4 bg-green-50 rounded-lg border-2 border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-semibold text-green-900">Filtres actifs</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearFilters}
+                      className="text-green-700 hover:text-green-900 hover:bg-green-100 h-7"
+                    >
+                      Tout effacer
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {searchQuery && (
+                      <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                        Recherche: "{searchQuery}"
+                      </Badge>
+                    )}
+                    {selectedCategory && (
+                      <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                        Catégorie: {selectedCategory}
+                      </Badge>
+                    )}
+                    {selectedDifficulty && (
+                      <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                        Difficulté: {selectedDifficulty}
+                      </Badge>
+                    )}
+                    {selectedType && (
+                      <Badge variant="outline" className="bg-white border-green-300 text-green-800">
+                        Type: {selectedType}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Toolbar - Tri & Stats */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="text-sm text-slate-600">
+                  {loading ? (
+                    <span>Chargement...</span>
+                  ) : (
+                    <span>
+                      <strong className="text-slate-900">{resources.length}</strong> ressource{resources.length !== 1 ? 's' : ''} trouvée{resources.length !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+
+                {/* Tri */}
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-4 w-4 text-slate-500" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   >
-                    Tout effacer
+                    {sortOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Liste des ressources */}
+              {loading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="h-12 w-12 animate-spin text-green-500" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-16">
+                  <p className="text-red-600 mb-4">Erreur : {error}</p>
+                  <Button variant="outline" onClick={() => window.location.reload()}>
+                    Réessayer
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {searchQuery && (
-                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
-                      Recherche: "{searchQuery}"
-                    </Badge>
-                  )}
-                  {selectedCategory && (
-                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
-                      Catégorie: {selectedCategory}
-                    </Badge>
-                  )}
-                  {selectedDifficulty && (
-                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
-                      Difficulté: {selectedDifficulty}
-                    </Badge>
-                  )}
-                  {selectedType && (
-                    <Badge variant="outline" className="bg-white border-green-300 text-green-800">
-                      Type: {selectedType}
-                    </Badge>
-                  )}
+              ) : resources.length === 0 ? (
+                <div className="text-center py-16">
+                  <BookOpen className="h-16 w-16 mx-auto mb-4 text-gray-200" />
+                  <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                    Aucune ressource trouvée
+                  </h3>
+                  <p className="text-slate-500 mb-6">
+                    Essayez de modifier vos filtres ou votre recherche.
+                  </p>
+                  <Button variant="outline" onClick={handleClearFilters}>
+                    Réinitialiser les filtres
+                  </Button>
                 </div>
-              </div>
-            )}
-
-            {/* Toolbar - Tri & Stats */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="text-sm text-slate-600">
-                {loading ? (
-                  <span>Chargement...</span>
-                ) : (
-                  <span>
-                    <strong className="text-slate-900">{resources.length}</strong> ressource{resources.length !== 1 ? 's' : ''} trouvée{resources.length !== 1 ? 's' : ''}
-                  </span>
-                )}
-              </div>
-
-              {/* Tri */}
-              <div className="flex items-center gap-2">
-                <ArrowUpDown className="h-4 w-4 text-slate-500" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                >
-                  {sortOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {resources.map(resource => (
+                    <ResourceCard
+                      key={resource.id}
+                      resource={resource}
+                      onLike={() => {
+                        if (user) {
+                          console.log('Like resource:', resource.id)
+                        }
+                      }}
+                      isLiked={false}
+                    />
                   ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Liste des ressources */}
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-12 w-12 animate-spin text-green-500" />
-              </div>
-            ) : error ? (
-              <div className="text-center py-16">
-                <p className="text-red-600 mb-4">Erreur : {error}</p>
-                <Button variant="outline" onClick={() => window.location.reload()}>
-                  Réessayer
-                </Button>
-              </div>
-            ) : resources.length === 0 ? (
-              <div className="text-center py-16">
-                <BookOpen className="h-16 w-16 mx-auto mb-4 text-gray-200" />
-                <h3 className="text-xl font-semibold text-slate-800 mb-2">
-                  Aucune ressource trouvée
-                </h3>
-                <p className="text-slate-500 mb-6">
-                  Essayez de modifier vos filtres ou votre recherche.
-                </p>
-                <Button variant="outline" onClick={handleClearFilters}>
-                  Réinitialiser les filtres
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {resources.map(resource => (
-                  <ResourceCard
-                    key={resource.id}
-                    resource={resource}
-                    onLike={() => {
-                      if (user) {
-                        console.log('Like resource:', resource.id)
-                      }
-                    }}
-                    isLiked={false}
-                  />
-                ))}
-              </div>
-            )}
+                </div>
+              )}
 
               {/* CTA Admin */}
               {canCreateResource && (
@@ -652,10 +586,10 @@ export default function ResourcesPage() {
                       Ajouter une nouvelle ressource
                     </Link>
                   </Button>
-              </div>
-            )}
-          </main>
-        </div>
+                </div>
+              )}
+            </main>
+          </div>
         </section>
       </div>
     </div>

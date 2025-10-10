@@ -98,14 +98,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href="/resources/paths" 
-                  className="text-slate-400 hover:text-cyan-400 transition-colors duration-200 text-sm"
-                >
-                  Parcours d'apprentissage
-                </Link>
-              </li>
-              <li>
-                <Link 
                   href="/articles" 
                   className="text-slate-400 hover:text-cyan-400 transition-colors duration-200 text-sm"
                 >
