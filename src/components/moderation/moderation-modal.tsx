@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
@@ -25,7 +26,7 @@ import { Shield, Trash2, Ban, AlertTriangle, CheckCircle, Loader2 } from 'lucide
 interface ModerationModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  contentType: 'article' | 'project' | 'comment'
+  contentType: 'article' | 'project' | 'comment' | 'competition'
   contentId: string
   contentTitle: string
   authorId: string
@@ -34,6 +35,16 @@ interface ModerationModalProps {
 }
 
 type ActionType = 'delete' | 'ban' | 'warn' | null
+
+// Fonction pour convertir les actions en types de base de données
+const getActionType = (action: ActionType): string => {
+  switch (action) {
+    case 'warn': return 'warn_user'
+    case 'delete': return 'delete_content'
+    case 'ban': return 'ban_user'
+    default: return 'warn_user'
+  }
+}
 
 export default function ModerationModal({
   open,
@@ -45,6 +56,7 @@ export default function ModerationModal({
   authorName,
   onSuccess
 }: ModerationModalProps) {
+  const { user } = useAuth()
   const [action, setAction] = useState<ActionType>(null)
   const [reason, setReason] = useState('')
   const [loading, setLoading] = useState(false)
@@ -54,6 +66,11 @@ export default function ModerationModal({
   const supabase = createClient()
 
   const handleModerate = async () => {
+    if (!user) {
+      setError('Vous devez être connecté pour modérer')
+      return
+    }
+
     if (!action) {
       setError('Veuillez sélectionner une action')
       return
@@ -72,27 +89,32 @@ export default function ModerationModal({
       const { error: moderationError } = await supabase
         .from('moderation_actions')
         .insert([{
-          content_type: contentType,
-          content_id: contentId,
-          action_type: action,
-          reason: reason,
-          target_user_id: authorId
+          moderator_id: user?.id,
+          target_type: contentType,
+          target_id: contentId,
+          action_type: getActionType(action),
+          reason: reason
         }])
 
       if (moderationError) throw moderationError
 
       // 2. Exécuter l'action selon le type
+      console.log(`🎯 Exécution de l'action: ${action}`)
       switch (action) {
         case 'delete':
+          console.log('🗑️ Suppression du contenu...')
           await handleDelete()
           break
         case 'ban':
+          console.log('🚫 Bannissement de l\'utilisateur...')
           await handleBan()
           break
         case 'warn':
+          console.log('⚠️ Avertissement enregistré')
           await handleWarn()
           break
       }
+      console.log('✅ Action exécutée avec succès')
 
       setSuccess(true)
       setTimeout(() => {
@@ -110,24 +132,63 @@ export default function ModerationModal({
 
   const handleDelete = async () => {
     const tableName = contentType === 'article' ? 'articles' : 
-                      contentType === 'project' ? 'projects' : 'comments'
+                      contentType === 'project' ? 'projects' : 
+                      contentType === 'competition' ? 'competitions' : 'comments'
     
-    const { error } = await supabase
+    console.log(`🗑️ Suppression de ${contentType} (${contentId}) dans la table ${tableName}`)
+    
+    // Vérifier d'abord si le contenu existe
+    const { data: existingContent, error: fetchError } = await supabase
+      .from(tableName)
+      .select('id, title')
+      .eq('id', contentId)
+      .single()
+
+    if (fetchError) {
+      console.error('❌ Erreur lors de la vérification du contenu:', fetchError)
+      throw fetchError
+    }
+
+    console.log(`📋 Contenu trouvé:`, existingContent)
+    
+    // Effectuer la suppression
+    const { data: deletedData, error } = await supabase
       .from(tableName)
       .delete()
       .eq('id', contentId)
+      .select()
 
-    if (error) throw error
+    if (error) {
+      console.error('❌ Erreur lors de la suppression:', error)
+      throw error
+    }
+    
+    console.log(`📊 Résultat de la suppression:`, deletedData)
+    console.log(`📈 Nombre d'éléments supprimés:`, deletedData?.length || 0)
+    
+    if (!deletedData || deletedData.length === 0) {
+      console.warn('⚠️ Aucun élément supprimé - possible problème de permissions RLS')
+      throw new Error('Aucun élément supprimé - vérifiez les permissions RLS')
+    }
+    
+    console.log('✅ Contenu supprimé avec succès')
   }
 
   const handleBan = async () => {
+    console.log(`🚫 Bannissement de l'utilisateur ${authorId}`)
+    
     // Bannir l'utilisateur
     const { error: banError } = await supabase
       .from('profiles')
       .update({ account_status: 'banned' })
       .eq('id', authorId)
 
-    if (banError) throw banError
+    if (banError) {
+      console.error('❌ Erreur lors du bannissement:', banError)
+      throw banError
+    }
+    
+    console.log('✅ Utilisateur banni')
 
     // Supprimer aussi le contenu
     await handleDelete()
@@ -139,10 +200,16 @@ export default function ModerationModal({
         user_id: authorId,
         sanction_type: 'ban',
         reason: reason,
+        issued_by: user?.id,
         duration_days: null // Permanent
       }])
 
-    if (sanctionError) throw sanctionError
+    if (sanctionError) {
+      console.error('❌ Erreur lors de l\'enregistrement de la sanction:', sanctionError)
+      throw sanctionError
+    }
+    
+    console.log('✅ Sanction enregistrée')
   }
 
   const handleWarn = async () => {
@@ -211,6 +278,7 @@ export default function ModerationModal({
                 <Badge variant="outline">
                   {contentType === 'article' && '📝 Article'}
                   {contentType === 'project' && '💼 Projet'}
+                  {contentType === 'competition' && '🏆 Compétition'}
                   {contentType === 'comment' && '💬 Commentaire'}
                 </Badge>
               </div>

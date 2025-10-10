@@ -40,7 +40,10 @@ export default function TalentsPage() {
   const fetchTopContributors = async () => {
     setLoading(true)
     try {
+      console.log('🏆 Récupération des Top Contributors...')
+      
       // Top 10 par score de compétitions
+      console.log('📊 Récupération des scores de compétitions...')
       const { data: competitionsData } = await supabase
         .from('leaderboard')
         .select(`
@@ -57,7 +60,10 @@ export default function TalentsPage() {
         .order('score', { ascending: false })
         .limit(10)
 
+      console.log('✅ Scores de compétitions récupérés:', competitionsData?.length || 0)
+
       // Top 10 par contenu créé (articles + projets)
+      console.log('📝 Récupération des profils...')
       const { data: profilesData } = await supabase
         .from('profiles')
         .select(`
@@ -68,6 +74,8 @@ export default function TalentsPage() {
           role
         `)
         .limit(50)
+
+      console.log('✅ Profils récupérés:', profilesData?.length || 0)
 
       if (profilesData) {
         // Compter les articles et projets pour chaque profil
@@ -107,8 +115,10 @@ export default function TalentsPage() {
           .slice(0, 10)
 
         setTopByContent(sortedByContent)
+        console.log('✅ Top par contenu calculé:', sortedByContent.length)
 
         // Top 10 par engagement (likes + comments)
+        console.log('💝 Calcul de l\'engagement...')
         const engagementCounts = await Promise.all(
           profilesData.map(async (profile) => {
             const { count: likesCount } = await supabase
@@ -143,9 +153,11 @@ export default function TalentsPage() {
           .slice(0, 10)
 
         setTopByEngagement(sortedByEngagement)
+        console.log('✅ Top par engagement calculé:', sortedByEngagement.length)
       }
 
       // Formater les données des compétitions
+      console.log('🏆 Formatage des données de compétitions...')
       if (competitionsData) {
         const formattedCompetitions = competitionsData
           .filter(item => item.profiles)
@@ -166,9 +178,12 @@ export default function TalentsPage() {
           }))
 
         setTopByCompetitions(formattedCompetitions)
+        console.log('✅ Top par compétitions formaté:', formattedCompetitions.length)
       }
+      
+      console.log('🎉 Tous les Top Contributors récupérés avec succès !')
     } catch (err) {
-      console.error('Error fetching top contributors:', err)
+      console.error('❌ Error fetching top contributors:', err)
     } finally {
       setLoading(false)
     }

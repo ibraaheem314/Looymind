@@ -8,8 +8,6 @@ import { useAuth } from '@/hooks/useAuth'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement | null>(null)
   const { user, profile, isAuthenticated, signOut } = useAuth()
@@ -23,21 +21,16 @@ export default function Header() {
   const navigation = [
     { name: 'Accueil', href: '/' },
     { 
-      name: 'Compétitions', 
-      href: '/competitions'
-    },
-    { 
-      name: 'Communauté', 
-      href: '/talents',
-      submenu: [
-        { name: 'Talents', href: '/talents' },
-        { name: 'Projets', href: '/projects' },
-        { name: 'Tutoriels', href: '/articles' },
-      ]
-    },
-    { 
       name: 'Ressources', 
       href: '/resources'
+    },
+    { 
+      name: 'Articles', 
+      href: '/articles'
+    },
+    { 
+      name: 'Talents', 
+      href: '/talents'
     },
   ]
 
@@ -80,70 +73,13 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navigation.map((item) => (
-              <div key={item.name} className="relative">
-                {item.submenu ? (
-                  <div
-                    className="relative"
-                    onMouseEnter={() => {
-                      if (dropdownTimeout) {
-                        clearTimeout(dropdownTimeout)
-                        setDropdownTimeout(null)
-                      }
-                      setActiveDropdown(item.name)
-                    }}
-                    onMouseLeave={() => {
-                      const timeout = setTimeout(() => {
-                        setActiveDropdown(null)
-                      }, 150)
-                      setDropdownTimeout(timeout)
-                    }}
-                  >
-                    <button className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors duration-200">
-                      {item.name}
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                    
-                    {activeDropdown === item.name && (
-                      <div 
-                        className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-[300]"
-                        onMouseEnter={() => {
-                          if (dropdownTimeout) {
-                            clearTimeout(dropdownTimeout)
-                            setDropdownTimeout(null)
-                          }
-                          setActiveDropdown(item.name)
-                        }}
-                        onMouseLeave={() => {
-                          const timeout = setTimeout(() => {
-                            setActiveDropdown(null)
-                          }, 150)
-                          setDropdownTimeout(timeout)
-                        }}
-                      >
-                        <div className="py-2">
-                          {item.submenu.map((subItem) => (
-                            <Link
-                              key={subItem.name}
-                              href={subItem.href}
-                              className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-cyan-600 transition-colors cursor-pointer"
-                              onClick={() => setActiveDropdown(null)}
-                            >
-                              {subItem.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
               <Link
+                key={item.name}
                 href={item.href}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors duration-200"
+                className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors duration-200"
               >
                 {item.name}
               </Link>
-                )}
-              </div>
             ))}
           </nav>
 
@@ -249,29 +185,14 @@ export default function Header() {
           <div className="md:hidden border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
-                <div key={item.name}>
                 <Link
+                  key={item.name}
                   href={item.href}
-                    className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 block px-3 py-2 text-base font-medium rounded-md"
+                  className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 block px-3 py-2 text-base font-medium rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
-                  {item.submenu && (
-                    <div className="ml-4 space-y-1">
-                      {item.submenu.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          href={subItem.href}
-                          className="text-slate-500 hover:text-cyan-600 hover:bg-slate-50 block px-3 py-1 text-sm rounded-md"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
               ))}
               <div className="pt-4 pb-3 border-t border-slate-100">
                 {isAuthenticated ? (

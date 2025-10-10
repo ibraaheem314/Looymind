@@ -36,7 +36,7 @@ interface Article {
   }
 }
 
-export default function ArticlesPage() {
+export default function TutorialsPage() {
   const { user, profile } = useAuth()
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
@@ -76,7 +76,7 @@ export default function ArticlesPage() {
       
       if (fetchError) {
         console.error('Error fetching articles:', fetchError)
-        setError('Erreur lors du chargement des articles')
+        setError('Erreur lors du chargement des tutoriels')
         setArticles([])
         setLoading(false)
         return
@@ -90,7 +90,7 @@ export default function ArticlesPage() {
       setArticles(transformedArticles as Article[])
       setLoading(false)
     } catch (err) {
-      setError('Erreur lors du chargement des articles')
+      setError('Erreur lors du chargement des tutoriels')
       console.error('Error:', err)
     } finally {
       setLoading(false)

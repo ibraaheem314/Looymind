@@ -3,10 +3,10 @@
 ## Scripts Actifs (à utiliser dans l'ordre)
 
 ### 1. **Structure de base**
-- `competitions_system.sql` - Tables des compétitions
-- `projects_complete_schema.sql` - Tables des projets
+- `competitions_system.sql` - Tables des compétitions + RLS admin
+- `projects_complete_schema.sql` - Tables des projets + RLS admin
 - `article_interactions_complete.sql` - Tables des articles et interactions
-- `moderation_system.sql` - Système de modération
+- `moderation_system.sql` - Système de modération + support compétitions
 
 ### 2. **Ressources**
 - `resources_hybrid_schema.sql` - Schéma des ressources
@@ -16,6 +16,8 @@
 ### 3. **Compétitions & Évaluation**
 - `FINAL_FIX_EVALUATION_v2.sql` - **IMPORTANT** : Système d'évaluation (SANS triggers récursifs)
 - `create_storage_bucket.sql` - Bucket pour les soumissions CSV
+- `create_datasets_bucket.sql` - Bucket pour les datasets de compétitions
+- `datasets_system.sql` - Système de datasets pour compétitions
 
 ### 4. **Schema actuel**
 - `CURRENT_WORKING_SCHEMA.sql` - Vue d'ensemble du schéma complet
@@ -34,6 +36,10 @@ Ces scripts ont été supprimés car remplacés par des versions plus récentes 
 - ❌ `CONSOLIDATED_COMPETITIONS_SCHEMA.sql` → Jamais utilisé
 - ❌ `DIAGNOSTIC_SUBMISSIONS.sql` → Outil de debug temporaire
 - ❌ `update_bucket_to_public.sql` → Action ponctuelle déjà exécutée
+- ❌ `fix_admin_delete_permissions.sql` → Intégré dans les scripts de base
+- ❌ `fix_competitions_rls_conflict.sql` → Intégré dans `competitions_system.sql`
+- ❌ `fix_projects_rls_conflict.sql` → Intégré dans `projects_complete_schema.sql`
+- ❌ `fix_moderation_target_type.sql` → Intégré dans `moderation_system.sql`
 
 ---
 

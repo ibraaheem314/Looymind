@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function CreateArticlePage() {
+export default function CreateTutorialPage() {
   const { user, profile } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -239,12 +239,12 @@ export default function CreateArticlePage() {
       console.error('Error details:', JSON.stringify(err, null, 2))
       
       // Messages d'erreur plus clairs
-      let errorMessage = 'Erreur lors de l\'enregistrement de l\'article'
+      let errorMessage = 'Erreur lors de l\'enregistrement du tutoriel'
       
       if (err.message?.includes('permission') || err.message?.includes('policy')) {
         errorMessage = 'Erreur de permissions. Vérifiez que vous êtes connecté.'
       } else if (err.message?.includes('duplicate') || err.message?.includes('unique')) {
-        errorMessage = 'Un article avec ce titre existe déjà. Veuillez changer le titre.'
+        errorMessage = 'Un tutoriel avec ce titre existe déjà. Veuillez changer le titre.'
       } else if (err.message) {
         errorMessage = err.message
       }
@@ -318,10 +318,10 @@ export default function CreateArticlePage() {
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">
-                  {draftId ? 'Modifier l\'article' : 'Nouvel article'}
+                  {draftId ? 'Modifier le tutoriel' : 'Nouveau tutoriel'}
                 </h1>
                 <p className="text-sm text-slate-600">
-                  {draftId ? 'Modifiez et publiez votre article' : 'Partagez vos connaissances avec la communauté'}
+                  {draftId ? 'Modifiez et publiez votre tutoriel' : 'Partagez vos connaissances avec la communauté'}
                 </p>
               </div>
             </div>
@@ -356,7 +356,7 @@ export default function CreateArticlePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Titre de l'article *</Label>
+                  <Label htmlFor="title">Titre du tutoriel *</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -372,7 +372,7 @@ export default function CreateArticlePage() {
                     id="excerpt"
                     value={formData.excerpt}
                     onChange={(e) => handleInputChange('excerpt', e.target.value)}
-                    placeholder="Un court résumé de votre article (2-3 phrases)"
+                    placeholder="Un court résumé de votre tutoriel (2-3 phrases)"
                     rows={3}
                   />
                   <p className="text-xs text-slate-500 mt-1">
@@ -395,9 +395,9 @@ export default function CreateArticlePage() {
             {/* Content */}
             <Card>
               <CardHeader>
-                <CardTitle>Contenu de l'article *</CardTitle>
+                <CardTitle>Contenu du tutoriel *</CardTitle>
                 <CardDescription>
-                  Rédigez votre article en Markdown (support complet)
+                  Rédigez votre tutoriel en Markdown (support complet)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -477,7 +477,7 @@ export default function CreateArticlePage() {
               </CardContent>
             </Card>
 
-            {/* Mark as Resource */}
+            {/* Resource info (auto-sync) */}
             <Card className="border-green-200 bg-green-50/50">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -486,20 +486,10 @@ export default function CreateArticlePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.markAsResource}
-                    onChange={(e) => handleInputChange('markAsResource', e.target.checked)}
-                    className="mt-1"
-                  />
-                  <div className="text-sm">
-                    <p className="font-medium text-slate-900">Marquer comme ressource</p>
-                    <p className="text-slate-600 mt-1">
-                      Votre article apparaîtra dans la section "Ressources" pour aider la communauté
-                    </p>
-                  </div>
-                </label>
+                <div className="text-sm text-slate-700">
+                  Les tutoriels publiés sont automatiquement visibles dans la section
+                  <span className="font-medium"> Ressources</span>.
+                </div>
               </CardContent>
             </Card>
 
@@ -557,7 +547,7 @@ export default function CreateArticlePage() {
                 <CardContent className="p-4">
                   <div className="flex items-start gap-2 text-green-600">
                     <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Article enregistré avec succès !</p>
+                    <p className="text-sm">Tutoriel enregistré avec succès !</p>
                   </div>
                 </CardContent>
               </Card>
@@ -572,7 +562,7 @@ export default function CreateArticlePage() {
           <DialogHeader>
             <DialogTitle>Confirmer la suppression</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.
+              Êtes-vous sûr de vouloir supprimer ce tutoriel ? Cette action est irréversible.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

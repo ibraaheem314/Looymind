@@ -3,6 +3,15 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
+  // Simple redirects for legacy French paths
+  const pathname = req.nextUrl.pathname
+  if (pathname === '/tutoriels') {
+    return NextResponse.redirect(new URL('/articles', req.url))
+  }
+  if (pathname === '/tutoriels/create') {
+    return NextResponse.redirect(new URL('/articles/create', req.url))
+  }
+
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
 

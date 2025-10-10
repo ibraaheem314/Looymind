@@ -1,32 +1,42 @@
-# 🦉 Looymind - Communauté IA du Sénégal
+# 🦉 Palanteer - Plateforme Éducative IA du Sénégal
 
-> La première plateforme hybride d'Intelligence Artificielle du Sénégal. Connectons les talents, partageons les connaissances et construisons l'avenir de l'IA en Afrique.
+> La plateforme éducative IA pour les talents sénégalais. Accédez à des ressources, partagez vos connaissances et construisez l'avenir de l'IA en Afrique.
 
-## 🚀 Fonctionnalités
+**🚀 Statut** : MVP en BETA - **Focus Éducation**
 
-### 🏆 Défis IA Compétitifs
-- Participez à des compétitions de machine learning avec des datasets réels
-- Prix attractifs en XOF
-- Système de scoring automatique
-- Classements en temps réel
+## 🎯 Notre Mission
 
-### 👥 Communauté d'Apprentissage
-- Plus de 500 talents connectés
-- Système de mentorat
-- Profils détaillés avec compétences
-- Réseautage professionnel
+Démocratiser l'accès à l'Intelligence Artificielle au Sénégal en offrant une plateforme francophone où les talents peuvent apprendre, partager et progresser ensemble.
 
-### 💡 Projets Collaboratifs
-- Créez et rejoignez des projets IA innovants
-- Collaboration en temps réel
-- Gestion des contributions
-- Intégration GitHub
+## ✨ Fonctionnalités (MVP v1.0)
 
-### 📚 Ressources Éducatives
-- Cours et tutoriels en français
-- Articles spécialisés sur l'IA
-- Outils et datasets
-- Contenu adapté au contexte africain
+### 📚 **Ressources Éducatives**
+- 📖 Curation de cours et tutoriels IA (Coursera, YouTube, Kaggle, etc.)
+- 🇸🇳 Ressources adaptées au contexte sénégalais
+- 🔍 Filtres avancés (catégorie, difficulté, type, langue)
+- 📊 Suivi de progression et bookmarks
+- ✅ 100% gratuit et en français
+
+### 📝 **Articles Communautaires**
+- ✍️ Rédaction en Markdown avec prévisualisation
+- 🏷️ Catégories IA (ML, Data Science, NLP, Computer Vision...)
+- 💬 Commentaires hiérarchiques et discussions
+- ❤️ Système de likes persistants
+- 👁️ Compteurs de vues uniques
+- 🎓 Transformation en ressource éducative
+
+### 👥 **Communauté & Talents**
+- 🌟 Annuaire des talents IA du Sénégal
+- 📊 Profils détaillés avec compétences et projets
+- 🎯 Dashboard personnalisé
+- 🏆 Système de réputation basé sur contributions
+- 👨‍🏫 Rôles : Membre, Mentor, Organisation, Admin
+
+### 🛡️ **Modération & Qualité**
+- ⚙️ Dashboard de modération complet
+- 🚨 Système de signalements
+- 👮 Modération utilisateurs et contenus
+- ⚖️ Sanctions graduées
 
 ## 🛠️ Technologies
 
@@ -35,6 +45,26 @@
 - **Backend**: Supabase (PostgreSQL, Auth, Storage)
 - **Déploiement**: Vercel
 - **Versioning**: Git, GitHub
+
+## 📦 Fonctionnalités Archivées (Roadmap Future)
+
+Certaines fonctionnalités ont été archivées pour permettre un focus sur l'éducation (MVP). Elles seront réactivées ultérieurement :
+
+### ⏸️ **Compétitions IA** (Phase 3 - 2026+)
+- Système complet de compétitions style Kaggle/Zindi
+- Soumissions et leaderboard en temps réel
+- Prix en FCFA
+- **Archivé dans** : `_archive/competitions/`
+
+### ⏸️ **Projets Collaboratifs** (Phase 2 - Q2 2026)
+- Système de projets avec collaborateurs
+- Intégration GitHub
+- Portfolio professionnel
+- **Archivé dans** : `_archive/projects/`
+
+**📖 Guide de restauration** : Voir `_archive/RESTORATION_GUIDE.md`
+
+---
 
 ## 📋 Prérequis
 

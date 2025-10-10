@@ -152,11 +152,11 @@ export default function ModerationDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Soumissions</span>
-                {stats?.submissions.pending && stats.submissions.pending > 0 && (
-                  <Badge className="bg-cyan-100 text-cyan-700">{stats.submissions.pending}</Badge>
+                {stats?.submissions.total && stats.submissions.total > 0 && (
+                  <Badge className="bg-cyan-100 text-cyan-700">{stats.submissions.total}</Badge>
                 )}
               </CardTitle>
-              <CardDescription>Soumissions en attente d'évaluation</CardDescription>
+              <CardDescription>Évaluation des soumissions de compétitions</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -168,7 +168,9 @@ export default function ModerationDashboard() {
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-500">Total évaluées</span>
-                  <span className="text-slate-600">{stats?.submissions.total || 0}</span>
+                  <span className="text-slate-600">
+                    {(stats?.submissions.total || 0) - (stats?.submissions.pending || 0)}
+                  </span>
                 </div>
               </div>
               <Link href="/admin/submissions">

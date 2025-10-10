@@ -46,7 +46,7 @@ interface Article {
   }
 }
 
-export default function ArticleDetailPage() {
+export default function TutorialDetailPage() {
   const { user, profile } = useAuth()
   const { slug } = useParams()
   const router = useRouter()
@@ -62,17 +62,14 @@ export default function ArticleDetailPage() {
   const [showModerateModal, setShowModerateModal] = useState(false)
 
   const categories = [
-    { value: 'ia', label: 'Intelligence Artificielle' },
-    { value: 'data-science', label: 'Data Science' },
-    { value: 'machine-learning', label: 'Machine Learning' },
-    { value: 'deep-learning', label: 'Deep Learning' },
-    { value: 'nlp', label: 'NLP' },
-    { value: 'computer-vision', label: 'Computer Vision' },
-    { value: 'big-data', label: 'Big Data' },
-    { value: 'cloud', label: 'Cloud Computing' },
-    { value: 'dev', label: 'Développement' },
-    { value: 'tutorial', label: 'Tutoriel' },
-    { value: 'news', label: 'Actualités' }
+    { value: 'tutorial', label: '📚 Tutoriel (How-to)' },
+    { value: 'competition-analysis', label: '🏆 Analyse de Compétition' },
+    { value: 'feedback', label: '💡 Retour d\'Expérience' },
+    { value: 'best-practices', label: '⭐ Best Practices' },
+    { value: 'technique', label: '🔬 Technique & Méthode' },
+    { value: 'dataset-exploration', label: '📊 Exploration de Dataset' },
+    { value: 'model-optimization', label: '⚡ Optimisation de Modèle' },
+    { value: 'feature-engineering', label: '🛠️ Feature Engineering' }
   ]
 
   useEffect(() => {
@@ -305,10 +302,10 @@ export default function ArticleDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
-            <h2 className="text-xl font-semibold mb-2">Article non trouvé</h2>
+            <h2 className="text-xl font-semibold mb-2">Tutoriel non trouvé</h2>
             <p className="text-gray-600 mb-4">{error}</p>
             <Link href="/articles">
-              <Button>Retour aux articles</Button>
+              <Button>Retour aux tutoriels</Button>
             </Link>
           </CardContent>
         </Card>

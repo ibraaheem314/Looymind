@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS public.moderation_actions (
     'restore_content',
     'dismiss_report'
   )),
-  target_type TEXT NOT NULL CHECK (target_type IN ('article', 'project', 'comment', 'profile', 'user')),
+  target_type TEXT NOT NULL CHECK (target_type IN ('article', 'project', 'comment', 'profile', 'user', 'competition')),
   target_id UUID NOT NULL,
   reason TEXT,
   duration_days INTEGER, -- Pour les suspensions temporaires

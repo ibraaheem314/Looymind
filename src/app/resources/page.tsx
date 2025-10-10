@@ -65,7 +65,7 @@ export default function ResourcesPage() {
                 <span className="text-green-600">ressources de qualité</span>
               </h1>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                Cours, tutoriels, vidéos et outils soigneusement sélectionnés pour vous accompagner du niveau débutant à expert.
+                Cours, tutoriels, vidéos et outils sélectionnés, organisés en <strong>parcours guidés</strong> pour apprendre étape par étape.
               </p>
               
               {/* Stats inline */}
@@ -86,14 +86,22 @@ export default function ResourcesPage() {
                 </div>
               </div>
 
-              {canCreateResource && (
-                <Link href="/resources/create">
-                  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/30">
-                    <Plus className="h-5 w-5 mr-2" />
-                    Ajouter une Ressource
-                  </Button>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/resources" className="inline-flex">
+                  <Button size="sm" variant="outline" className="rounded-full px-4">Bibliothèque</Button>
                 </Link>
-              )}
+                <Link href="/resources/paths" className="inline-flex">
+                  <Button size="sm" className="rounded-full px-4 bg-[#2d5986] hover:bg-[#1e3a5f] text-white">Parcours</Button>
+                </Link>
+                {canCreateResource && (
+                  <Link href="/resources/create">
+                    <Button size="sm" variant="outline" className="rounded-full px-4 border-green-300 text-green-800 hover:bg-green-50">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter une Ressource
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Right: Resource preview mockup */}

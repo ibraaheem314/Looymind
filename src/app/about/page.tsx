@@ -7,14 +7,23 @@ import Link from 'next/link'
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      {/* Hero Section - Redesigné */}
+      <div className="relative bg-gradient-to-b from-[#0a0e1a] via-[#0d1117] to-[#0f172a] text-white overflow-hidden">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-600/10" aria-hidden="true" />
+        
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iY3lhbiIgc3Ryb2tlLW9wYWNpdHk9IjAuMDMiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40" aria-hidden="true" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              À propos de Palanteer
+            <Badge className="bg-gradient-to-r from-cyan-500/20 to-blue-600/20 border border-cyan-400/30 text-cyan-300 mb-6 text-sm px-4 py-1.5">
+              🚀 Notre Histoire
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+              À propos de <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Palanteer</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
               La première communauté hybride d'Intelligence Artificielle du Sénégal. 
               Nous connectons les talents, partageons les connaissances et construisons 
               l'avenir de l'IA en Afrique.
@@ -202,16 +211,17 @@ export default function AboutPage() {
             Ensemble, construisons l'avenir de l'Intelligence Artificielle en Afrique
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/register">
-              <Button size="lg" className="bg-white text-slate-800 hover:bg-gray-100">
+            <Button size="lg" className="btn-inverse text-lg px-10 py-6 group" asChild>
+              <Link href="/auth/register">
                 Rejoindre la communauté
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-slate-800">
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="btn-tertiary-dark text-lg px-10 py-6 group" asChild>
+              <Link href="/contact">
                 Nous contacter
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
